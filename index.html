@@ -100,6 +100,7 @@
         .tool-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; color: var(--secondary); cursor: pointer; border-radius: 8px; }
         .tool-btn.active { color: var(--accent); background: rgba(0, 122, 255, 0.1); }
         
+        /* 调整备注样式：底部内边距为0，方便时间对齐 */
         .item-note { 
             margin:10px 0 0 0; 
             padding-top: 10px; 
@@ -111,18 +112,19 @@
             -webkit-line-clamp: 2; 
             -webkit-box-orient: vertical; 
             overflow: hidden; 
-            line-height: 1.5;
+            line-height: 1.5; /* 明确行高 */
         }
         
+        /* 时间记录样式调整：与备注行对齐，字号增大到12px(同备注) */
         .item-time {
             position: absolute;
-            bottom: 22px;
+            bottom: 22px; /* 与卡片 padding 对齐 */
             right: 22px;
-            font-size: 11px;
+            font-size: 11px; /* 稍微大一点，建议11px或12px */
             color: var(--secondary);
             opacity: 0.4;
             font-family: ui-monospace, monospace;
-            line-height: 1.5;
+            line-height: 1.5; /* 与备注行高一致 */
         }
 
         .auth-viewport { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 0 var(--side-gap); }
@@ -216,8 +218,8 @@
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </div>
         </div>
-        <div class="action-btn" onclick="openAddModal()" style="color:var(--accent)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-        <div class="action-btn" onclick="softLock()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <div class="action-btn" onmousedown="event.preventDefault();openAddModal()" ontouchstart="event.preventDefault();openAddModal()" style="color:var(--accent)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+        <div class="action-btn" onmousedown="event.preventDefault();softLock()" ontouchstart="event.preventDefault();softLock()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
     </div>
 </header>
 
@@ -279,51 +281,6 @@
     let FINAL_TOKEN = "", GIST_ID = localStorage.getItem('ae_gid'), ENCRYPTED_TK = localStorage.getItem('ae_enc_tk');
     let deleteTargetId = null, currentEditId = null, CACHED_LIST = []; 
 
-    /** iOS 终极兼容复制方案 **/
-    function copy(text) {
-        // 方案 1: 尝试同步写入 (iOS 对异步 Promise 往往拦截)
-        const textArea = document.createElement("textarea");
-        textArea.value = text;
-        
-        // 必须让元素可见但不在视图内，否则 iOS 不允许 execCommand
-        textArea.style.position = "fixed";
-        textArea.style.top = "0";
-        textArea.style.left = "-9999px";
-        textArea.style.width = '2em';
-        textArea.style.height = '2em';
-        textArea.style.padding = '0';
-        textArea.style.border = 'none';
-        textArea.style.outline = 'none';
-        textArea.style.boxShadow = 'none';
-        textArea.style.background = 'transparent';
-        
-        document.body.appendChild(textArea);
-        
-        // iOS 选区逻辑
-        textArea.focus();
-        textArea.setSelectionRange(0, 999999); 
-        
-        let success = false;
-        try {
-            success = document.execCommand('copy');
-        } catch (err) {}
-
-        if (success) {
-            showToast("已复制");
-        } else {
-            // 方案 2: 最后的现代 API 尝试
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(text).then(() => {
-                    showToast("已复制");
-                }).catch(() => showToast("复制失败，请重试"));
-            } else {
-                showToast("浏览器不支持复制");
-            }
-        }
-        
-        document.body.removeChild(textArea);
-    }
-
     document.addEventListener('click', (e) => {
         const bar = document.getElementById('search-bar');
         const wrapper = document.getElementById('search-wrapper');
@@ -332,6 +289,11 @@
             bar.blur(); 
         }
     });
+
+    window.addEventListener('touchmove', () => {
+        const bar = document.getElementById('search-bar');
+        if (bar === document.activeElement && bar.value === "") { bar.blur(); }
+    }, {passive: true});
 
     function focusSearch() { document.getElementById('search-bar').focus(); }
     function handleSearchUI(input) {
@@ -358,10 +320,10 @@
             const itemStr = JSON.stringify(item).replace(/"/g, '&quot;');
             div.innerHTML = `
                 <div class="card-actions">
-                    <button class="tool-btn" onclick="togglePass('${item.id}', this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                    <button class="tool-btn" onclick="copy('${item.pass}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
-                    <button class="tool-btn" onclick="openEditModal(${itemStr})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-                    <button class="tool-btn" onclick="confirmDelete('${item.id}')" style="color:var(--danger)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2-2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+                    <button class="tool-btn" onmousedown="event.preventDefault();togglePass('${item.id}', this)" ontouchstart="event.preventDefault();togglePass('${item.id}', this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11-8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    <button class="tool-btn" onmousedown="event.preventDefault();copy('${item.pass}')" ontouchstart="event.preventDefault();copy('${item.pass}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+                    <button class="tool-btn" onmousedown="event.preventDefault();openEditModal(${itemStr})" ontouchstart="event.preventDefault();openEditModal(${itemStr})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                    <button class="tool-btn" onmousedown="event.preventDefault();confirmDelete('${item.id}')" ontouchstart="event.preventDefault();confirmDelete('${item.id}')" style="color:var(--danger)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2-2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
                 </div>
                 <div class="card-info">
                     <h3 class="item-name">${item.name}</h3>
@@ -378,6 +340,7 @@
     }
 
     function togglePass(id, btn) { document.getElementById('card-'+id).classList.toggle('revealed'); btn.classList.toggle('active'); }
+    function copy(t) { navigator.clipboard.writeText(t); showToast("已复制"); }
     function openAddModal() { currentEditId = null; document.getElementById('modal-title').innerText = "新增凭据"; ['add-name','add-user','add-pass','add-note'].forEach(i => document.getElementById(i).value=''); toggleModal('add-modal', true); }
     function openEditModal(item) { currentEditId = item.id; document.getElementById('modal-title').innerText = "修改凭据"; document.getElementById('add-name').value = item.name; document.getElementById('add-user').value = item.user; document.getElementById('add-pass').value = item.pass; document.getElementById('add-note').value = item.note || ''; toggleModal('add-modal', true); }
     
