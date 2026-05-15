@@ -11,7 +11,6 @@
             --accent: #007aff;
             --danger: #ff3b30;
             --secondary: #86868b;
-            --border: rgba(0, 0, 0, 0.05);
         }
 
         body, html {
@@ -38,15 +37,15 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* 透明毛玻璃 Header */
+        /* 核心修改：取消 Header 底色和边框，实现完全悬浮感 */
         header {
             position: fixed; top: 0; left: 0; width: 100%;
-            padding: calc(15px + env(safe-area-inset-top)) 24px 15px;
+            padding: calc(18px + env(safe-area-inset-top)) 24px 15px;
             box-sizing: border-box; z-index: 100;
             display: flex; justify-content: space-between; align-items: center;
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            border-bottom: 0.5px solid var(--border);
+            background: transparent; /* 取消底色 */
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: none; /* 取消底边线 */
         }
 
         .brand { display: flex; align-items: center; gap: 10px; }
@@ -57,13 +56,14 @@
         
         .action-btn {
             width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; border-radius: 14px; background: rgba(255,255,255,0.5);
-            border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            cursor: pointer; border-radius: 14px; 
+            background: rgba(255,255,255,0.4);
+            border: 1px solid rgba(255,255,255,0.3); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .action-btn:active, .primary-btn:active, .tool-btn:active { transform: scale(0.9); opacity: 0.7; }
 
-        /* 内容外层 */
         .page-wrapper {
             display: flex; flex-direction: column; align-items: center;
             padding: calc(110px + env(safe-area-inset-top)) 24px 40px;
@@ -79,7 +79,7 @@
             backdrop-filter: blur(15px); width: 100%; box-sizing: border-box;
         }
 
-        /* 核心修改：学习 iOS 弹窗风格 */
+        /* iOS 风格弹窗 */
         .glass-card {
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
@@ -90,22 +90,8 @@
             box-sizing: border-box;
         }
 
-        /* iOS 标题风格：更黑、更粗、更紧凑 */
-        .glass-card h2, .glass-card h3 { 
-            margin: 0; 
-            font-size: 18px; 
-            font-weight: 700; 
-            color: #000;
-            letter-spacing: -0.4px;
-        }
-        /* iOS 描述风格：偏灰、稍微间距 */
-        .glass-card p.ios-msg { 
-            font-size: 13.5px; 
-            color: #3a3a3c; 
-            margin: 5px 0 20px; 
-            line-height: 1.4;
-            font-weight: 400;
-        }
+        .glass-card h2, .glass-card h3 { margin: 0; font-size: 18px; font-weight: 700; color: #000; letter-spacing: -0.4px; }
+        .ios-msg { font-size: 13.5px; color: #3a3a3c; margin: 5px 0 20px; line-height: 1.4; font-weight: 400; }
 
         .auth-viewport {
             display: flex; align-items: center; justify-content: center;
@@ -207,9 +193,10 @@
     </div>
 </div>
 
-<div id="toast">已同步</div>
+<div id="toast">已更新</div>
 
 <script>
+    // 强制生成【蓝色】Favicon
     function generateFavicon() {
         const svgPath = `M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 12 12 22 12 22Z M9 12L11 14L15 10`;
         const encoded = btoa(`<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="${svgPath}"/></svg>`);
