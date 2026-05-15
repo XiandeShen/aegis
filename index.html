@@ -6,13 +6,14 @@
     <title>Aegis</title>
     <link id="favicon" rel="icon" type="image/svg+xml">
     <style>
+        * { box-sizing: border-box; }
+
         :root {
             --bg-base: #f5f5f7;
             --accent: #007aff;
             --danger: #ff3b30;
             --secondary: #86868b;
             --side-gap: 20px;
-            /* 统一视觉规范 */
             --glass-bg: rgba(255, 255, 255, 0.75);
             --glass-blur: blur(20px);
             --glass-border: 1px solid rgba(255, 255, 255, 0.6);
@@ -22,7 +23,7 @@
         }
 
         body, html {
-            margin: 0; padding: 0; height: 100%;
+            margin: 0; padding: 0; width: 100%; min-height: 100%;
             background-color: var(--bg-base);
             color: #1d1d1f;
             font-family: -apple-system, "SF Pro Display", "PingFang SC", sans-serif;
@@ -38,19 +39,14 @@
             animation: gradientFlow 15s ease-in-out infinite;
             z-index: -1;
         }
-        @keyframes gradientFlow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        @keyframes gradientFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-        /* 顶部栏：修改为不透明，确保遮挡下方内容 */
         header {
             position: fixed; top: 0; left: 0; width: 100%;
             padding: calc(18px + env(safe-area-inset-top)) var(--side-gap) 15px;
-            box-sizing: border-box; z-index: 100;
+            z-index: 100;
             display: flex; justify-content: space-between; align-items: center;
-            background: var(--bg-base); /* 纯色背景 */
+            background: var(--bg-base);
             border-bottom: 0.5px solid rgba(0,0,0,0.05);
         }
 
@@ -68,54 +64,64 @@
         }
 
         .page-wrapper {
-            display: block; 
+            width: 100%; max-width: 1000px; margin: 0 auto;
             padding: calc(110px + env(safe-area-inset-top)) var(--side-gap) 40px;
-            box-sizing: border-box; width: 100%;
-            max-width: 1000px; margin: 0 auto;
         }
 
-        #list-container {
-            display: grid; grid-template-columns: 1fr; gap: 16px;
-            width: 100%; box-sizing: border-box;
+        #list-container { 
+            display: grid; 
+            grid-template-columns: 100%; 
+            gap: 16px; 
+            width: 100%;
+            text-align: center; /* 确保内部纯文字居中 */
         }
-        @media (min-width: 768px) {
-            #list-container { grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (min-width: 768px) { 
+            #list-container { grid-template-columns: repeat(2, 1fr); gap: 20px; } 
         }
 
-        /* 统一卡片与模态框风格 */
+        /* 状态提示容器：强制跨越所有网格列并居中 */
+        .status-msg {
+            grid-column: 1 / -1; 
+            width: 100%;
+            padding-top: 60px;
+            color: var(--secondary);
+            font-size: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         .item-card, .glass-card { 
             background: var(--glass-bg); 
             backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
             border-radius: var(--radius-lg); 
             border: var(--glass-border); 
             box-shadow: var(--card-shadow);
-            box-sizing: border-box;
+            width: 100%;
+            text-align: left; /* 卡片内容恢复左对齐 */
         }
 
-        .item-card { 
-            padding: 22px; 
-            display: flex; flex-direction: column; 
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        .item-card { padding: 22px; display: flex; flex-direction: column; transition: transform 0.2s; }
         .item-card:active { transform: scale(0.98); }
 
-        .card-info { flex: 1; margin-bottom: 16px; }
+        .card-info { flex: 1; margin-bottom: 12px; width: 100%; overflow: hidden; }
         .item-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin:0; font-size:18px; font-weight: 700; color: #1d1d1f; }
-        .item-user { margin:4px 0 0 0; color:var(--secondary); font-size:13px; font-family: ui-monospace, monospace; }
+        .item-user { margin:4px 0 0 0; color:var(--secondary); font-size:13px; font-family: ui-monospace, monospace; word-break: break-all; }
+        .item-note { margin:6px 0 0 0; font-size:12px; color: var(--secondary); opacity: 0.8; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
         .pass-row {
             display: flex; align-items: center; justify-content: space-between;
             background: rgba(0,0,0,0.04); border-radius: 16px;
-            padding: 8px 12px; min-height: 48px;
+            padding: 8px 12px; min-height: 48px; width: 100%;
         }
         .pass-val { 
-            font-family: ui-monospace, monospace; font-size: 15px; 
-            color: var(--accent); word-break: break-all;
+            font-family: ui-monospace, monospace; font-size: 15px; color: var(--accent); 
             filter: blur(5px); opacity: 0.3; transition: all 0.3s ease; user-select: none;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 8px;
         }
         .item-card.revealed .pass-val { filter: blur(0); opacity: 1; user-select: text; }
 
-        .card-actions { display: flex; gap: 4px; }
+        .card-actions { display: flex; gap: 4px; flex-shrink: 0; }
         .tool-btn { 
             width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
             border: none; background: transparent; color: var(--secondary); cursor: pointer; 
@@ -123,42 +129,32 @@
         }
         .tool-btn.active { color: var(--accent); background: rgba(0, 122, 255, 0.1); }
 
-        .auth-viewport { display: flex; align-items: center; justify-content: center; height: 100vh; width: 100%; padding: 0 var(--side-gap); box-sizing: border-box; }
-        .glass-card { padding: 32px 24px; width: 100%; max-width: 320px; text-align: center; }
+        .auth-viewport { display: flex; align-items: center; justify-content: center; min-height: 100vh; width: 100%; padding: 0 var(--side-gap); }
+        .glass-card { padding: 32px 24px; width: 100%; max-width: 340px; text-align: center; }
 
         input { 
-            width: 100%; height: 50px; padding: 0 16px; margin: 8px 0; 
-            border-radius: var(--radius-md); 
-            border: 1px solid rgba(0,0,0,0.08); 
-            font-size: 16px; outline: none; box-sizing: border-box; 
-            background: rgba(255,255,255,0.6);
-            transition: all 0.2s;
+            width: 100%; height: 50px; padding: 0 16px; margin: 8px 0; border-radius: var(--radius-md); 
+            border: 1px solid rgba(0,0,0,0.08); font-size: 16px; outline: none;
+            background: rgba(255,255,255,0.6); transition: all 0.2s; -webkit-appearance: none;
         }
         input:focus { border-color: var(--accent); background: #fff; }
 
         .primary-btn { 
-            width: 100%; height: 50px; background: var(--accent); 
-            border: none; border-radius: var(--radius-md); 
-            color: white; font-size: 16px; font-weight: 600; 
-            margin-top: 12px; cursor: pointer; 
-            transition: opacity 0.2s;
+            width: 100%; height: 50px; background: var(--accent); border: none; border-radius: var(--radius-md); 
+            color: white; font-size: 16px; font-weight: 600; margin-top: 12px; cursor: pointer; transition: all 0.2s;
+            -webkit-appearance: none;
         }
-        .primary-btn:active { opacity: 0.8; }
+        .primary-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
         .modal-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.15); 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.25); 
             z-index: 200; display: none; align-items: center; justify-content: center; 
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); 
-            padding: 0 var(--side-gap); box-sizing: border-box; 
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 0 var(--side-gap);
         }
 
         #toast { 
-            position: fixed; bottom: -80px; left: 50%; transform: translateX(-50%); 
-            background: rgba(0,0,0,0.8); color: white; 
-            padding: 12px 24px; border-radius: 24px; 
-            font-size: 14px; transition: 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); 
-            z-index: 1000;
+            position: fixed; bottom: -80px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); color: white; 
+            padding: 12px 24px; border-radius: 24px; font-size: 14px; transition: 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); z-index: 1000;
         }
         #toast.show { bottom: 50px; }
     </style>
@@ -170,15 +166,15 @@
 <header>
     <div class="brand">
         <div class="brand-logo">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 12 12 22 12 22Z"/><path d="M9 12L11 14L15 10"/></svg>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 12 12 22 12 22Z"/><path d="M9 12L11 14L15 10"/>
+            </svg>
         </div>
         <div class="brand-name">AEGIS</div>
     </div>
     <div class="header-actions" id="actions">
-        <div class="action-btn" onclick="startSync()" style="color:var(--accent)" id="sync-btn-ui">
-            <svg id="sync-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-        </div>
-        <div class="action-btn" onclick="toggleModal('add-modal', true)" style="color:var(--accent)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+        <div class="action-btn" onclick="startSync()" style="color:var(--accent)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div>
+        <div class="action-btn" onclick="openAddModal()" style="color:var(--accent)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
         <div class="action-btn" onclick="softLock()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
     </div>
 </header>
@@ -197,13 +193,15 @@
     <div id="list-container"></div>
 </div>
 
+<!-- 弹窗部分 -->
 <div class="modal-overlay" id="add-modal-overlay">
     <div class="glass-card">
-        <h3 style="margin-top:0">新增凭据</h3>
+        <h3 id="modal-title" style="margin-top:0">凭据操作</h3>
         <input type="text" id="add-name" placeholder="应用名称">
         <input type="text" id="add-user" placeholder="用户名/账号">
         <input type="password" id="add-pass" placeholder="登录密码">
-        <button class="primary-btn" onclick="save()">同步至云端</button>
+        <input type="text" id="add-note" placeholder="备注（可选）">
+        <button class="primary-btn" id="save-btn" onclick="save()">同步至云端</button>
         <button class="primary-btn" style="background:none; color:var(--accent); margin-top:8px" onclick="toggleModal('add-modal', false)">取消</button>
     </div>
 </div>
@@ -224,18 +222,18 @@
     </div>
 </div>
 
-<div id="toast">已同步</div>
+<div id="toast">已完成</div>
 
 <script>
     let FINAL_TOKEN = "";
     let GIST_ID = localStorage.getItem('ae_gid');
     const ENCRYPTED_TK = localStorage.getItem('ae_enc_tk');
     let deleteTargetId = null;
+    let currentEditId = null;
 
     function generateFavicon() {
-        const svgPath = `M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 12 12 22 12 22Z M9 12L11 14L15 10`;
-        const encoded = btoa(`<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="${svgPath}"/></svg>`);
-        document.getElementById('favicon').setAttribute('href', `data:image/svg+xml;base64,${encoded}`);
+        const svg = btoa(`<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 12 12 22 12 22Z M9 12L11 14L15 10"/></svg>`);
+        document.getElementById('favicon').setAttribute('href', `data:image/svg+xml;base64,${svg}`);
     }
     generateFavicon();
 
@@ -269,9 +267,8 @@
 
     async function startSync() {
         const container = document.getElementById('list-container');
-        // 居中显示的同步提示
-        container.innerHTML = '<div id="sync-loading" style="width:100%; text-align:center; padding-top:60px; color:#86868b; grid-column: 1/-1;">同步中...</div>';
-        
+        // 修正居中：使用 status-msg 类包裹，确保在 Grid 中跨行全宽居中
+        container.innerHTML = '<div class="status-msg">同步中...</div>';
         try {
             const resp = await fetch('https://api.github.com/gists', { headers: { 'Authorization': `token ${FINAL_TOKEN}` } });
             const data = await resp.json();
@@ -282,7 +279,6 @@
                 const detail = await (await fetch(db.url, { headers: { Authorization: `token ${FINAL_TOKEN}` } })).json();
                 render(JSON.parse(detail.files['aegis_db.json'].content || "[]"));
             } else {
-                // 如果没有找到数据库文件，创建一个
                 const createResp = await fetch('https://api.github.com/gists', {
                     method: 'POST',
                     headers: { 'Authorization': `token ${FINAL_TOKEN}`, 'Content-Type': 'application/json' },
@@ -294,27 +290,30 @@
                 render([]);
             }
         } catch(e) { 
-            container.innerHTML = '<div style="width:100%; text-align:center; color:red; padding-top:60px; grid-column: 1/-1;">同步失败，请检查网络或Token</div>'; 
+            container.innerHTML = '<div class="status-msg" style="color:var(--danger)">网络连接失败</div>'; 
         }
     }
 
     function render(list) {
         const c = document.getElementById('list-container');
-        c.innerHTML = list.length ? '' : '<div style="width:100%; text-align:center; color:#86868b; padding-top:60px; grid-column: 1/-1;">库中尚无凭据</div>';
+        c.innerHTML = list.length ? '' : '<div class="status-msg">暂无凭据</div>';
         list.sort((a,b)=>b.id-a.id).forEach(item => {
             const div = document.createElement('div');
             div.className = 'item-card';
             div.id = `card-${item.id}`;
+            const itemStr = JSON.stringify(item).replace(/"/g, '&quot;');
             div.innerHTML = `
                 <div class="card-info">
                     <h3 class="item-name">${item.name}</h3>
                     <p class="item-user">${item.user || '-'}</p>
+                    ${item.note ? `<p class="item-note">${item.note}</p>` : ''}
                 </div>
                 <div class="pass-row">
                     <div id="p-${item.id}" class="pass-val">${item.pass}</div>
                     <div class="card-actions">
                         <button class="tool-btn" onclick="togglePass('${item.id}', this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                         <button class="tool-btn" onclick="copy('${item.pass}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+                        <button class="tool-btn" onclick="openEditModal(${itemStr})"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
                         <button class="tool-btn" onclick="confirmDelete('${item.id}')" style="color:var(--danger)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
                     </div>
                 </div>`;
@@ -322,10 +321,49 @@
         });
     }
 
+    function openAddModal() {
+        currentEditId = null;
+        document.getElementById('modal-title').innerText = "新增凭据";
+        ['add-name','add-user','add-pass','add-note'].forEach(i => document.getElementById(i).value='');
+        toggleModal('add-modal', true);
+    }
+
+    function openEditModal(item) {
+        currentEditId = item.id;
+        document.getElementById('modal-title').innerText = "修改凭据";
+        document.getElementById('add-name').value = item.name;
+        document.getElementById('add-user').value = item.user;
+        document.getElementById('add-pass').value = item.pass;
+        document.getElementById('add-note').value = item.note || '';
+        toggleModal('add-modal', true);
+    }
+
+    async function save() { 
+        const name = document.getElementById('add-name').value.trim(); 
+        const user = document.getElementById('add-user').value.trim(); 
+        const pass = document.getElementById('add-pass').value.trim(); 
+        const note = document.getElementById('add-note').value.trim();
+        if(!name || !pass) return; 
+        const saveBtn = document.getElementById('save-btn');
+        saveBtn.disabled = true; saveBtn.innerText = "同步中...";
+        try {
+            let list = await getLatest(); 
+            if (currentEditId) {
+                const index = list.findIndex(i => i.id == currentEditId);
+                if (index !== -1) list[index] = { ...list[index], name, user, pass, note };
+            } else {
+                list.push({name, user, pass, note, id: Date.now()}); 
+            }
+            await updateCloud(list); 
+            toggleModal('add-modal', false); 
+        } catch (e) { showToast("同步失败"); } finally {
+            saveBtn.disabled = false; saveBtn.innerText = "同步至云端";
+        }
+    }
+
     function togglePass(id, btn) { 
-        const card = document.getElementById('card-' + id);
-        const isShown = card.classList.toggle('revealed'); 
-        btn.classList.toggle('active', isShown);
+        document.getElementById('card-' + id).classList.toggle('revealed'); 
+        btn.classList.toggle('active');
     }
     
     function toggleModal(id, show) { document.getElementById(id + '-overlay').style.display = show ? 'flex' : 'none'; }
@@ -333,24 +371,17 @@
     function confirmDelete(id) { 
         deleteTargetId = id; 
         toggleModal('confirm-modal', true); 
-        document.getElementById('confirm-delete-btn').onclick = async () => { 
-            toggleModal('confirm-modal', false); 
-            let list = await getLatest(); 
-            list = list.filter(i => i.id != deleteTargetId); 
-            await updateCloud(list); 
+        document.getElementById('confirm-delete-btn').onclick = async function() { 
+            this.disabled = true;
+            try {
+                let list = await getLatest(); 
+                list = list.filter(i => i.id != deleteTargetId); 
+                await updateCloud(list); 
+            } finally {
+                this.disabled = false;
+                toggleModal('confirm-modal', false); 
+            }
         }; 
-    }
-
-    async function save() { 
-        const name = document.getElementById('add-name').value; 
-        const user = document.getElementById('add-user').value; 
-        const pass = document.getElementById('add-pass').value; 
-        if(!name || !pass) return; 
-        let list = await getLatest(); 
-        list.push({name, user, pass, id: Date.now()}); 
-        await updateCloud(list); 
-        toggleModal('add-modal', false); 
-        ['add-name','add-user','add-pass'].forEach(i => document.getElementById(i).value=''); 
     }
 
     async function getLatest() { 
