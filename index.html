@@ -11,6 +11,7 @@
             --accent: #007aff;
             --danger: #ff3b30;
             --secondary: #86868b;
+            --side-gap: 20px;
         }
 
         body, html {
@@ -38,12 +39,11 @@
 
         header {
             position: fixed; top: 0; left: 0; width: 100%;
-            padding: calc(18px + env(safe-area-inset-top)) 24px 15px;
+            padding: calc(18px + env(safe-area-inset-top)) var(--side-gap) 15px;
             box-sizing: border-box; z-index: 100;
             display: flex; justify-content: space-between; align-items: center;
-            background: transparent;
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-bottom: none;
+            background: var(--bg-base); 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
         }
 
         .brand { display: flex; align-items: center; gap: 10px; }
@@ -53,28 +53,28 @@
         .header-actions { display: flex; gap: 12px; visibility: hidden; }
         
         .action-btn {
-            width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; border-radius: 14px; 
-            background: rgba(255,255,255,0.4);
-            border: 1px solid rgba(255,255,255,0.3); 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; border-radius: 12px; 
+            background: rgba(255,255,255,0.8);
+            border: 1px solid rgba(0,0,0,0.05); 
+            transition: all 0.2s;
         }
-        .action-btn:active, .primary-btn:active, .tool-btn:active { transform: scale(0.9); opacity: 0.7; }
 
         .page-wrapper {
-            display: flex; flex-direction: column; align-items: center;
-            padding: calc(110px + env(safe-area-inset-top)) 24px 40px;
+            display: block; 
+            padding: calc(100px + env(safe-area-inset-top)) var(--side-gap) 40px;
             box-sizing: border-box; width: 100%;
+            max-width: 1000px; margin: 0 auto;
         }
 
-        #main-ui { display: none; width: 100%; max-width: 1000px; margin: 0 auto; }
+        #main-ui { display: none; width: 100%; }
 
         #list-container {
             display: grid;
             grid-template-columns: 1fr;
             gap: 16px;
             width: 100%;
+            box-sizing: border-box;
         }
 
         @media (min-width: 768px) {
@@ -85,49 +85,15 @@
         }
 
         .item-card { 
-            background: rgba(255,255,255,0.7); border-radius: 28px; padding: 22px; 
+            background: rgba(255,255,255,0.7); border-radius: 24px; padding: 20px; 
             display: flex; align-items: center; 
-            border: 1px solid rgba(255,255,255,0.5); box-shadow: 0 8px 24px rgba(0,0,0,0.02);
-            backdrop-filter: blur(15px); width: 100%; box-sizing: border-box;
-            align-self: start;
-            min-height: 120px; /* 设置一个基础最小高度保证对齐美感 */
+            border: 1px solid rgba(255,255,255,0.5); 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            width: 100%; box-sizing: border-box;
+            min-height: 110px;
         }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
-            border-radius: 32px; padding: 35px 24px 28px;
-            width: 100%; max-width: 320px; text-align: center;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.6);
-            box-sizing: border-box;
-        }
-
-        .glass-card h2, .glass-card h3 { margin: 0; font-size: 18px; font-weight: 700; color: #000; letter-spacing: -0.4px; }
-        .ios-msg { font-size: 13.5px; color: #3a3a3c; margin: 5px 0 20px; line-height: 1.4; font-weight: 400; }
-
-        .auth-viewport {
-            display: flex; align-items: center; justify-content: center;
-            height: 100vh; width: 100%; padding: 0 24px; box-sizing: border-box;
-        }
-
-        input {
-            width: 100%; height: 52px; padding: 0 16px; margin: 8px 0;
-            border-radius: 14px; border: 1px solid rgba(0,0,0,0.08);
-            font-size: 17px; outline: none; box-sizing: border-box;
-            background: rgba(255,255,255,0.85); transition: all 0.3s;
-        }
-        input:focus { border-color: var(--accent); background: #fff; box-shadow: 0 0 0 4px rgba(0,122,255,0.1); }
-
-        .primary-btn {
-            width: 100%; height: 52px; background: var(--accent);
-            border: none; border-radius: 14px; color: white; font-size: 17px; font-weight: 600;
-            margin-top: 15px; cursor: pointer;
-        }
-
-        .tool-btn { padding: 10px; border: none; background: transparent; color: var(--secondary); cursor: pointer; }
-        
-        /* 核心修改：使用 visibility 和固定高度实现“隐形占位” */
         .pass-text { 
             margin-top: 8px; 
             font-family: ui-monospace, monospace; 
@@ -137,31 +103,23 @@
             padding: 8px 12px; 
             border-radius: 10px; 
             word-break: break-all;
-            
-            /* 预留高度防止跳动 */
             visibility: hidden; 
             height: 1.4em; 
             display: -webkit-box;
-            -webkit-line-clamp: 2; /* 最多显示2行密码区域 */
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
             transition: visibility 0.2s;
         }
-        .pass-text.show {
-            visibility: visible;
-        }
+        .pass-text.show { visibility: visible; }
 
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.12); z-index: 200;
-            display: none; align-items: center; justify-content: center;
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            padding: 0 24px; box-sizing: border-box;
-        }
-
-        .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
-        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
-
+        .auth-viewport { display: flex; align-items: center; justify-content: center; height: 100vh; width: 100%; padding: 0 var(--side-gap); box-sizing: border-box; }
+        .glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border-radius: 32px; padding: 35px 24px 28px; width: 100%; max-width: 320px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.6); box-sizing: border-box; }
+        .ios-msg { font-size: 13.5px; color: #3a3a3c; margin: 5px 0 20px; line-height: 1.4; }
+        input { width: 100%; height: 52px; padding: 0 16px; margin: 8px 0; border-radius: 14px; border: 1px solid rgba(0,0,0,0.08); font-size: 17px; outline: none; box-sizing: border-box; background: rgba(255,255,255,0.85); }
+        .primary-btn { width: 100%; height: 52px; background: var(--accent); border: none; border-radius: 14px; color: white; font-size: 17px; font-weight: 600; margin-top: 15px; cursor: pointer; }
+        .tool-btn { padding: 10px; border: none; background: transparent; color: var(--secondary); cursor: pointer; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.12); z-index: 200; display: none; align-items: center; justify-content: center; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 0 var(--side-gap); box-sizing: border-box; }
         #toast { position: fixed; bottom: -80px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); color: white; padding: 14px 30px; border-radius: 30px; font-size: 15px; transition: 0.4s; z-index: 1000; }
         #toast.show { bottom: 50px; }
     </style>
@@ -172,22 +130,21 @@
 
 <header>
     <div class="brand">
-        <div class="brand-logo" id="header-logo-svg">
+        <div class="brand-logo">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 12 12 22 12 22Z"/><path d="M9 12L11 14L15 10"/></svg>
         </div>
         <div class="brand-name">AEGIS</div>
     </div>
     <div class="header-actions" id="actions">
-        <div class="action-btn" onclick="startSync()" style="color:var(--accent)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div>
-        <div class="action-btn" onclick="toggleModal('add-modal', true)" style="color:var(--accent)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-        <div class="action-btn" onclick="softLock()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <div class="action-btn" onclick="startSync()" style="color:var(--accent)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div>
+        <div class="action-btn" onclick="toggleModal('add-modal', true)" style="color:var(--accent)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+        <div class="action-btn" onclick="softLock()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
     </div>
 </header>
 
 <div class="auth-viewport" id="auth-ui">
     <div class="glass-card" id="login-card">
         <h2>解锁保险库</h2>
-        <p class="ios-msg">输入主密码以同步云端数据库</p>
         <input type="password" id="main-pass" placeholder="解锁密码" autofocus>
         <div id="setup-area" style="display:none; margin-top:10px;"><input type="password" id="gh-token" placeholder="GitHub Token"></div>
         <button class="primary-btn" onclick="handleAuth()">进入 AEGIS</button>
@@ -202,30 +159,27 @@
 <div class="modal-overlay" id="add-modal-overlay">
     <div class="glass-card">
         <h3>新增凭据</h3>
-        <p class="ios-msg">此操作将同步至 GitHub 私有存储</p>
         <input type="text" id="add-name" placeholder="应用名称">
         <input type="text" id="add-user" placeholder="用户名/账号">
         <input type="password" id="add-pass" placeholder="登录密码">
         <button class="primary-btn" onclick="save()">同步至云端</button>
-        <button class="primary-btn" style="background:none; color:var(--accent); font-weight:400; box-shadow:none" onclick="toggleModal('add-modal', false)">取消</button>
+        <button class="primary-btn" style="background:none; color:var(--accent); box-shadow:none" onclick="toggleModal('add-modal', false)">取消</button>
     </div>
 </div>
 
 <div class="modal-overlay" id="confirm-modal-overlay">
     <div class="glass-card">
         <h3 style="color:var(--danger)">确认删除？</h3>
-        <p class="ios-msg">此操作将永久移除该条记录</p>
         <button class="primary-btn" id="confirm-delete-btn" style="background:var(--danger)">确定删除</button>
-        <button class="primary-btn" style="background:none; color:var(--accent); font-weight:400; box-shadow:none" onclick="toggleModal('confirm-modal', false)">取消</button>
+        <button class="primary-btn" style="background:none; color:var(--accent); box-shadow:none" onclick="toggleModal('confirm-modal', false)">取消</button>
     </div>
 </div>
 
 <div class="modal-overlay" id="hard-reset-overlay">
     <div class="glass-card">
         <h3 style="color:var(--danger)">确定重置吗？</h3>
-        <p class="ios-msg">这将注销当前 Token 并退出系统</p>
         <button class="primary-btn" style="background:var(--danger)" onclick="hardReset()">确定重置</button>
-        <button class="primary-btn" style="background:none; color:var(--accent); font-weight:400; box-shadow:none" onclick="toggleModal('hard-reset', false)">取消</button>
+        <button class="primary-btn" style="background:none; color:var(--accent); box-shadow:none" onclick="toggleModal('hard-reset', false)">取消</button>
     </div>
 </div>
 
@@ -244,42 +198,34 @@
     const ENCRYPTED_TK = localStorage.getItem('ae_enc_tk');
     let deleteTargetId = null;
 
-    if (!ENCRYPTED_TK) {
-        document.querySelector('#login-card h2').innerText = "初始化配置";
-        document.getElementById('setup-area').style.display = "block";
-    } else { document.getElementById('reset-link').style.display = "block"; }
+    if (!ENCRYPTED_TK) { document.querySelector('#login-card h2').innerText = "初始化配置"; document.getElementById('setup-area').style.display = "block"; } 
+    else { document.getElementById('reset-link').style.display = "block"; }
 
     async function handleAuth() {
         const pass = document.getElementById('main-pass').value;
         if (!pass) return;
         if (!ENCRYPTED_TK) {
             const tk = document.getElementById('gh-token').value.trim();
-            if (!tk.startsWith('ghp_')) { triggerShake(); return; }
+            if (!tk.startsWith('ghp_')) { showToast("Token无效"); return; }
             localStorage.setItem('ae_enc_tk', btoa(pass + "|" + tk));
             FINAL_TOKEN = tk;
         } else {
             try {
                 const dec = atob(ENCRYPTED_TK).split('|');
-                if (dec[0] !== pass) { triggerShake(); return; }
+                if (dec[0] !== pass) { showToast("密码错误"); return; }
                 FINAL_TOKEN = dec[1];
             } catch(e) { hardReset(); }
         }
         document.getElementById('auth-ui').style.display = 'none';
-        document.getElementById('main-ui').style.display = 'flex';
+        document.getElementById('main-ui').style.display = 'block';
         document.getElementById('actions').style.visibility = 'visible';
         startSync();
     }
 
-    function triggerShake() {
-        const card = document.getElementById('login-card');
-        card.classList.add('shake');
-        showToast("密码不正确");
-        setTimeout(() => card.classList.remove('shake'), 400);
-    }
-
     async function startSync() {
         const container = document.getElementById('list-container');
-        container.innerHTML = '<p style="text-align:center; grid-column: 1 / -1; color:#86868b; margin-top:60px;">同步中...</p>';
+        // 修正居中显示
+        container.innerHTML = '<div style="width:100%; text-align:center; padding-top:60px; color:#86868b; grid-column: 1/-1;">同步中...</div>';
         try {
             const resp = await fetch('https://api.github.com/gists', { headers: { 'Authorization': `token ${FINAL_TOKEN}` } });
             const db = (await resp.json()).find(g => g.files['aegis_db.json']);
@@ -288,37 +234,33 @@
                 const detail = await (await fetch(db.url, { headers: { Authorization: `token ${FINAL_TOKEN}` } })).json();
                 render(JSON.parse(detail.files['aegis_db.json'].content || "[]"));
             } else { render([]); }
-        } catch(e) { container.innerHTML = '<p style="text-align:center; grid-column: 1 / -1; color:red; margin-top:20px;">同步失败</p>'; }
+        } catch(e) { container.innerHTML = '<div style="width:100%; text-align:center; color:red; padding-top:20px;">同步失败</div>'; }
     }
 
     function render(list) {
         const c = document.getElementById('list-container');
-        c.innerHTML = list.length ? '' : '<p style="color:#86868b; grid-column: 1 / -1; text-align:center; margin-top:60px;">库中尚无凭据</p>';
+        c.innerHTML = list.length ? '' : '<div style="width:100%; text-align:center; color:#86868b; padding-top:60px;">库中尚无凭据</div>';
         list.sort((a,b)=>b.id-a.id).forEach(item => {
             const div = document.createElement('div');
             div.className = 'item-card';
             div.innerHTML = `
-                <div style="flex:1; min-width:0;">
-                    <h3 style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin:0;">${item.name}</h3>
-                    <p style="margin:4px 0 0 0; color:var(--secondary); font-size:14px;">${item.user || '-'}</p>
+                <div style="flex:1; min-width:0; padding-right:10px;">
+                    <h3 style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin:0; font-size:17px;">${item.name}</h3>
+                    <p style="margin:4px 0 0 0; color:var(--secondary); font-size:13px;">${item.user || '-'}</p>
                     <div id="p-${item.id}" class="pass-text">${item.pass}</div>
                 </div>
-                <div style="display:flex; align-self: flex-start; margin-top: 5px;">
-                    <button class="tool-btn" onclick="togglePass('${item.id}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                    <button class="tool-btn" onclick="copy('${item.pass}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
-                    <button class="tool-btn" onclick="confirmDelete('${item.id}')" style="color:var(--danger)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+                <div style="display:flex; align-self: flex-start; gap:4px;">
+                    <button class="tool-btn" onclick="togglePass('${item.id}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    <button class="tool-btn" onclick="copy('${item.pass}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+                    <button class="tool-btn" onclick="confirmDelete('${item.id}')" style="color:var(--danger)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
                 </div>`;
             c.appendChild(div);
         });
     }
 
-    function togglePass(id) { 
-        const el = document.getElementById('p-' + id);
-        el.classList.toggle('show'); 
-    }
-
-    function confirmDelete(id) { deleteTargetId = id; toggleModal('confirm-modal', true); document.getElementById('confirm-delete-btn').onclick = async () => { toggleModal('confirm-modal', false); let list = await getLatest(); list = list.filter(i => i.id != deleteTargetId); await updateCloud(list); }; }
+    function togglePass(id) { document.getElementById('p-' + id).classList.toggle('show'); }
     function toggleModal(id, show) { document.getElementById(id + '-overlay').style.display = show ? 'flex' : 'none'; }
+    function confirmDelete(id) { deleteTargetId = id; toggleModal('confirm-modal', true); document.getElementById('confirm-delete-btn').onclick = async () => { toggleModal('confirm-modal', false); let list = await getLatest(); list = list.filter(i => i.id != deleteTargetId); await updateCloud(list); }; }
     async function save() { const name = document.getElementById('add-name').value; const user = document.getElementById('add-user').value; const pass = document.getElementById('add-pass').value; if(!name || !pass) return; let list = await getLatest(); list.push({name, user, pass, id: Date.now()}); await updateCloud(list); toggleModal('add-modal', false); ['add-name','add-user','add-pass'].forEach(i => document.getElementById(i).value=''); }
     async function getLatest() { const r = await fetch(`https://api.github.com/gists/${GIST_ID}`, { headers: { Authorization: `token ${FINAL_TOKEN}` }}); return JSON.parse((await r.json()).files['aegis_db.json'].content || "[]"); }
     async function updateCloud(list) { await fetch(`https://api.github.com/gists/${GIST_ID}`, { method: 'PATCH', headers: { Authorization: `token ${FINAL_TOKEN}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ files: { "aegis_db.json": { content: JSON.stringify(list) } } }) }); render(list); showToast("已同步"); }
