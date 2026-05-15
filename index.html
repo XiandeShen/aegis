@@ -30,7 +30,10 @@
             position: fixed; top: 0; left: 0; width: 100%;
             padding: calc(18px + env(safe-area-inset-top)) var(--side-gap) 15px;
             z-index: 100; display: flex; justify-content: space-between; align-items: center;
-            background: var(--bg-base); border-bottom: 0.5px solid rgba(0,0,0,0.05);
+            background: rgba(245, 245, 247, 0.8); 
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: 0.5px solid rgba(0,0,0,0.05);
         }
 
         .brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
@@ -80,7 +83,11 @@
             border: 1px solid rgba(0, 0, 0, 0.05); flex-shrink: 0;
         }
 
-        .page-wrapper { width: 100%; max-width: 1000px; margin: 0 auto; padding: calc(110px + env(safe-area-inset-top)) var(--side-gap) 40px; }
+        .page-wrapper { 
+            width: 100%; max-width: 1000px; margin: 0 auto; 
+            min-height: 100vh;
+            padding: calc(110px + env(safe-area-inset-top)) var(--side-gap) 40px; 
+        }
         #list-container { display: grid; grid-template-columns: 100%; gap: 16px; }
         @media (min-width: 768px) { #list-container { grid-template-columns: repeat(2, 1fr); gap: 20px; } }
         
@@ -104,7 +111,8 @@
         .auth-viewport { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 0 var(--side-gap); }
         .glass-card { background: var(--glass-bg); backdrop-filter: var(--glass-blur); border-radius: var(--radius-lg); border: var(--glass-border); padding: 32px 24px; width: 100%; max-width: 340px; text-align: center; }
         input { width: 100%; height: 50px; padding: 0 16px; margin: 8px 0; border-radius: var(--radius-md); border: 1px solid rgba(0,0,0,0.08); font-size: 16px; outline: none; background: rgba(255,255,255,0.6); }
-        .primary-btn { width: 100%; height: 50px; background: var(--accent); border: none; border-radius: var(--radius-md); color: white; font-size: 16px; font-weight: 600; margin-top: 12px; cursor: pointer; }
+        .primary-btn { width: 100%; height: 50px; background: var(--accent); border: none; border-radius: var(--radius-md); color: white; font-size: 16px; font-weight: 600; margin-top: 12px; cursor: pointer; transition: opacity 0.3s; }
+        .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.25); z-index: 200; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
         #toast { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(0,0,0,0.85); color: white; padding: 12px 24px; border-radius: 24px; z-index: 1000; opacity: 0; pointer-events: none; transition: all 0.4s; }
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -145,7 +153,6 @@
 
 <div class="page-wrapper" id="main-ui" style="display:none"><div id="list-container"></div></div>
 
-<!-- 弹窗部分 -->
 <div class="modal-overlay" id="add-modal-overlay"><div class="glass-card"><h3 id="modal-title">凭据操作</h3><input type="text" id="add-name" placeholder="应用名称"><input type="text" id="add-user" placeholder="用户名"><input type="password" id="add-pass" placeholder="密码"><input type="text" id="add-note" placeholder="备注"><button class="primary-btn" id="save-btn" onclick="save()">同步至云端</button><button class="primary-btn" style="background:none; color:var(--accent)" onclick="toggleModal('add-modal', false)">取消</button></div></div>
 <div class="modal-overlay" id="confirm-modal-overlay"><div class="glass-card"><h3 style="color:var(--danger)">确认删除？</h3><button class="primary-btn" id="confirm-delete-btn" style="background:var(--danger)">确定删除</button><button class="primary-btn" style="background:none; color:var(--accent)" onclick="toggleModal('confirm-modal', false)">取消</button></div></div>
 <div class="modal-overlay" id="hard-reset-overlay"><div class="glass-card"><h3 style="color:var(--danger)">确定重置吗？</h3><button class="primary-btn" style="background:var(--danger)" onclick="hardReset()">确定重置</button><button class="primary-btn" style="background:none; color:var(--accent)" onclick="toggleModal('hard-reset', false)">取消</button></div></div>
@@ -155,21 +162,15 @@
     let FINAL_TOKEN = "", GIST_ID = localStorage.getItem('ae_gid'), ENCRYPTED_TK = localStorage.getItem('ae_enc_tk');
     let deleteTargetId = null, currentEditId = null, CACHED_LIST = []; 
 
-    // 点击外部收起搜索框逻辑
     document.addEventListener('click', (e) => {
         const bar = document.getElementById('search-bar');
         const wrapper = document.getElementById('search-wrapper');
-        if (!wrapper.contains(e.target) && bar.value === "") {
-            bar.blur();
-        }
+        if (wrapper && !wrapper.contains(e.target) && bar.value === "") { bar.blur(); }
     });
 
-    // 移动端滑动收起逻辑
     window.addEventListener('touchmove', () => {
         const bar = document.getElementById('search-bar');
-        if (bar === document.activeElement && bar.value === "") {
-            bar.blur();
-        }
+        if (bar === document.activeElement && bar.value === "") { bar.blur(); }
     }, {passive: true});
 
     function focusSearch() { document.getElementById('search-bar').focus(); }
@@ -218,12 +219,36 @@
         });
     }
 
-    // 后续通用逻辑保持一致...
     function togglePass(id, btn) { document.getElementById('card-'+id).classList.toggle('revealed'); btn.classList.toggle('active'); }
     function copy(t) { navigator.clipboard.writeText(t); showToast("已复制"); }
     function openAddModal() { currentEditId = null; document.getElementById('modal-title').innerText = "新增凭据"; ['add-name','add-user','add-pass','add-note'].forEach(i => document.getElementById(i).value=''); toggleModal('add-modal', true); }
     function openEditModal(item) { currentEditId = item.id; document.getElementById('modal-title').innerText = "修改凭据"; document.getElementById('add-name').value = item.name; document.getElementById('add-user').value = item.user; document.getElementById('add-pass').value = item.pass; document.getElementById('add-note').value = item.note || ''; toggleModal('add-modal', true); }
-    function confirmDelete(id) { deleteTargetId = id; toggleModal('confirm-modal', true); document.getElementById('confirm-delete-btn').onclick = async function() { this.disabled = true; try { let list = await getLatest(); list = list.filter(i => i.id != deleteTargetId); await updateCloud(list); clearSearch(); } finally { this.disabled = false; toggleModal('confirm-modal', false); } }; }
+    
+    // 改进后的确认删除函数
+    function confirmDelete(id) { 
+        deleteTargetId = id; 
+        const confirmBtn = document.getElementById('confirm-delete-btn');
+        confirmBtn.innerText = "确定删除"; // 重置文字
+        toggleModal('confirm-modal', true); 
+        
+        confirmBtn.onclick = async function() { 
+            this.disabled = true; 
+            this.innerText = "正在删除..."; // 添加反馈提示
+            try { 
+                let list = await getLatest(); 
+                list = list.filter(i => i.id != deleteTargetId); 
+                await updateCloud(list); 
+                clearSearch(); 
+            } catch(e) {
+                showToast("删除失败");
+            } finally { 
+                this.disabled = false; 
+                this.innerText = "确定删除";
+                toggleModal('confirm-modal', false); 
+            } 
+        }; 
+    }
+
     function softLock() { location.reload(); }
     function toggleModal(id, show) { document.getElementById(id + '-overlay').style.display = show ? 'flex' : 'none'; }
     function showToast(m) { const t=document.getElementById('toast'); t.innerText=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2000); }
@@ -249,11 +274,23 @@
             } else { startSyncNew(); }
         } catch(e) { container.innerHTML = '<div class="status-msg">连接失败</div>'; }
     }
+    async function startSyncNew() {
+        try {
+            const res = await fetch('https://api.github.com/gists', {
+                method: 'POST', headers: { Authorization: `token ${FINAL_TOKEN}` },
+                body: JSON.stringify({ description: "Aegis Data", public: false, files: { "aegis_db.json": { content: "[]" } } })
+            });
+            const data = await res.json(); GIST_ID = data.id; localStorage.setItem('ae_gid', GIST_ID); render([]);
+        } catch(e) { showToast("初始化Gist失败"); }
+    }
     function handleSearch(val) { const query = (val || "").toLowerCase().trim(); if (!query) { render(CACHED_LIST); return; } render(CACHED_LIST.filter(item => item.name.toLowerCase().includes(query) || (item.user && item.user.toLowerCase().includes(query))), true); }
     async function save() { 
         const name = document.getElementById('add-name').value.trim(), pass = document.getElementById('add-pass').value.trim(); if(!name || !pass) return;
-        const saveBtn = document.getElementById('save-btn'); saveBtn.disabled = true;
-        try { let list = await getLatest(); if (currentEditId) { const index = list.findIndex(i => i.id == currentEditId); if (index !== -1) list[index] = { ...list[index], name, user: document.getElementById('add-user').value, pass, note: document.getElementById('add-note').value }; } else { list.push({name, user: document.getElementById('add-user').value, pass, note: document.getElementById('add-note').value, id: Date.now()}); } await updateCloud(list); toggleModal('add-modal', false); } catch (e) { showToast("同步失败"); } finally { saveBtn.disabled = false; }
+        const saveBtn = document.getElementById('save-btn'); 
+        const originalText = saveBtn.innerText;
+        saveBtn.disabled = true;
+        saveBtn.innerText = "正在同步...";
+        try { let list = await getLatest(); if (currentEditId) { const index = list.findIndex(i => i.id == currentEditId); if (index !== -1) list[index] = { ...list[index], name, user: document.getElementById('add-user').value, pass, note: document.getElementById('add-note').value }; } else { list.push({name, user: document.getElementById('add-user').value, pass, note: document.getElementById('add-note').value, id: Date.now()}); } await updateCloud(list); clearSearch(); toggleModal('add-modal', false); } catch (e) { showToast("同步失败"); } finally { saveBtn.disabled = false; saveBtn.innerText = originalText; }
     }
     async function getLatest() { const r = await fetch(`https://api.github.com/gists/${GIST_ID}`, { headers: { Authorization: `token ${FINAL_TOKEN}` }}); const data = await r.json(); return JSON.parse(data.files['aegis_db.json'].content || "[]"); }
     async function updateCloud(list) { await fetch(`https://api.github.com/gists/${GIST_ID}`, { method: 'PATCH', headers: { Authorization: `token ${FINAL_TOKEN}` }, body: JSON.stringify({ files: { "aegis_db.json": { content: JSON.stringify(list) } } }) }); render(list); showToast("已同步"); }
