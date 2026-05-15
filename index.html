@@ -23,7 +23,6 @@
             overflow-x: hidden;
         }
 
-        /* 均匀动态流光背景 */
         .gradient-bg {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: linear-gradient(135deg, #e2e8f0 0%, #f9fafb 50%, #e2e8f0 100%);
@@ -37,15 +36,14 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* 核心修改：取消 Header 底色和边框，实现完全悬浮感 */
         header {
             position: fixed; top: 0; left: 0; width: 100%;
             padding: calc(18px + env(safe-area-inset-top)) 24px 15px;
             box-sizing: border-box; z-index: 100;
             display: flex; justify-content: space-between; align-items: center;
-            background: transparent; /* 取消底色 */
+            background: transparent;
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-bottom: none; /* 取消底边线 */
+            border-bottom: none;
         }
 
         .brand { display: flex; align-items: center; gap: 10px; }
@@ -70,16 +68,31 @@
             box-sizing: border-box; width: 100%;
         }
 
-        #main-ui { display: none; width: 100%; max-width: 480px; margin: 0 auto; }
+        #main-ui { display: none; width: 100%; max-width: 1000px; margin: 0 auto; }
+
+        #list-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            #list-container {
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+        }
 
         .item-card { 
             background: rgba(255,255,255,0.7); border-radius: 28px; padding: 22px; 
-            margin-bottom: 16px; display: flex; align-items: center; 
+            display: flex; align-items: center; 
             border: 1px solid rgba(255,255,255,0.5); box-shadow: 0 8px 24px rgba(0,0,0,0.02);
             backdrop-filter: blur(15px); width: 100%; box-sizing: border-box;
+            align-self: start;
+            min-height: 120px; /* 设置一个基础最小高度保证对齐美感 */
         }
 
-        /* iOS 风格弹窗 */
         .glass-card {
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
@@ -113,7 +126,30 @@
         }
 
         .tool-btn { padding: 10px; border: none; background: transparent; color: var(--secondary); cursor: pointer; }
-        .pass-text { margin-top: 12px; font-family: ui-monospace, monospace; font-size: 14px; color: var(--accent); background: rgba(0,122,255,0.06); padding: 10px; border-radius: 10px; display: none; word-break: break-all; }
+        
+        /* 核心修改：使用 visibility 和固定高度实现“隐形占位” */
+        .pass-text { 
+            margin-top: 8px; 
+            font-family: ui-monospace, monospace; 
+            font-size: 13px; 
+            color: var(--accent); 
+            background: rgba(0,122,255,0.06); 
+            padding: 8px 12px; 
+            border-radius: 10px; 
+            word-break: break-all;
+            
+            /* 预留高度防止跳动 */
+            visibility: hidden; 
+            height: 1.4em; 
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* 最多显示2行密码区域 */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            transition: visibility 0.2s;
+        }
+        .pass-text.show {
+            visibility: visible;
+        }
 
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -160,7 +196,7 @@
 </div>
 
 <div class="page-wrapper" id="main-ui">
-    <div id="list-container" style="width: 100%;"></div>
+    <div id="list-container"></div>
 </div>
 
 <div class="modal-overlay" id="add-modal-overlay">
@@ -196,7 +232,6 @@
 <div id="toast">已更新</div>
 
 <script>
-    // 强制生成【蓝色】Favicon
     function generateFavicon() {
         const svgPath = `M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 12 12 22 12 22Z M9 12L11 14L15 10`;
         const encoded = btoa(`<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="${svgPath}"/></svg>`);
@@ -244,7 +279,7 @@
 
     async function startSync() {
         const container = document.getElementById('list-container');
-        container.innerHTML = '<p style="text-align:center; color:#86868b; margin-top:60px;">同步中...</p>';
+        container.innerHTML = '<p style="text-align:center; grid-column: 1 / -1; color:#86868b; margin-top:60px;">同步中...</p>';
         try {
             const resp = await fetch('https://api.github.com/gists', { headers: { 'Authorization': `token ${FINAL_TOKEN}` } });
             const db = (await resp.json()).find(g => g.files['aegis_db.json']);
@@ -253,21 +288,22 @@
                 const detail = await (await fetch(db.url, { headers: { Authorization: `token ${FINAL_TOKEN}` } })).json();
                 render(JSON.parse(detail.files['aegis_db.json'].content || "[]"));
             } else { render([]); }
-        } catch(e) { container.innerHTML = '<p style="text-align:center; color:red; margin-top:20px;">同步失败</p>'; }
+        } catch(e) { container.innerHTML = '<p style="text-align:center; grid-column: 1 / -1; color:red; margin-top:20px;">同步失败</p>'; }
     }
 
     function render(list) {
         const c = document.getElementById('list-container');
-        c.innerHTML = list.length ? '' : '<p style="color:#86868b; text-align:center; margin-top:60px;">库中尚无凭据</p>';
+        c.innerHTML = list.length ? '' : '<p style="color:#86868b; grid-column: 1 / -1; text-align:center; margin-top:60px;">库中尚无凭据</p>';
         list.sort((a,b)=>b.id-a.id).forEach(item => {
             const div = document.createElement('div');
             div.className = 'item-card';
             div.innerHTML = `
                 <div style="flex:1; min-width:0;">
-                    <h3 style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.name}</h3><p>${item.user || '-'}</p>
+                    <h3 style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin:0;">${item.name}</h3>
+                    <p style="margin:4px 0 0 0; color:var(--secondary); font-size:14px;">${item.user || '-'}</p>
                     <div id="p-${item.id}" class="pass-text">${item.pass}</div>
                 </div>
-                <div style="display:flex;">
+                <div style="display:flex; align-self: flex-start; margin-top: 5px;">
                     <button class="tool-btn" onclick="togglePass('${item.id}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                     <button class="tool-btn" onclick="copy('${item.pass}')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
                     <button class="tool-btn" onclick="confirmDelete('${item.id}')" style="color:var(--danger)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
@@ -276,8 +312,12 @@
         });
     }
 
+    function togglePass(id) { 
+        const el = document.getElementById('p-' + id);
+        el.classList.toggle('show'); 
+    }
+
     function confirmDelete(id) { deleteTargetId = id; toggleModal('confirm-modal', true); document.getElementById('confirm-delete-btn').onclick = async () => { toggleModal('confirm-modal', false); let list = await getLatest(); list = list.filter(i => i.id != deleteTargetId); await updateCloud(list); }; }
-    function togglePass(id) { const el = document.getElementById('p-' + id); el.style.display = (el.style.display === 'block') ? 'none' : 'block'; }
     function toggleModal(id, show) { document.getElementById(id + '-overlay').style.display = show ? 'flex' : 'none'; }
     async function save() { const name = document.getElementById('add-name').value; const user = document.getElementById('add-user').value; const pass = document.getElementById('add-pass').value; if(!name || !pass) return; let list = await getLatest(); list.push({name, user, pass, id: Date.now()}); await updateCloud(list); toggleModal('add-modal', false); ['add-name','add-user','add-pass'].forEach(i => document.getElementById(i).value=''); }
     async function getLatest() { const r = await fetch(`https://api.github.com/gists/${GIST_ID}`, { headers: { Authorization: `token ${FINAL_TOKEN}` }}); return JSON.parse((await r.json()).files['aegis_db.json'].content || "[]"); }
