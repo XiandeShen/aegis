@@ -73,28 +73,21 @@
             grid-template-columns: 100%; 
             gap: 16px; 
             width: 100%;
+            text-align: center;
         }
         @media (min-width: 768px) { 
             #list-container { grid-template-columns: repeat(2, 1fr); gap: 20px; } 
         }
 
-        /* 骨架占位卡片 */
-        .skeleton-card {
-            height: 120px;
-            background: rgba(255, 255, 255, 0.3);
-            border: 2px dashed rgba(0, 0, 0, 0.05);
-            border-radius: var(--radius-lg);
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
-
         .status-msg {
             grid-column: 1 / -1; 
-            text-align: center;
-            padding: 20px;
+            width: 100%;
+            padding-top: 60px;
             color: var(--secondary);
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .item-card, .glass-card { 
@@ -104,6 +97,7 @@
             border: var(--glass-border); 
             box-shadow: var(--card-shadow);
             width: 100%;
+            text-align: left;
         }
 
         .item-card { 
@@ -111,10 +105,11 @@
             display: flex; 
             flex-direction: column; 
             transition: transform 0.2s; 
-            position: relative; 
+            position: relative; /* 必须为按钮定位基准 */
         }
         .item-card:active { transform: scale(0.98); }
 
+        /* 按钮群组：右上角绝对定位 */
         .card-actions { 
             position: absolute; 
             top: 18px; 
@@ -123,9 +118,10 @@
             gap: 2px; 
         }
 
-        .card-info { flex: 1; width: 100%; padding-right: 110px; } 
+        .card-info { flex: 1; width: 100%; padding-right: 110px; } /* 为按钮留空，防止重叠 */
         .item-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin:0; font-size:18px; font-weight: 700; color: #1d1d1f; }
         
+        /* 账号密码布局 */
         .info-row { margin-top: 6px; display: flex; flex-direction: column; gap: 2px; }
         .item-user, .pass-val { font-size:13px; font-family: ui-monospace, monospace; word-break: break-all; }
         .item-user { color:var(--secondary); margin: 0; }
@@ -229,6 +225,14 @@
     </div>
 </div>
 
+<div class="modal-overlay" id="hard-reset-overlay">
+    <div class="glass-card">
+        <h3 style="color:var(--danger); margin-top:0">确定重置吗？</h3>
+        <button class="primary-btn" style="background:var(--danger)" onclick="hardReset()">确定重置</button>
+        <button class="primary-btn" style="background:none; color:var(--accent); margin-top:8px" onclick="toggleModal('hard-reset', false)">取消</button>
+    </div>
+</div>
+
 <div id="toast">已完成</div>
 
 <script>
@@ -274,14 +278,7 @@
 
     async function startSync() {
         const container = document.getElementById('list-container');
-        // 同步中的加载态：骨架屏 + 文字
-        container.innerHTML = `
-            <div class="status-msg">同步中...</div>
-            <div class="skeleton-card"></div>
-            <div class="skeleton-card"></div>
-            <div class="skeleton-card"></div>
-            <div class="skeleton-card"></div>
-        `;
+        container.innerHTML = '<div class="status-msg">同步中...</div>';
         try {
             const resp = await fetch('https://api.github.com/gists', { headers: { 'Authorization': `token ${FINAL_TOKEN}` } });
             const data = await resp.json();
