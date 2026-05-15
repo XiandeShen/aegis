@@ -88,6 +88,7 @@
             padding: 22px; 
             position: relative; 
             transition: transform 0.2s; 
+            min-height: 110px;
         }
         .card-actions { position: absolute; top: 18px; right: 18px; display: flex; gap: 2px; }
         .card-info { padding-right: 110px; text-align: left; }
@@ -99,20 +100,6 @@
         .item-card.revealed .pass-val { filter: blur(0); opacity: 1; user-select: text; }
         .tool-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; color: var(--secondary); cursor: pointer; border-radius: 8px; }
         .tool-btn.active { color: var(--accent); background: rgba(0, 122, 255, 0.1); }
-        
-        .item-note { 
-            margin:10px 0 0 0; 
-            padding-top: 10px; 
-            border-top: 0.5px solid rgba(0,0,0,0.05); 
-            font-size:12px; 
-            color: var(--secondary); 
-            opacity: 0.8; 
-            display: -webkit-box; 
-            -webkit-line-clamp: 2; 
-            -webkit-box-orient: vertical; 
-            overflow: hidden; 
-            line-height: 1.5;
-        }
         
         .item-time {
             position: absolute;
@@ -127,7 +114,8 @@
 
         .auth-viewport { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 0 var(--side-gap); }
         .glass-card { background: var(--glass-bg); backdrop-filter: var(--glass-blur); border-radius: var(--radius-lg); border: var(--glass-border); padding: 32px 24px; width: 100%; max-width: 340px; text-align: center; }
-        input { width: 100%; height: 50px; padding: 0 16px; margin: 8px 0; border-radius: var(--radius-md); border: 1px solid rgba(0,0,0,0.08); font-size: 16px; outline: none; background: rgba(255,255,255,0.6); }
+        input, textarea { width: 100%; height: 50px; padding: 0 16px; margin: 8px 0; border-radius: var(--radius-md); border: 1px solid rgba(0,0,0,0.08); font-size: 16px; outline: none; background: rgba(255,255,255,0.6); font-family: inherit; }
+        textarea { height: 100px; padding: 12px 16px; resize: none; }
         .primary-btn { width: 100%; height: 50px; background: var(--accent); border: none; border-radius: var(--radius-md); color: white; font-size: 16px; font-weight: 600; margin-top: 12px; cursor: pointer; transition: opacity 0.3s; }
         .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.25); z-index: 200; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
@@ -156,12 +144,7 @@
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
         
-        .card-brand-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 24px;
-        }
+        .card-brand-header { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; }
         .card-brand-logo { color: var(--accent); display: flex; align-items: center; }
         .card-brand-name { font-size: 15px; font-weight: 800; letter-spacing: 0.25em; color: #1d1d1f; }
         #login-card h2 { display: none; }
@@ -197,6 +180,22 @@
         @keyframes fadeInFlag { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
         #reset-link { transition: all 0.2s ease !important; font-weight: 500; padding: 8px 12px; border-radius: 8px; display: inline-block; text-align: center; margin-top: 12px !important; }
         #reset-link:hover { opacity: 1 !important; color: var(--danger) !important; background: rgba(255, 59, 48, 0.06); }
+
+        /* 备注弹窗内容样式 */
+        .note-display-content {
+            text-align: left;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #1d1d1f;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 15px 0;
+            padding: 12px;
+            background: rgba(0,0,0,0.03);
+            border-radius: 12px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
     </style>
 </head>
 <body>
@@ -244,6 +243,8 @@
 <div class="modal-overlay" id="add-modal-overlay"><div class="glass-card"><h3 id="modal-title">凭据操作</h3><input type="text" id="add-name" placeholder="应用名称"><input type="text" id="add-user" placeholder="用户名"><input type="password" id="add-pass" placeholder="密码"><input type="text" id="add-note" placeholder="备注"><button class="primary-btn" id="save-btn" onclick="save()">同步至云端</button><button class="primary-btn" style="background:none; color:var(--accent)" onclick="toggleModal('add-modal', false)">取消</button></div></div>
 <div class="modal-overlay" id="confirm-modal-overlay"><div class="glass-card"><h3 style="color:var(--danger)">确认删除？</h3><button class="primary-btn" id="confirm-delete-btn" style="background:var(--danger)">确定删除</button><button class="primary-btn" style="background:none; color:var(--accent)" onclick="toggleModal('confirm-modal', false)">取消</button></div></div>
 <div class="modal-overlay" id="hard-reset-overlay"><div class="glass-card"><h3 style="color:var(--danger)">确定重置吗？</h3><button class="primary-btn" style="background:var(--danger)" onclick="hardReset()">确定重置</button><button class="primary-btn" style="background:none; color:var(--accent)" onclick="toggleModal('hard-reset', false)">取消</button></div></div>
+<div class="modal-overlay" id="note-modal-overlay"><div class="glass-card"><h3>备注信息</h3><div class="note-display-content" id="note-content"></div><button class="primary-btn" onclick="toggleModal('note-modal', false)">关闭</button></div></div>
+
 <div id="toast"></div>
 
 <script>
@@ -316,9 +317,14 @@
             const div = document.createElement('div');
             div.className = 'item-card'; div.id = `card-${item.id}`;
             const itemStr = JSON.stringify(item).replace(/"/g, '&quot;');
+            
+            // 备注按钮逻辑：只有当 note 有内容时才渲染
+            const noteBtn = item.note ? `<button class="tool-btn" onmousedown="event.preventDefault();showNote('${item.note.replace(/\n/g, '\\n').replace(/'/g, "\\'")}')" ontouchstart="event.preventDefault();showNote('${item.note.replace(/\n/g, '\\n').replace(/'/g, "\\'")}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></button>` : '';
+
             div.innerHTML = `
                 <div class="card-actions">
                     <button class="tool-btn" onmousedown="event.preventDefault();togglePass('${item.id}', this)" ontouchstart="event.preventDefault();togglePass('${item.id}', this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11-8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    ${noteBtn}
                     <button class="tool-btn" onmousedown="event.preventDefault();openEditModal(${itemStr})" ontouchstart="event.preventDefault();openEditModal(${itemStr})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
                     <button class="tool-btn" onmousedown="event.preventDefault();confirmDelete('${item.id}')" ontouchstart="event.preventDefault();confirmDelete('${item.id}')" style="color:var(--danger)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2-2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
                 </div>
@@ -328,7 +334,6 @@
                         <p class="item-user">${item.user || '-'}</p>
                         <div id="p-${item.id}" class="pass-val">${item.pass}</div>
                     </div>
-                    ${item.note ? `<p class="item-note">${item.note}</p>` : ''}
                 </div>
                 ${item.updatedAt ? `<div class="item-time">${item.updatedAt}</div>` : ''} 
             `;
@@ -337,7 +342,7 @@
     }
 
     function togglePass(id, btn) { document.getElementById('card-'+id).classList.toggle('revealed'); btn.classList.toggle('active'); }
-    function copy(t) { navigator.clipboard.writeText(t); showToast("已复制"); }
+    function showNote(content) { document.getElementById('note-content').innerText = content; toggleModal('note-modal', true); }
     function openAddModal() { currentEditId = null; document.getElementById('modal-title').innerText = "新增凭据"; ['add-name','add-user','add-pass','add-note'].forEach(i => document.getElementById(i).value=''); toggleModal('add-modal', true); }
     function openEditModal(item) { currentEditId = item.id; document.getElementById('modal-title').innerText = "修改凭据"; document.getElementById('add-name').value = item.name; document.getElementById('add-user').value = item.user; document.getElementById('add-pass').value = item.pass; document.getElementById('add-note').value = item.note || ''; toggleModal('add-modal', true); }
     
@@ -374,8 +379,8 @@
             FINAL_TOKEN = tk;
         } else {
             const decryptedTk = await CryptoSvc.decrypt(ENCRYPTED_TK);
-            if (!decryptedTk) { showToast("密码错误或数据损坏"); return; }
-            FINAL_TOKEN = decryptedTk;
+            decryptedTk ? FINAL_TOKEN = decryptedTk : (showToast("密码错误或数据损坏"));
+            if (!decryptedTk) return;
         }
         document.getElementById('auth-ui').style.display = 'none'; document.getElementById('main-ui').style.display = 'block'; document.getElementById('actions').style.visibility = 'visible'; startSync();
     }
@@ -415,7 +420,6 @@
         const name = document.getElementById('add-name').value.trim(), pass = document.getElementById('add-pass').value.trim(); 
         if(!name || !pass) return;
         const saveBtn = document.getElementById('save-btn'); 
-        const originalText = saveBtn.innerText;
         saveBtn.disabled = true; saveBtn.innerText = "同步中...";
         
         const now = new Date();
@@ -423,36 +427,18 @@
 
         try { 
             let list = await getLatest(); 
+            const payload = { name, user: document.getElementById('add-user').value, pass, note: document.getElementById('add-note').value, updatedAt: timeStr };
             if (currentEditId) { 
                 const index = list.findIndex(i => i.id == currentEditId); 
-                if (index !== -1) {
-                    list[index] = { 
-                        ...list[index], 
-                        name, 
-                        user: document.getElementById('add-user').value, 
-                        pass, 
-                        note: document.getElementById('add-note').value,
-                        updatedAt: timeStr 
-                    }; 
-                }
+                if (index !== -1) list[index] = { ...list[index], ...payload }; 
             } else { 
-                list.push({
-                    name, 
-                    user: document.getElementById('add-user').value, 
-                    pass, 
-                    note: document.getElementById('add-note').value, 
-                    id: Date.now(),
-                    updatedAt: timeStr 
-                }); 
+                list.push({ ...payload, id: Date.now() }); 
             } 
             await updateCloud(list); 
             clearSearch(); 
             toggleModal('add-modal', false); 
-        } catch (e) { 
-            showToast("同步失败"); 
-        } finally { 
-            saveBtn.disabled = false; 
-            saveBtn.innerText = originalText; 
+        } catch (e) { showToast("同步失败"); } finally { 
+            saveBtn.disabled = false; saveBtn.innerText = "同步至云端"; 
         }
     }
 
