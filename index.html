@@ -112,7 +112,14 @@
         
         .item-time { position: absolute; bottom: 22px; right: 22px; font-size: 11px; color: var(--secondary); opacity: 0.4; font-family: ui-monospace, monospace; line-height: 1.5; }
 
-        .auth-viewport { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 0 var(--side-gap); }
+        /* 优化点 1：使用 fixed 结合 safe-area 彻底锁定视口，确保 iOS PWA 模式下完美绝对居中 */
+        .auth-viewport { 
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: flex; align-items: center; justify-content: center; 
+            padding: env(safe-area-inset-top) var(--side-gap) env(safe-area-inset-bottom);
+            z-index: 150;
+        }
         .glass-card { background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border-radius: var(--radius-lg); border: var(--glass-border); padding: 32px 24px; width: 100%; max-width: 340px; text-align: center; }
         
         .auth-form-body input { width: 100%; height: 50px; padding: 0 16px; margin: 8px 0; border-radius: var(--radius-md); border: 1px solid rgba(0,0,0,0.08); font-size: 16px; outline: none; background: rgba(255,255,255,0.6); font-family: inherit; }
@@ -650,6 +657,15 @@
 
     async function handleAuth() {
         const pass = document.getElementById('main-pass').value; if (!pass) return;
+        
+        // 优化点 2：在执行核心解锁逻辑前，强制隐藏输入法并增加微延迟
+        // 让 iOS 系统的键盘动画彻底收回、重置真实的视口大小，杜绝首卡被顶起遮挡
+        document.getElementById('main-pass').blur();
+        const tokenInput = document.getElementById('gh-token');
+        if(tokenInput) tokenInput.blur();
+        
+        await new Promise(resolve => setTimeout(resolve, 350)); 
+
         await CryptoSvc.deriveKey(pass);
         if (!ENCRYPTED_TK) {
             const tk = document.getElementById('gh-token').value.trim(); 
@@ -666,6 +682,7 @@
         document.getElementById('main-ui').style.display = 'block'; 
         document.getElementById('actions').style.visibility = 'visible'; 
         
+        // 确保视口高度彻底规整后再执行复位重置
         window.scrollTo(0, 0);
         document.body.scrollTop = 0;
         
