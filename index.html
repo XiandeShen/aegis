@@ -65,20 +65,55 @@
         }
 
         .header-actions { display: flex; gap: 10px; visibility: hidden; align-items: center; flex: 1; justify-content: flex-end; margin-left: 12px; }
-        .search-wrapper { display: flex; align-items: center; background: rgba(0, 0, 0, 0.05); border-radius: 12px; width: 40px; height: 40px; overflow: hidden; position: relative; transition: all 0.25s ease; }
-        .search-icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: var(--secondary); flex-shrink: 0; cursor: pointer; }
-        .search-input { border: none; background: transparent; height: 100%; width: 0; padding: 0; font-size: 16px; outline: none; color: #1d1d1f; line-height: normal; }
+        
+        /* ─── 优化搜索框结构，防止聚焦蓝色光晕被截断 ─── */
+        .search-wrapper { 
+            display: flex; 
+            align-items: center; 
+            background: rgba(0, 0, 0, 0.05); 
+            border-radius: 12px; 
+            width: 40px; 
+            height: 40px; 
+            overflow: hidden; 
+            position: relative; 
+            border: 1px solid transparent;
+            transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+        }
+        .search-icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: var(--secondary); flex-shrink: 0; }
+        
+        /* 彻底清除 input 聚焦时自带的默认 outline 与 shadow，把控制权交给外层 search-wrapper */
+        .search-input { 
+            border: none; 
+            background: transparent; 
+            height: 100%; 
+            width: 0; 
+            padding: 0; 
+            font-size: 16px; 
+            outline: none !important; 
+            box-shadow: none !important; 
+            color: #1d1d1f; 
+            line-height: normal; 
+        }
         .search-clear { width: 32px; height: 40px; color: var(--secondary); cursor: pointer; display: none; align-items: center; justify-content: center; flex-shrink: 0; }
         
+        /* 当搜索框内有焦点时，由外层包裹框整体产生优雅的高亮和外发光，杜绝截断 Bug */
+        .search-wrapper:focus-within {
+            background: #fff;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12);
+        }
+
         @media (max-width: 767px) {
             .header-actions.search-active .action-btn { display: none; }
-            .header-actions.search-active .search-wrapper { width: 100%; max-width: 220px; background: #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.08); }
+            .header-actions.search-active .search-wrapper { width: 100%; max-width: 200px; background: #fff; box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12); border-color: var(--accent); }
             .header-actions.search-active .search-input { width: 100%; padding: 0 4px; }
         }
-        @media (min-width: 768px) { .search-wrapper { width: 220px; } .search-wrapper:focus-within { background: #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.05); } .search-input { width: 100%; padding-right: 10px; } }
+        @media (min-width: 768px) { 
+            .search-wrapper { width: 200px; transition: width 0.2s, border-color 0.2s, box-shadow 0.2s, background-color 0.2s; } 
+            .search-input { width: 100%; padding-right: 10px; } 
+        }
         .search-wrapper.has-content .search-clear { display: flex; }
-        .action-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 12px; background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(0, 0, 0, 0.04); flex-shrink: 0; transition: background 0.2s; }
-        .action-btn:active { background: rgba(0,0,0,0.04); }
+        .action-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 12px; background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(0, 0, 0, 0.04); flex-shrink: 0; }
         
         /* 列表区域布局 */
         .page-wrapper { width: 100%; max-width: 1000px; margin: 0 auto; min-height: 100vh; padding: calc(86px + env(safe-area-inset-top)) var(--side-gap) 40px; }
@@ -171,7 +206,7 @@
         .modal-icon-wrapper.danger-style { color: var(--danger); background: rgba(255, 59, 48, 0.08); }
         .page-modal-content h3 { font-size: 22px; font-weight: 700; color: #1d1d1f; margin: 0; letter-spacing: -0.5px; }
 
-        /* 统一的群组白色卡片容器（添加、编辑页面专用样式组） */
+        /* 统一的群组白色卡片容器 */
         .apple-group-box {
             background: rgba(255, 255, 255, 0.85); border-radius: 18px; padding: 0 16px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.01); margin-bottom: 24px;
@@ -179,7 +214,6 @@
             display: flex; flex-direction: column;
         }
         
-        /* 核心修复：彻底洗掉通用输入框自带的深灰色背景、高度、内边距与外边距，回归无缝流式列表 */
         .apple-group-box input, .apple-group-box textarea { 
             background: transparent !important; 
             border: none !important; 
@@ -190,18 +224,16 @@
             font-size: 16px !important; 
             box-shadow: none !important; 
         }
-        /* 增加流畅的分割线环境 */
         .apple-group-box input:not(:last-child) { 
             border-bottom: 1px solid rgba(0, 0, 0, 0.04) !important; 
         }
-        /* 完美兼容多行输入容器的独立自适应高度 */
         .apple-group-box textarea.add-note-input { 
             height: 95px !important; 
             padding: 14px 0 !important; 
             border-top: 1px solid rgba(0, 0, 0, 0.04) !important;
         }
 
-        /* 隐藏【添加/编辑】输入框内部多出来的原生滚动条 */
+        /* 隐藏编辑区内部的备注滚动条 */
         .apple-group-box textarea::-webkit-scrollbar { width: 5px; }
         .apple-group-box textarea::-webkit-scrollbar-track { background: transparent; }
         .apple-group-box textarea::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0); border-radius: 10px; transition: background 0.25s ease; }
@@ -228,7 +260,7 @@
             overflow: hidden; text-overflow: ellipsis; max-height: 120px; overflow-y: auto; 
         }
 
-        /* 隐藏【详情面板】备注框的滚动条 */
+        /* 隐藏详情面板内的备注滚动条 */
         .info-cell-value::-webkit-scrollbar { width: 5px; }
         .info-cell-value::-webkit-scrollbar-track { background: transparent; }
         .info-cell-value::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0); border-radius: 10px; transition: background 0.25s ease; }
@@ -243,7 +275,7 @@
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         .status-msg { width: 100%; padding: 60px 0; color: var(--secondary); text-align: center; grid-column: 1/-1; font-size: 15px; }
 
-        /* 解锁面板组件微调 */
+        /* 解锁面板组件 */
         #login-card h2 { display: none; }
         .card-brand-header { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; justify-content: center; }
         .card-brand-logo { color: var(--accent); display: flex; align-items: center; }
@@ -442,6 +474,7 @@
         if (wrapper && !wrapper.contains(e.target) && bar && bar.value === "" && !isToolBtn) { bar.blur(); }
     });
 
+    // 修复聚焦调用
     function focusSearch() { document.getElementById('search-bar').focus(); }
     function handleSearchUI(input) {
         const wrapper = document.getElementById('search-wrapper'), actions = document.getElementById('actions');
