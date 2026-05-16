@@ -101,36 +101,55 @@
         .primary-btn { width: 100%; height: 50px; background: var(--accent); border: none; border-radius: var(--radius-md); color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.3s; }
         .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* ==================== 模态框及双按钮横向布局优化 ==================== */
+        /* 核心修改：优化遮罩层，使其在 PC 端与移动端完美上下左右居中 */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #f5f5f7; z-index: 200; display: none; 
-            flex-direction: column; align-items: center; justify-content: flex-start;
-            padding: calc(44px + env(safe-area-inset-top)) var(--side-gap) 40px;
+            background: rgba(0, 0, 0, 0.12); z-index: 200; display: none; 
+            /* 改为全居中排列 */
+            align-items: center; justify-content: center;
+            padding: var(--side-gap);
             overflow-y: auto; -webkit-overflow-scrolling: touch;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); /* 增加背景模糊 */
         }
         
-        .page-modal-content { width: 100%; max-width: 420px; display: flex; flex-direction: column; text-align: left; }
+        /* 核心修改：二级窗口卡片在 PC 端重塑为高级精致浮窗 */
+        .page-modal-content { 
+            width: 100%; max-width: 420px; display: flex; flex-direction: column; text-align: left;
+            background: #ffffff; border-radius: 24px; padding: 24px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.12); border: 1px solid rgba(0,0,0,0.05);
+            max-height: calc(100vh - 60px); overflow-y: auto;
+            animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; /* 引入平滑动画 */
+        }
+        
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.92) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* 兼容小屏幕手机端 */
+        @media (max-width: 480px) {
+            .modal-overlay { background: #f5f5f7; padding: calc(20px + env(safe-area-inset-top)) var(--side-gap) 40px; align-items: flex-start; }
+            .page-modal-content { max-height: 100%; box-shadow: none; border: none; padding: 12px 0; background: transparent; animation: none; }
+        }
 
         .modal-page-header { margin-bottom: 24px; display: flex; flex-direction: row; align-items: center; gap: 14px; padding-left: 2px; }
         .modal-icon-wrapper { 
             width: 44px; height: 44px; border-radius: 12px; 
             display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-            background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.02); color: var(--accent);
+            background: var(--bg-base); box-shadow: 0 2px 8px rgba(0,0,0,0.01); color: var(--accent);
         }
-        .modal-icon-wrapper.danger-style { color: var(--danger); }
+        .modal-icon-wrapper.danger-style { color: var(--danger); background: rgba(255, 59, 48, 0.08); }
         .page-modal-content h3 { font-size: 22px; font-weight: 700; color: #1d1d1f; margin: 0; letter-spacing: -0.5px; }
 
         .apple-group-box {
-            background: #ffffff; border-radius: 16px; padding: 4px 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02); margin-bottom: 24px;
+            background: var(--bg-base); border-radius: 16px; padding: 4px 16px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.01); margin-bottom: 24px;
             border: 1px solid rgba(0, 0, 0, 0.02);
         }
         .apple-group-box input, .apple-group-box textarea { background: transparent; border: none; margin: 0; padding: 0; border-radius: 0; height: 52px; font-size: 16px; }
         .apple-group-box input:not(:last-child), .apple-group-box textarea { border-bottom: 1px solid rgba(0, 0, 0, 0.04); }
         .apple-group-box textarea.add-note-input { height: 90px; padding: 14px 0; }
 
-        /* 全局标准化横向双按钮容器 */
         .modal-action-row {
             display: flex; gap: 12px; width: 100%; margin-top: 8px;
         }
@@ -145,22 +164,30 @@
         }
 
         /* 详情展示流组件 */
-        .info-cell-group { background: #ffffff; border-radius: 16px; padding: 0 16px; border: 1px solid rgba(0, 0, 0, 0.02); box-shadow: 0 1px 3px rgba(0,0,0,0.02); margin-bottom: 24px; }
+        .info-cell-group { background: var(--bg-base); border-radius: 16px; padding: 0 16px; border: 1px solid rgba(0, 0, 0, 0.02); margin-bottom: 24px; }
         .info-cell { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; cursor: pointer; }
         .info-cell:not(:last-child) { border-bottom: 1px solid rgba(0, 0, 0, 0.04); }
         .info-cell:active { opacity: 0.6; }
         .info-cell-label { font-size: 14px; color: var(--secondary); font-weight: 500; flex-shrink: 0; width: 70px; }
-        .info-cell-value { font-size: 16px; color: #1d1d1f; text-align: right; word-break: break-all; padding-left: 12px; font-family: ui-monospace, monospace; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; max-height: 80px; overflow-y: auto; }
+        
+        .info-cell-value { 
+            font-size: 16px; color: #1d1d1f; text-align: right; 
+            word-break: break-all; padding-left: 12px; font-family: ui-monospace, monospace; 
+            flex: 1; 
+            display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; 
+            overflow: hidden; text-overflow: ellipsis; 
+            max-height: 120px; overflow-y: auto; 
+        }
         .info-cell-value.highlight { color: var(--accent); font-weight: 600; }
-        .info-cell-value.note-style { text-align: left; font-family: inherit; font-size: 15px; color: #333; line-height: 1.4; width: 100%; }
-        .info-cell.vertical-cell { flex-direction: column; align-items: flex-start; gap: 6px; cursor: default; }
-        .info-cell.vertical-cell:active { opacity: 1; }
+        .info-cell-value.note-style { 
+            text-align: right; font-family: inherit; font-size: 15px; 
+            color: #333; line-height: 1.4; width: auto; 
+        }
 
         #toast { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(0,0,0,0.85); color: white; padding: 12px 24px; border-radius: 24px; z-index: 1000; opacity: 0; pointer-events: none; transition: all 0.4s; }
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         .status-msg { width: 100%; padding: 60px 0; color: var(--secondary); text-align: center; grid-column: 1/-1; }
 
-        /* 解锁页面重构：输入框与按钮横向切分 */
         #login-card {
             background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.45); box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.01), 0 24px 60px -8px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.4);
             width: 100%; max-width: 360px; padding: 24px; border-radius: 30px; display: flex; flex-direction: column; position: relative;
@@ -171,8 +198,6 @@
         #login-card h2 { display: none; }
         
         .auth-form-body { display: flex; flex-direction: column; gap: 0; }
-        
-        /* 核心修改：让解锁输入框和进入按钮横向并排 */
         .auth-input-button-row { display: flex; gap: 10px; width: 100%; align-items: center; }
         .auth-input-button-row input { margin: 0; flex: 1; background: rgba(255, 255, 255, 0.75); border: 1px solid rgba(0, 0, 0, 0.05); border-radius: 15px; height: 50px; font-size: 15px; color: #1d1d1f; box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.01); transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
         .auth-input-button-row input::placeholder { color: #a1a1a6; }
@@ -231,7 +256,6 @@
 
 <div class="page-wrapper" id="main-ui" style="display:none"><div id="list-container"></div></div>
 
-<!-- 1. 新增/编辑 凭据页面 -->
 <div class="modal-overlay" id="add-modal-overlay">
     <div class="page-modal-content">
         <div class="modal-page-header">
@@ -253,7 +277,6 @@
     </div>
 </div>
 
-<!-- 2. 确认删除 警示页面 -->
 <div class="modal-overlay" id="confirm-modal-overlay">
     <div class="page-modal-content">
         <div class="modal-page-header">
@@ -269,7 +292,6 @@
     </div>
 </div>
 
-<!-- 3. 配置重置 警示页面 -->
 <div class="modal-overlay" id="hard-reset-overlay">
     <div class="page-modal-content">
         <div class="modal-page-header">
@@ -285,7 +307,6 @@
     </div>
 </div>
 
-<!-- 4. 凭据详情 页面 -->
 <div class="modal-overlay" id="pass-modal-overlay">
     <div class="page-modal-content">
         <div class="modal-page-header">
@@ -308,9 +329,9 @@
                 <div class="info-cell-label">安全密码</div>
                 <div class="info-cell-value highlight" id="detail-pass"></div>
             </div>
-            <div class="info-cell vertical-cell" id="detail-note-row">
+            <div class="info-cell" id="detail-note-row" onclick="copyTextFromCell('detail-note', '备注')">
                 <div class="info-cell-label">备注信息</div>
-                <div class="info-cell-value note-style" id="detail-note" onclick="copyTextFromCell('detail-note', '备注')"></div>
+                <div class="info-cell-value note-style" id="detail-note"></div>
             </div>
         </div>
 
