@@ -27,9 +27,12 @@
             -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; overflow-x: hidden;
         }
         
-        body.modal-open {
+        /* 修改点：优化防底层穿透滚动的锁定类，改由 JS 动态配合 fixed 定位控制，避免直接强制 100vh 丢失位置 */
+        body.modal-open-fixed {
+            position: fixed !important;
+            left: 0 !important;
+            width: 100% !important;
             overflow: hidden !important;
-            height: 100vh !important;
         }
 
         .gradient-bg {
@@ -101,35 +104,33 @@
         .primary-btn { width: 100%; height: 50px; background: var(--accent); border: none; border-radius: var(--radius-md); color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.3s; }
         .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* 核心修改：优化遮罩层，使其在 PC 端与移动端完美上下左右居中 */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0, 0, 0, 0.12); z-index: 200; display: none; 
-            /* 改为全居中排列 */
             align-items: center; justify-content: center;
             padding: var(--side-gap);
             overflow-y: auto; -webkit-overflow-scrolling: touch;
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); /* 增加背景模糊 */
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
         }
         
-        /* 核心修改：二级窗口卡片在 PC 端重塑为高级精致浮窗 */
         .page-modal-content { 
             width: 100%; max-width: 420px; display: flex; flex-direction: column; text-align: left;
             background: #ffffff; border-radius: 24px; padding: 24px;
             box-shadow: 0 12px 40px rgba(0,0,0,0.12); border: 1px solid rgba(0,0,0,0.05);
             max-height: calc(100vh - 60px); overflow-y: auto;
-            animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; /* 引入平滑动画 */
+            animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
-        
+        .page-modal-content::-webkit-scrollbar { width: 4px; }
+        .page-modal-content::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
+
         @keyframes popIn {
             from { opacity: 0; transform: scale(0.92) translateY(10px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        /* 兼容小屏幕手机端 */
         @media (max-width: 480px) {
             .modal-overlay { background: #f5f5f7; padding: calc(20px + env(safe-area-inset-top)) var(--side-gap) 40px; align-items: flex-start; }
-            .page-modal-content { max-height: 100%; box-shadow: none; border: none; padding: 12px 0; background: transparent; animation: none; }
+            .page-modal-content { max-height: 100%; box-shadow: none; border: none; padding: 12px 0; background: transparent; animation: none; overflow-y: visible; }
         }
 
         .modal-page-header { margin-bottom: 24px; display: flex; flex-direction: row; align-items: center; gap: 14px; padding-left: 2px; }
@@ -178,6 +179,13 @@
             overflow: hidden; text-overflow: ellipsis; 
             max-height: 120px; overflow-y: auto; 
         }
+
+        .info-cell-value::-webkit-scrollbar { width: 5px; }
+        .info-cell-value::-webkit-scrollbar-track { background: transparent; }
+        .info-cell-value::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0); border-radius: 10px; transition: background 0.3s ease; }
+        .info-cell:hover .info-cell-value::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); }
+        .info-cell-value::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.3) !important; }
+
         .info-cell-value.highlight { color: var(--accent); font-weight: 600; }
         .info-cell-value.note-style { 
             text-align: right; font-family: inherit; font-size: 15px; 
@@ -375,9 +383,11 @@
 
     let FINAL_TOKEN = "", GIST_ID = localStorage.getItem('ae_gid'), ENCRYPTED_TK = localStorage.getItem('ae_enc_tk');
     let deleteTargetId = null, currentEditId = null, CACHED_LIST = []; 
+    let lastScrollY = 0; // 用于精密记录底层视图的滚动像素值
 
+    // 重新对移动端的滚动事件做穿透防御治理
     document.addEventListener('touchmove', (e) => {
-        if (document.body.classList.contains('modal-open')) {
+        if (document.body.classList.contains('modal-open-fixed')) {
             if (!e.target.closest('.modal-overlay')) {
                 e.preventDefault();
             }
@@ -483,15 +493,27 @@
 
     function softLock() { location.reload(); }
     
+    // 核心重构函数：利用高级锚定法，精准锁定和恢复页面的滚动条像素位置
     function toggleModal(id, show) { 
         const overlay = document.getElementById(id + '-overlay');
         if (show) {
+            // 打开弹窗前：记录当前绝对滚动像素值
+            lastScrollY = window.scrollY;
             overlay.style.display = 'flex';
-            document.body.classList.add('modal-open');
+            
+            // 将位置转化为固定负边距赋给 body，既静止了底层，又保留了视觉位置
+            document.body.style.top = `-${lastScrollY}px`;
+            document.body.classList.add('modal-open-fixed');
         } else {
             overlay.style.display = 'none';
+            
+            // 检查是否还有其他活跃弹窗，防止多弹窗嵌套时状态冲突
             if (!document.querySelector('.modal-overlay[style*="display: flex"]')) {
-                document.body.classList.remove('modal-open');
+                document.body.classList.remove('modal-open-fixed');
+                document.body.style.top = '';
+                
+                // 瞬间将视口送回刚才记录的绝对像素位置
+                window.scrollTo(0, lastScrollY);
             }
         }
     }
