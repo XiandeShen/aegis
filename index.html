@@ -11,8 +11,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Aegis">
-    
-    <meta name="theme-color" id="meta-theme" content="#f5f5f7">
 
     <style>
         * { box-sizing: border-box; }
@@ -29,12 +27,10 @@
             background-color: var(--bg-base); color: #1d1d1f;
             font-family: var(--font-sans);
             -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; overflow-x: hidden;
-            transition: background-color 0.3s ease;
         }
         
         body.modal-open-fixed {
             position: fixed !important; left: 0 !important; width: 100% !important; overflow: hidden !important;
-            background-color: #e2e8f0 !important; 
         }
 
         .gradient-bg {
@@ -106,79 +102,28 @@
         .primary-btn { width: 100%; height: 50px; background: var(--accent); border: none; border-radius: var(--radius-md); color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.3s; font-family: var(--font-sans); }
         .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* ─── 优化：精细改良的遮罩层与定位基准 ─── */
         .modal-overlay { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            right: 0;
-            bottom: 0;
-            z-index: 200; 
-            display: none; 
-            /* 取消原本的 flex 垂直居中，改用内部子元素绝对定位，防止各端计算差异 */
-            background: rgba(245, 245, 247, 0.62); 
-            backdrop-filter: blur(30px); 
-            -webkit-backdrop-filter: blur(30px);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0, 0, 0, 0.2); z-index: 200; display: none; 
+            align-items: center; justify-content: center; padding: var(--side-gap);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
         }
+        
+        #pass-modal-overlay { z-index: 210; }
 
-        /* 独立伪元素：专门向上延伸 150px 去模糊灵动岛，不参与任何视窗位置计算 */
-        .modal-overlay::before {
-            content: "";
-            position: absolute;
-            top: -150px;
-            left: 0;
-            right: 0;
-            height: 150px;
-            background: inherit;
-            backdrop-filter: inherit;
-            -webkit-backdrop-filter: inherit;
-            pointer-events: none;
-        }
-
-        /* 统一改造：二级弹窗主体定位算法 */
         .page-modal-content { 
-            position: absolute;
-            left: 50%;
-            width: calc(100% - (var(--side-gap) * 2)); 
-            max-width: 420px; 
-            display: flex; 
-            flex-direction: column; 
-            text-align: left;
-            background: rgba(255, 255, 255, 0.85); 
-            backdrop-filter: blur(30px); 
-            -webkit-backdrop-filter: blur(30px);
-            border-radius: 30px; 
-            padding: 26px; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.15); 
-            border: var(--glass-border);
-            max-height: calc(100vh - 80px); 
-            overflow-y: auto;
-            
-            /* 默认配置（移动端/手机端）：采用 46% 黄金视觉中心定位线，规避视觉下沉 */
-            top: 46%;
-            transform: translate(-50%, -50%);
-            animation: applePopInMobile 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            width: 100%; max-width: 420px; display: flex; flex-direction: column; text-align: left;
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border-radius: 30px; padding: 26px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); border: var(--glass-border);
+            max-height: calc(100vh - 60px); overflow-y: auto; position: relative;
+            animation: applePopIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
-
-        /* 大屏/PC端媒体查询：恢复至完美的 50% 物理水平垂直绝对居中 */
-        @media (min-width: 768px) {
-            .page-modal-content {
-                top: 50%;
-                animation: applePopInPC 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            }
-        }
-
         .page-modal-content::-webkit-scrollbar { width: 4px; }
         .page-modal-content::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 10px; }
 
-        /* 针对两端不同居中定位线单独适配的起手动画 */
-        @keyframes applePopInMobile {
-            from { opacity: 0; transform: translate(-50%, -44%) scale(0.96); }
-            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        }
-        @keyframes applePopInPC {
-            from { opacity: 0; transform: translate(-50%, -46%) scale(0.96); }
-            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        @keyframes applePopIn {
+            from { opacity: 0; transform: scale(0.95) translateY(8px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
         .modal-close-x {
@@ -217,6 +162,7 @@
         }
         .info-block-content.highlight { color: var(--accent); font-weight: 700; }
         
+        /* ─── 极致对齐样式修正区域 ─── */
         .note-fixed-height-box {
             height: 76px !important; min-height: 76px !important; max-height: 76px !important;
             overflow-y: auto !important; word-break: break-all; white-space: pre-wrap;
@@ -234,6 +180,7 @@
         }
         .info-block-item input { height: 26px !important; line-height: 26px !important; font-size: 16px !important; padding: 0 !important; }
         
+        /* 给编辑状态下的 textarea 补充精确内边距，将其文本基准线强行压低，与 div 达到绝对像素对齐 */
         .info-block-item textarea.add-note-input { resize: none; padding: 2px 0 0 0 !important; }
 
         .modal-search-box-wrapper {
@@ -740,24 +687,16 @@
     
     function toggleModal(id, show) { 
         const overlay = document.getElementById(id + '-overlay');
-        const themeMeta = document.getElementById('meta-theme'); 
-        
         if (show) {
             lastScrollY = window.scrollY; 
-            overlay.style.display = 'block'; /* 调整为 block，内部定位改由绝对布局驱动 */
-            
-            if (themeMeta) themeMeta.setAttribute('content', 'rgba(235, 235, 240, 0.85)');
-
-            if (document.querySelectorAll('.modal-overlay[style*="display: block"]').length === 1) {
+            overlay.style.display = 'flex';
+            if (document.querySelectorAll('.modal-overlay[style*="display: flex"]').length === 1) {
                 document.body.style.top = `-${lastScrollY}px`; 
                 document.body.classList.add('modal-open-fixed');
             }
         } else {
             overlay.style.display = 'none';
-            if (!document.querySelector('.modal-overlay[style*="display: block"]')) {
-                
-                if (themeMeta) themeMeta.setAttribute('content', '#f5f5f7');
-
+            if (!document.querySelector('.modal-overlay[style*="display: flex"]')) {
                 document.body.classList.remove('modal-open-fixed'); 
                 document.body.style.top = ''; 
                 window.scrollTo(0, lastScrollY);
