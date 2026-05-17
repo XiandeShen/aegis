@@ -111,13 +111,17 @@
         
         #pass-modal-overlay { z-index: 210; }
 
+        /* ─── 极致对齐：让所有核心弹窗的高宽、上下间距在任意屏幕下达成绝对一致 ─── */
         .page-modal-content { 
-            width: 100%; max-width: 420px; display: flex; flex-direction: column; text-align: left;
+            width: 100%; max-width: 420px; 
+            height: 78vh; /* 统一采用屏幕可见高度的 78% 作为硬性标准尺寸，规避小屏截断问题 */
+            display: flex; flex-direction: column; text-align: left;
             background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
             border-radius: 30px; padding: 26px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); border: var(--glass-border);
-            max-height: calc(100vh - 60px); overflow-y: auto; position: relative;
+            overflow: hidden; position: relative;
             animation: applePopIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
+
         .page-modal-content::-webkit-scrollbar { width: 4px; }
         .page-modal-content::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 10px; }
 
@@ -135,18 +139,25 @@
         .modal-close-x:hover { background: rgba(0, 0, 0, 0.08); color: #1d1d1f; }
         .modal-close-x:active { transform: scale(0.95); }
 
-        .modal-page-header { margin-bottom: 22px; display: flex; flex-direction: row; align-items: center; gap: 12px; padding-right: 32px; }
+        .modal-page-header { margin-bottom: 22px; display: flex; flex-direction: row; align-items: center; gap: 12px; padding-right: 32px; flex-shrink: 0; }
         .modal-icon-wrapper { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.03); color: var(--accent); }
         .modal-icon-wrapper.danger-style { color: var(--danger); }
         .modal-icon-wrapper svg { width: 22px; height: 22px; }
         .page-modal-content h3 { font-size: 20px; font-weight: 700; color: #1d1d1f; margin: 0; letter-spacing: -0.5px; }
 
-        .apple-group-box, .info-cell-group { background: transparent; border: none; padding: 0; margin-bottom: 6px; display: flex; flex-direction: column; gap: 12px; }
+        /* 详情与新增页的内部容器设为可滚动 */
+        .info-cell-group, .apple-group-box { 
+            background: transparent; border: none; padding: 0; margin-bottom: 6px; 
+            display: flex; flex-direction: column; gap: 12px; 
+            flex: 1; overflow-y: auto; padding-right: 2px;
+        }
+        .info-cell-group::-webkit-scrollbar, .apple-group-box::-webkit-scrollbar { width: 3px; }
+        .info-cell-group::-webkit-scrollbar-thumb, .apple-group-box::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.06); border-radius: 10px; }
 
         .info-block-item {
             background: rgba(255, 255, 255, 0.5); border-radius: 16px; padding: 12px 16px;
             border: 1px solid rgba(0, 0, 0, 0.03); display: flex; flex-direction: column; gap: 4px; width: 100%;
-            cursor: pointer; transition: background-color 0.2s, border-color 0.25s, box-shadow 0.25s;
+            cursor: pointer; transition: background-color 0.2s, border-color 0.25s, box-shadow 0.25s; flex-shrink: 0;
         }
         
         .info-block-item.view-mode-active { cursor: pointer; }
@@ -162,14 +173,13 @@
         }
         .info-block-content.highlight { color: var(--accent); font-weight: 700; }
         
-        /* ─── 极致对齐与留白样式修正区域 ─── */
         .note-fixed-height-box {
             height: 76px !important; min-height: 76px !important; max-height: 76px !important;
             overflow-y: auto !important; word-break: break-all; white-space: pre-wrap;
             font-size: 14px !important; color: #333 !important; line-height: 1.6 !important; 
             font-family: var(--font-sans) !important; 
             width: 100%; text-align: left; margin: 0 !important;
-            padding-right: 8px !important; /* 增加右边距，给自定义滚动条优雅的留白，防止贴近框线 */
+            padding-right: 8px !important;
         }
         div.note-fixed-height-box { padding-top: 2px !important; } 
         .note-fixed-height-box::-webkit-scrollbar { width: 3px; }
@@ -181,27 +191,26 @@
         }
         .info-block-item input { height: 26px !important; line-height: 26px !important; font-size: 16px !important; padding: 0 !important; }
         
-        /* 给编辑状态下的 textarea 补充精确内边距，将其文本基准线强行压低，与 div 达到绝对像素对齐 */
         .info-block-item textarea.add-note-input { resize: none; padding: 2px 0 0 0 !important; }
 
         .modal-search-box-wrapper {
             background: #fff; border: 1px solid rgba(0,0,0,0.06); border-radius: 16px;
             padding: 2px 14px; display: flex; align-items: center; gap: 10px; height: 50px; margin-bottom: 20px;
-            transition: border-color 0.25s, box-shadow 0.25s;
+            transition: border-color 0.25s, box-shadow 0.25s; flex-shrink: 0;
         }
         .modal-search-box-wrapper:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1); }
         .modal-search-box-wrapper input { border: none; outline: none; font-size: 16px; flex: 1; color: #1d1d1f; height: 100%; background: transparent; font-family: var(--font-sans); }
         
         .modal-search-results-area {
-            display: flex; flex-direction: column; width: 100%; max-height: 280px; overflow-y: auto;
-            padding-right: 6px; 
+            display: flex; flex-direction: column; width: 100%; flex: 1; overflow-y: auto;
+            padding-right: 6px; margin-bottom: 4px;
         }
         .modal-search-results-area::-webkit-scrollbar { width: 3px; }
         .modal-search-results-area::-webkit-scrollbar-track { background: transparent; }
         .modal-search-results-area::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.08); border-radius: 10px; }
         .modal-search-results-area:hover::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); }
 
-        .modal-action-row { display: flex; gap: 10px; width: 100%; margin-top: 14px; }
+        .modal-action-row { display: flex; gap: 10px; width: 100%; margin-top: 14px; flex-shrink: 0; }
         .modal-action-row .primary-btn, .modal-action-row .secondary-text-btn { flex: 1; height: 48px; border-radius: var(--radius-md); font-size: 15px; font-weight: 600; border: none; cursor: pointer; font-family: var(--font-sans); }
         .modal-action-row .secondary-text-btn { background: rgba(0, 0, 0, 0.04); color: #1d1d1f; transition: background 0.2s, transform 0.1s; }
         .modal-action-row .secondary-text-btn:active { background: rgba(0, 0, 0, 0.08); transform: scale(0.98); }
@@ -399,7 +408,7 @@
 </div>
 
 <div class="modal-overlay" id="confirm-delete-modal-overlay">
-    <div class="page-modal-content">
+    <div class="page-modal-content" style="height: auto; min-height: auto;">
         <div class="modal-close-x" onclick="toggleModal('confirm-delete-modal', false)">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </div>
@@ -409,7 +418,7 @@
             </div>
             <h3 style="color:var(--danger)">确定要删除凭据吗？</h3>
         </div>
-        <div class="info-cell-group" style="margin-bottom: 20px;">
+        <div class="info-cell-group" style="margin-bottom: 20px; overflow: hidden;">
             <div class="info-block-item edit-mode-active" style="background: rgba(255, 59, 48, 0.03); border-color: rgba(255, 59, 48, 0.05);">
                 <div class="info-block-label" style="color: var(--danger)">将永久从云端移除</div>
                 <div class="info-block-content" id="delete-target-name" style="font-weight:700;"></div>
@@ -423,7 +432,7 @@
 </div>
 
 <div class="modal-overlay" id="hard-reset-overlay">
-    <div class="page-modal-content">
+    <div class="page-modal-content" style="height: auto; min-height: auto;">
         <div class="modal-page-header">
             <div class="modal-icon-wrapper danger-style">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
@@ -557,7 +566,6 @@
         document.getElementById('detail-pass').innerText = item.pass || '-';
         document.getElementById('detail-note').innerText = item.note || '';
 
-        // 打开时让备注文本框直接重置归零
         document.getElementById('detail-note').scrollTop = 0;
         document.getElementById('edit-note').scrollTop = 0;
 
@@ -570,9 +578,7 @@
         };
     }
 
-    // ─── 核心修复区域：在这里解决“假关闭”问题 ───
     function closeDetailsWindow() {
-        // 彻底关闭逻辑：在隐藏弹窗的一瞬间，强行把状态、样式和滚动条全部清零复位！
         toggleWindowEditState(false); 
         document.getElementById('detail-note').scrollTop = 0;
         document.getElementById('edit-note').scrollTop = 0;
