@@ -99,7 +99,6 @@
         .primary-btn { width: 100%; height: 50px; background: var(--accent); border: none; border-radius: var(--radius-md); color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.3s; }
         .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* ─── 核心修改：普通弹窗层级（搜索、新增、删除确认） ─── */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0, 0, 0, 0.2); z-index: 200; display: none; 
@@ -107,10 +106,7 @@
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
         }
         
-        /* ─── 核心修改：将详情窗口提高至高级别 z-index 210，使其可以完美盖在搜索窗口上方 ─── */
-        #pass-modal-overlay {
-            z-index: 210;
-        }
+        #pass-modal-overlay { z-index: 210; }
 
         .page-modal-content { 
             width: 100%; max-width: 420px; display: flex; flex-direction: column; text-align: left;
@@ -163,20 +159,23 @@
         }
         .info-block-content.highlight { color: var(--accent); font-weight: 700; }
         
+        /* ─── 核心修改（第10点）：完全拉平并锁定详情查看、编辑修改、独立新增三处备注栏里字体的大小与排版 ─── */
         .note-fixed-height-box {
             height: 76px !important; min-height: 76px !important; max-height: 76px !important;
             overflow-y: auto !important; word-break: break-all; white-space: pre-wrap;
-            font-size: 15px; color: #333; line-height: 1.4; font-family: inherit; width: 100%; text-align: left;
+            font-size: 14px !important; color: #333 !important; line-height: 1.5 !important; 
+            font-family: -apple-system, "SF Pro Display", "PingFang SC", sans-serif !important; 
+            width: 100%; text-align: left;
         }
-        .note-fixed-height-box::-webkit-scrollbar { width: 4px; }
-        .note-fixed-height-box::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 4px; }
+        .note-fixed-height-box::-webkit-scrollbar { width: 3px; }
+        .note-fixed-height-box::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.08); border-radius: 4px; }
 
         .info-block-item input, .info-block-item textarea {
             background: transparent !important; border: none !important; margin: 0 !important; padding: 0 !important;
             border-radius: 0 !important; width: 100% !important; outline: none !important; color: #1d1d1f; font-family: inherit; font-size: inherit;
         }
-        .info-block-item input { height: 26px !important; line-height: 26px !important; }
-        .info-block-item textarea.add-note-input { resize: none; padding-top: 2px !important; }
+        .info-block-item input { height: 26px !important; line-height: 26px !important; font-size: 16px !important; }
+        .info-block-item textarea.add-note-input { resize: none; padding-top: 1px !important; }
 
         .modal-search-box-wrapper {
             background: #fff; border: 1px solid rgba(0,0,0,0.06); border-radius: 16px;
@@ -186,11 +185,16 @@
         .modal-search-box-wrapper:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1); }
         .modal-search-box-wrapper input { border: none; outline: none; font-size: 16px; flex: 1; color: #1d1d1f; height: 100%; background: transparent; }
         
+        /* ─── 核心修改（第9点）：为搜索滚动条区域增加右侧补白，防止滚动条侵入和挡住卡片边缘 ─── */
         .modal-search-results-area {
             display: flex; flex-direction: column; width: 100%; max-height: 280px; overflow-y: auto;
+            padding-right: 6px; 
         }
-        .modal-search-results-area::-webkit-scrollbar { width: 4px; }
-        .modal-search-results-area::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
+        /* 极致细化定制的现代半透明微型滚动条，不再扎眼 */
+        .modal-search-results-area::-webkit-scrollbar { width: 3px; }
+        .modal-search-results-area::-webkit-scrollbar-track { background: transparent; }
+        .modal-search-results-area::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.08); border-radius: 10px; }
+        .modal-search-results-area:hover::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); }
 
         .modal-action-row { display: flex; gap: 10px; width: 100%; margin-top: 14px; }
         .modal-action-row .primary-btn, .modal-action-row .secondary-text-btn { flex: 1; height: 48px; border-radius: var(--radius-md); font-size: 15px; font-weight: 600; border: none; cursor: pointer; }
@@ -493,18 +497,16 @@
 
     function openSearchCenterWindow() {
         document.getElementById('modal-search-input').value = '';
-        handleModalSearchEvent(''); // 初始化彻底清空展现域
+        handleModalSearchEvent(''); 
         toggleModal('search-modal', true);
         setTimeout(() => document.getElementById('modal-search-input').focus(), 150);
     }
     window.openSearchModal = openSearchCenterWindow;
 
-    // 弹窗内部实时动态筛选
     function handleModalSearchEvent(val) {
         const query = (val || "").toLowerCase().trim();
         const box = document.getElementById('modal-search-results-box');
         
-        // 核心修改：无搜索关键字时直接清空下方，不显示任何占位提示文案
         if (!query) {
             box.innerHTML = '';
             return;
@@ -533,7 +535,6 @@
                 </div>
                 ${item.updatedAt ? `<div class="item-time">${item.updatedAt}</div>` : ''} 
             `;
-            // 核心修改：点击时直接弹出覆盖详情，绝不关闭底层的搜索弹窗，杜绝断层闪烁
             div.onclick = () => {
                 isSearchTriggerSource = true; 
                 showDetails(item);
@@ -542,7 +543,6 @@
         });
     }
 
-    // 窗口一：渲染并展示详情
     function showDetails(item) {
         currentActiveItem = item;
         toggleWindowEditState(false); 
@@ -561,13 +561,10 @@
         };
     }
 
-    // 核心修改：专门针对详情窗口关闭的清理动作
     function closeDetailsWindow() {
         toggleModal('pass-modal', false);
-        // 如果详情来源于搜索窗口的覆盖，直接关闭即可，底层的搜索窗口自始至终未曾消失
         if (isSearchTriggerSource) {
             isSearchTriggerSource = false; 
-            // 重新刷新一下搜索推荐槽的状态即可
             handleModalSearchEvent(document.getElementById('modal-search-input').value);
         }
     }
@@ -689,7 +686,6 @@
         if (show) {
             lastScrollY = window.scrollY; 
             overlay.style.display = 'flex';
-            // 只有在打开最底层第一个弹窗时才锁定 body 轴，避免多层弹窗时发生页面滚动位移
             if (document.querySelectorAll('.modal-overlay[style*="display: flex"]').length === 1) {
                 document.body.style.top = `-${lastScrollY}px`; 
                 document.body.classList.add('modal-open-fixed');
