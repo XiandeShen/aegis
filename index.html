@@ -147,9 +147,7 @@
         
         #pass-modal-overlay { z-index: 210; }
 
-        /* 【高级原生跨端响应】：基础定位保持绝对居中。
-          加一句 transition 动画让它在上移时产生丝滑的苹果式推进质感。
-        */
+        /* 通用弹窗内容：保持原生的绝对垂直居中定位 */
         .page-modal-content { 
             position: fixed; 
             top: 50%; 
@@ -163,27 +161,34 @@
             border-radius: 30px; padding: 26px; box-shadow: 0 20px 50px rgba(0,0,0,0.12); border: 1px solid rgba(255, 255, 255, 0.7);
             overflow: hidden;
             animation: applePopIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            transition: transform 0.28s cubic-bezier(0.25, 1, 0.5, 1), top 0.28s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* 【核心看点】：当搜索弹窗内部任何输入框获焦时 (:focus-within)，
-          不管 body 滚动有没有锁死，我们用纯 CSS 强行把它平滑顶起至 32% 位置，完美避开下半屏的键盘！
+        /* 【针对搜索弹窗的行业级标准规范布局】：
+          直接通过固定比例脱离不稳定的垂直居中。让它天然固定在键盘上方的舒适区（顶部向下12%位置），
+          无论卡片出来多少，输入框物理坐标卡死不动，彻底解决越顶越高和错位问题！
         */
-        .page-modal-content:focus-within {
-            top: 32%;
+        #search-modal-overlay .page-modal-content {
+            top: 12%;
+            transform: translate(-50%, 0); /* 只居中左右，不居中上下 */
+            height: calc(84vh - env(safe-area-inset-bottom) - 12%); /* 锁定最大高度范围 */
         }
 
         @media (min-width: 768px) {
-            #search-modal-overlay .page-modal-content { max-width: 680px; padding: 30px; top: 50%; }
-            /* 电脑端由于没有虚拟键盘，禁用获焦上移，保持绝对正中 */
-            #search-modal-overlay .page-modal-content:focus-within { top: 50%; }
+            .page-modal-content { top: 50%; }
+            #search-modal-overlay .page-modal-content { max-width: 680px; padding: 30px; top: 50%; transform: translate(-50%, -50%); height: auto; }
         }
 
         .page-modal-content::-webkit-scrollbar { display: none; width: 0; }
 
         @keyframes applePopIn {
-            from { opacity: 0; transform: translate(-50%, calc(-50% + 12px)) scale(0.96); }
-            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            from { opacity: 0; transform: translate(-50%, calc(-12% + 12px)) scale(0.96); }
+            to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+        }
+        @media (min-width: 768px) {
+            @keyframes applePopIn {
+                from { opacity: 0; transform: translate(-50%, calc(-50% + 12px)) scale(0.96); }
+                to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            }
         }
 
         .modal-close-x {
@@ -257,7 +262,6 @@
         
         .info-block-item textarea.add-note-input { resize: none; padding: 2px 0 0 0 !important; }
 
-        /* 移除 form 自带的边距，撑满外层 */
         .search-native-form { width: 100%; margin: 0; padding: 0; flex-shrink: 0; }
 
         .modal-search-box-wrapper {
@@ -637,7 +641,13 @@
         document.getElementById('modal-search-input').value = '';
         handleModalSearchEvent(''); 
         toggleModal('search-modal', true);
-        setTimeout(() => document.getElementById('modal-search-input').focus(), 150);
+        
+        // 【规范化调整】：将 150ms 缩短为 40ms，消除视觉差。
+        // 同时在 Safari 浏览器中，它会稳稳地停在 12% 的舒适位置等待键盘唤醒。
+        setTimeout(() => {
+            const searchInput = document.getElementById('modal-search-input');
+            if (searchInput) searchInput.focus();
+        }, 40);
     }
     window.openSearchModal = openSearchCenterWindow;
 
