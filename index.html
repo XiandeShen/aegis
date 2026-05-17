@@ -54,21 +54,8 @@
         body:has(#auth-ui:not([style*="display: none"])) header .brand { opacity: 0; pointer-events: none; }
 
         .header-actions { display: flex; gap: 10px; visibility: hidden; align-items: center; flex: 1; justify-content: flex-end; margin-left: 12px; }
-        .search-wrapper { display: flex; align-items: center; background: rgba(0, 0, 0, 0.05); border-radius: 12px; width: 40px; height: 40px; overflow: hidden; position: relative; border: 1px solid transparent; transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s; }
-        .search-icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: var(--secondary); flex-shrink: 0; }
-        .search-input { border: none; background: transparent; height: 100%; width: 0; padding: 0; font-size: 16px; outline: none !important; box-shadow: none !important; color: #1d1d1f; line-height: normal; }
-        .search-clear { width: 32px; height: 40px; color: var(--secondary); cursor: pointer; display: none; align-items: center; justify-content: center; flex-shrink: 0; }
-        
-        .search-wrapper:focus-within { background: #fff; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12); }
-
-        @media (max-width: 767px) {
-            .header-actions.search-active .action-btn { display: none; }
-            .header-actions.search-active .search-wrapper { width: 100%; max-width: 200px; background: #fff; box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12); border-color: var(--accent); }
-            .header-actions.search-active .search-input { width: 100%; padding: 0 4px; }
-        }
-        @media (min-width: 768px) { .search-wrapper { width: 200px; transition: width 0.2s, border-color 0.2s, box-shadow 0.2s, background-color 0.2s; } .search-input { width: 100%; padding-right: 10px; } }
-        .search-wrapper.has-content .search-clear { display: flex; }
-        .action-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 12px; background: rgba(255, 255, 255, 0.5); border: 1px solid rgba(0, 0, 0, 0.05); flex-shrink: 0; }
+        .action-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 12px; background: rgba(255, 255, 255, 0.5); border: 1px solid rgba(0, 0, 0, 0.05); flex-shrink: 0; color: #1d1d1f; }
+        .action-btn:active { transform: scale(0.94); }
         
         .page-wrapper { width: 100%; max-width: 1000px; margin: 0 auto; min-height: 100vh; padding: calc(96px + env(safe-area-inset-top)) var(--side-gap) 40px; }
         @media (min-width: 768px) { .page-wrapper { padding-top: calc(106px + env(safe-area-inset-top)); } }
@@ -80,11 +67,18 @@
             background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
             border-radius: var(--radius-lg); border: var(--glass-border); box-shadow: var(--card-shadow); 
             padding: 24px; position: relative; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; min-height: 110px;
-            cursor: pointer; -webkit-user-select: none; user-select: none;
+            cursor: pointer; -webkit-user-select: none; user-select: none; width: 100%;
         }
         .item-card:hover { transform: translateY(-2px); box-shadow: 0 12px 38px rgba(0, 0, 0, 0.08); }
         .item-card:active { transform: translateY(0) scale(0.99); opacity: 0.9; }
         
+        .search-result-card {
+            background: rgba(255, 255, 255, 0.6); backdrop-filter: none; -webkit-backdrop-filter: none;
+            border-radius: 20px; border: 1px solid rgba(0,0,0,0.03); box-shadow: none;
+            padding: 16px; min-height: auto; margin-bottom: 10px;
+        }
+        .search-result-card:hover { transform: translateY(-1px); background: #ffffff; }
+
         .card-info { padding-right: 0; text-align: left; }
         .item-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin:0; font-size:18px; font-weight: 700; color: #1d1d1f; }
         .info-row { margin-top: 6px; display: flex; flex-direction: column; gap: 2px; }
@@ -92,6 +86,7 @@
         .item-user { color:var(--secondary); margin: 0; }
         .pass-val { color: var(--accent); opacity: 0.7; }
         .item-time { position: absolute; bottom: 24px; right: 24px; font-size: 11px; color: var(--secondary); opacity: 0.4; font-family: ui-monospace, monospace; }
+        .search-result-card .item-time { bottom: 16px; right: 16px; }
 
         .auth-viewport { 
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
@@ -104,6 +99,7 @@
         .primary-btn { width: 100%; height: 50px; background: var(--accent); border: none; border-radius: var(--radius-md); color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.3s; }
         .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
+        /* ─── 核心修改：普通弹窗层级（搜索、新增、删除确认） ─── */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0, 0, 0, 0.2); z-index: 200; display: none; 
@@ -111,6 +107,11 @@
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
         }
         
+        /* ─── 核心修改：将详情窗口提高至高级别 z-index 210，使其可以完美盖在搜索窗口上方 ─── */
+        #pass-modal-overlay {
+            z-index: 210;
+        }
+
         .page-modal-content { 
             width: 100%; max-width: 420px; display: flex; flex-direction: column; text-align: left;
             background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
@@ -149,7 +150,6 @@
             cursor: pointer; transition: background-color 0.2s, border-color 0.25s, box-shadow 0.25s;
         }
         
-        /* 编辑状态的容器基础形态固定，不允许其因为内部节点更换而发生任何体积畸变 */
         .info-block-item.view-mode-active { cursor: pointer; }
         .info-block-item.view-mode-active:active { background-color: rgba(255, 255, 255, 0.9); }
         .info-block-item.edit-mode-active { cursor: default; background: rgba(255, 255, 255, 0.65); }
@@ -157,14 +157,12 @@
         
         .info-block-label { font-size: 11px; color: var(--secondary); font-weight: 600; user-select: none; text-transform: uppercase; letter-spacing: 0.05em; }
 
-        /* 输入域和文本展示槽的高度控制 */
         .info-block-content, .info-block-input-cell {
             font-size: 16px; color: #1d1d1f; text-align: left; word-break: break-all;
             font-family: ui-monospace, monospace; width: 100%; height: 26px; line-height: 26px;
         }
         .info-block-content.highlight { color: var(--accent); font-weight: 700; }
         
-        /* 融合窗口下：纯文本框与Textarea输入域被完全限制在相同的76px，保证任何时候都不改变外框 */
         .note-fixed-height-box {
             height: 76px !important; min-height: 76px !important; max-height: 76px !important;
             overflow-y: auto !important; word-break: break-all; white-space: pre-wrap;
@@ -180,6 +178,20 @@
         .info-block-item input { height: 26px !important; line-height: 26px !important; }
         .info-block-item textarea.add-note-input { resize: none; padding-top: 2px !important; }
 
+        .modal-search-box-wrapper {
+            background: #fff; border: 1px solid rgba(0,0,0,0.06); border-radius: 16px;
+            padding: 2px 14px; display: flex; align-items: center; gap: 10px; height: 50px; margin-bottom: 20px;
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+        .modal-search-box-wrapper:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1); }
+        .modal-search-box-wrapper input { border: none; outline: none; font-size: 16px; flex: 1; color: #1d1d1f; height: 100%; background: transparent; }
+        
+        .modal-search-results-area {
+            display: flex; flex-direction: column; width: 100%; max-height: 280px; overflow-y: auto;
+        }
+        .modal-search-results-area::-webkit-scrollbar { width: 4px; }
+        .modal-search-results-area::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
+
         .modal-action-row { display: flex; gap: 10px; width: 100%; margin-top: 14px; }
         .modal-action-row .primary-btn, .modal-action-row .secondary-text-btn { flex: 1; height: 48px; border-radius: var(--radius-md); font-size: 15px; font-weight: 600; border: none; cursor: pointer; }
         .modal-action-row .secondary-text-btn { background: rgba(0, 0, 0, 0.04); color: #1d1d1f; transition: background 0.2s, transform 0.1s; }
@@ -190,7 +202,7 @@
 
         #toast { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(0,0,0,0.85); color: white; padding: 12px 24px; border-radius: 24px; z-index: 1000; opacity: 0; pointer-events: none; transition: all 0.4s; }
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-        .status-msg { width: 100%; padding: 60px 0; color: var(--secondary); text-align: center; grid-column: 1/-1; }
+        .status-msg { width: 100%; padding: 40px 0; color: var(--secondary); text-align: center; grid-column: 1/-1; font-size: 14px; }
 
         #login-card {
             background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.45); box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.01), 0 24px 60px -8px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.4);
@@ -238,14 +250,8 @@
         <div class="brand-name">AEGIS</div>
     </div>
     <div class="header-actions" id="actions">
-        <div class="search-wrapper" id="search-wrapper">
-            <div class="search-icon" onclick="focusSearch()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            </div>
-            <input type="text" id="search-bar" class="search-input" placeholder="搜索..." oninput="handleSearchUI(this)" onfocus="handleSearchUI(this)" onblur="handleSearchUI(this)">
-            <div class="search-clear" onmousedown="event.preventDefault();clearSearch()" ontouchstart="event.preventDefault();clearSearch()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </div>
+        <div class="action-btn" onmousedown="event.preventDefault();openSearchModal()" ontouchstart="event.preventDefault();openSearchModal()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </div>
         <div class="action-btn" onmousedown="event.preventDefault();openAddModal()" ontouchstart="event.preventDefault();openAddModal()" style="color:var(--accent)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
         <div class="action-btn" onmousedown="event.preventDefault();softLock()" ontouchstart="event.preventDefault();softLock()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
@@ -277,9 +283,29 @@
 
 <div class="page-wrapper" id="main-ui" style="display:none"><div id="list-container"></div></div>
 
+<div class="modal-overlay" id="search-modal-overlay">
+    <div class="page-modal-content">
+        <div class="modal-close-x" onclick="toggleModal('search-modal', false)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </div>
+        <div class="modal-page-header">
+            <div class="modal-icon-wrapper">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            <h3>凭据搜索</h3>
+        </div>
+        
+        <div class="modal-search-box-wrapper">
+            <input type="text" id="modal-search-input" placeholder="输入名称、账号关键字过滤..." oninput="handleModalSearchEvent(this.value)">
+        </div>
+        
+        <div class="modal-search-results-area" id="modal-search-results-box"></div>
+    </div>
+</div>
+
 <div class="modal-overlay" id="pass-modal-overlay">
     <div class="page-modal-content">
-        <div class="modal-close-x" onclick="toggleModal('pass-modal', false)">
+        <div class="modal-close-x" id="merge-modal-close-icon" onclick="closeDetailsWindow()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </div>
         <div class="modal-page-header">
@@ -434,42 +460,19 @@
     };
 
     let FINAL_TOKEN = "", GIST_ID = localStorage.getItem('ae_gid'), ENCRYPTED_TK = localStorage.getItem('ae_enc_tk');
-    let currentActiveItem = null, CACHED_LIST = []; 
+    let currentActiveItem = null, CACHED_LIST = [], isSearchTriggerSource = false; 
     let lastScrollY = 0, isWindowInEditMode = false; 
-
-    document.addEventListener('click', (e) => {
-        const bar = document.getElementById('search-bar');
-        const wrapper = document.getElementById('search-wrapper');
-        if (wrapper && !wrapper.contains(e.target) && bar && bar.value === "") { bar.blur(); }
-    });
 
     document.addEventListener('touchmove', (e) => {
         if (document.body.classList.contains('modal-open-fixed')) {
             if (!e.target.closest('.modal-overlay')) { e.preventDefault(); }
-        } else {
-            const bar = document.getElementById('search-bar');
-            if (bar === document.activeElement && bar.value === "") { bar.blur(); }
         }
     }, { passive: false });
 
-    function focusSearch() { document.getElementById('search-bar').focus(); }
-    
-    function handleSearchUI(input) {
-        const wrapper = document.getElementById('search-wrapper'), actions = document.getElementById('actions');
-        const hasText = input.value.length > 0;
-        const isFocused = document.activeElement === input;
-        if (hasText) wrapper.classList.add('has-content'); else wrapper.classList.remove('has-content');
-        if (isFocused || hasText) actions.classList.add('search-active'); else actions.classList.remove('search-active');
-        handleSearch(input.value);
-        if (isFocused || hasText) { window.scrollTo({ top: 0, behavior: 'instant' }); }
-    }
-    
-    function clearSearch() { const input = document.getElementById('search-bar'); input.value = ''; handleSearchUI(input); input.focus(); }
-
-    function render(list, isSearching = false) {
-        if (!isSearching) CACHED_LIST = list; 
+    function render(list) {
+        CACHED_LIST = list; 
         const c = document.getElementById('list-container');
-        c.innerHTML = list.length ? '' : `<div class="status-msg">${isSearching ? '未找到相关凭据' : '暂无凭据'}</div>`;
+        c.innerHTML = list.length ? '' : `<div class="status-msg">暂无凭据</div>`;
         list.sort((a,b)=>b.id-a.id).forEach(item => {
             const div = document.createElement('div');
             div.className = 'item-card'; div.id = `card-${item.id}`;
@@ -483,15 +486,66 @@
                 </div>
                 ${item.updatedAt ? `<div class="item-time">${item.updatedAt}</div>` : ''} 
             `;
-            div.onclick = () => showDetails(item);
+            div.onclick = () => { isSearchTriggerSource = false; showDetails(item); };
             c.appendChild(div);
         });
     }
 
-    // 窗口一：初始化展现凭据
+    function openSearchCenterWindow() {
+        document.getElementById('modal-search-input').value = '';
+        handleModalSearchEvent(''); // 初始化彻底清空展现域
+        toggleModal('search-modal', true);
+        setTimeout(() => document.getElementById('modal-search-input').focus(), 150);
+    }
+    window.openSearchModal = openSearchCenterWindow;
+
+    // 弹窗内部实时动态筛选
+    function handleModalSearchEvent(val) {
+        const query = (val || "").toLowerCase().trim();
+        const box = document.getElementById('modal-search-results-box');
+        
+        // 核心修改：无搜索关键字时直接清空下方，不显示任何占位提示文案
+        if (!query) {
+            box.innerHTML = '';
+            return;
+        }
+        
+        const filtered = CACHED_LIST.filter(item => 
+            item.name.toLowerCase().includes(query) || 
+            (item.user && item.user.toLowerCase().includes(query))
+        );
+        
+        if (!filtered.length) {
+            box.innerHTML = `<div class="status-msg">未找到相关凭据</div>`;
+            return;
+        }
+        
+        box.innerHTML = '';
+        filtered.sort((a,b)=>b.id-a.id).forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'item-card search-result-card';
+            div.innerHTML = `
+                <div class="card-info">
+                    <h3 class="item-name">${item.name}</h3>
+                    <div class="info-row">
+                        <p class="item-user">${item.user || '-'}</p>
+                    </div>
+                </div>
+                ${item.updatedAt ? `<div class="item-time">${item.updatedAt}</div>` : ''} 
+            `;
+            // 核心修改：点击时直接弹出覆盖详情，绝不关闭底层的搜索弹窗，杜绝断层闪烁
+            div.onclick = () => {
+                isSearchTriggerSource = true; 
+                showDetails(item);
+            };
+            box.appendChild(div);
+        });
+    }
+
+    // 窗口一：渲染并展示详情
     function showDetails(item) {
         currentActiveItem = item;
-        toggleWindowEditState(false); // 强制初始化为静态非编辑状态
+        toggleWindowEditState(false); 
 
         document.getElementById('detail-name').innerText = item.name || '-';
         document.getElementById('detail-user').innerText = item.user || '-';
@@ -500,18 +554,26 @@
 
         toggleModal('pass-modal', true);
 
-        // 删除绑定接口跳转确认窗口
         document.getElementById('detail-del-btn').onclick = () => {
             toggleModal('pass-modal', false);
             document.getElementById('delete-target-name').innerText = item.name;
-            setTimeout(() => toggleModal('confirm-delete', true), 150);
+            setTimeout(() => toggleModal('confirm-delete-modal', true), 150);
         };
     }
 
-    // 核心切换逻辑：无感在同一个弹窗里融合“查看”与“修改”
+    // 核心修改：专门针对详情窗口关闭的清理动作
+    function closeDetailsWindow() {
+        toggleModal('pass-modal', false);
+        // 如果详情来源于搜索窗口的覆盖，直接关闭即可，底层的搜索窗口自始至终未曾消失
+        if (isSearchTriggerSource) {
+            isSearchTriggerSource = false; 
+            // 重新刷新一下搜索推荐槽的状态即可
+            handleModalSearchEvent(document.getElementById('modal-search-input').value);
+        }
+    }
+
     function toggleWindowEditState(activeEdit) {
         isWindowInEditMode = activeEdit;
-        
         const fields = ['name', 'user', 'pass', 'note'];
         const title = document.getElementById('merge-modal-title');
         const iconContainer = document.getElementById('merge-modal-icon-container');
@@ -520,7 +582,6 @@
             title.innerText = "修改凭据";
             iconContainer.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
             
-            // 填装当前静态值到对应的内部输入框
             document.getElementById('edit-name').value = currentActiveItem.name;
             document.getElementById('edit-user').value = currentActiveItem.user;
             document.getElementById('edit-pass').value = currentActiveItem.pass;
@@ -529,8 +590,7 @@
             fields.forEach(f => {
                 document.getElementById(`detail-${f}`).style.display = 'none';
                 document.getElementById(`wrapper-${f}`).style.display = 'block';
-                const el = document.getElementById(`container-${f}`);
-                el.className = "info-block-item edit-mode-active";
+                document.getElementById(`container-${f}`).className = "info-block-item edit-mode-active";
             });
 
             document.getElementById('group-view-actions').style.display = 'none';
@@ -542,8 +602,7 @@
             fields.forEach(f => {
                 document.getElementById(`wrapper-${f}`).style.display = 'none';
                 document.getElementById(`detail-${f}`).style.display = 'block';
-                const el = document.getElementById(`container-${f}`);
-                el.className = "info-block-item view-mode-active";
+                document.getElementById(`container-${f}`).className = "info-block-item view-mode-active";
             });
 
             document.getElementById('group-edit-actions').style.display = 'none';
@@ -551,22 +610,19 @@
         }
     }
 
-    // 独立打开新增窗口
     function openAddModal() {
         currentActiveItem = null;
         ['add-name','add-user','add-pass','add-note'].forEach(id => document.getElementById(id).value = '');
         toggleModal('add-modal', true);
     }
 
-    // 原位单条信息点击一键复制
     function copyTextFromCell(elementId, labelName) {
-        if (isWindowInEditMode) return; // 如果在编辑态则屏蔽复制动作
+        if (isWindowInEditMode) return; 
         const text = document.getElementById(elementId).innerText;
         if (!text || text === '') return;
         navigator.clipboard.writeText(text).then(() => { showToast(`${labelName}已复制`); }).catch(() => showToast("复制失败"));
     }
 
-    // 窗口：保存融合同步逻辑
     async function saveMergedData() {
         const name = document.getElementById('edit-name').value.trim();
         const pass = document.getElementById('edit-pass').value.trim();
@@ -574,27 +630,18 @@
 
         const saveBtn = document.getElementById('edit-save-btn');
         saveBtn.disabled = true; saveBtn.innerText = "同步中...";
-        
         const now = new Date();
         const timeStr = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
 
         try {
             let list = await getLatest();
-            const payload = {
-                name,
-                user: document.getElementById('edit-user').value,
-                pass,
-                note: document.getElementById('edit-note').value,
-                updatedAt: timeStr
-            };
+            const payload = { name, user: document.getElementById('edit-user').value, pass, note: document.getElementById('edit-note').value, updatedAt: timeStr };
             
             const index = list.findIndex(i => i.id == currentActiveItem.id);
             if (index !== -1) list[index] = { ...list[index], ...payload, id: currentActiveItem.id };
 
             await updateCloud(list);
-            clearSearch();
             
-            // 数据修改后直接在当前视窗内刷新文本显示并退回详情视图
             currentActiveItem = { ...currentActiveItem, ...payload };
             document.getElementById('detail-name').innerText = currentActiveItem.name;
             document.getElementById('detail-user').innerText = currentActiveItem.user;
@@ -602,12 +649,9 @@
             document.getElementById('detail-note').innerText = currentActiveItem.note;
             
             toggleWindowEditState(false);
-        } catch (e) { showToast("同步失败"); } finally {
-            saveBtn.disabled = false; saveBtn.innerText = "同步云端修改";
-        }
+        } catch (e) { showToast("同步失败"); } finally { saveBtn.disabled = false; saveBtn.innerText = "同步云端修改"; }
     }
 
-    // 新增独立凭据提交流
     async function saveNewData() {
         const name = document.getElementById('add-name').value.trim();
         const pass = document.getElementById('add-pass').value.trim();
@@ -620,24 +664,13 @@
 
         try {
             let list = await getLatest();
-            const payload = {
-                name,
-                user: document.getElementById('add-user').value,
-                pass,
-                note: document.getElementById('add-note').value,
-                updatedAt: timeStr,
-                id: Date.now()
-            };
+            const payload = { name, user: document.getElementById('add-user').value, pass, note: document.getElementById('add-note').value, updatedAt: timeStr, id: Date.now() };
             list.push(payload);
             await updateCloud(list);
-            clearSearch();
             toggleModal('add-modal', false);
-        } catch (e) { showToast("同步失败"); } finally {
-            saveBtn.disabled = false; saveBtn.innerText = "同步新建凭据";
-        }
+        } catch (e) { showToast("同步失败"); } finally { saveBtn.disabled = false; saveBtn.innerText = "同步新建凭据"; }
     }
 
-    // 最终确认删除触发
     document.getElementById('final-del-btn').onclick = async function() {
         if (!currentActiveItem) return;
         const btn = document.getElementById('final-del-btn'); btn.disabled = true; btn.innerText = "正在同步...";
@@ -645,8 +678,7 @@
             let list = await getLatest();
             list = list.filter(i => i.id != currentActiveItem.id);
             await updateCloud(list);
-            clearSearch();
-            toggleModal('confirm-delete', false);
+            toggleModal('confirm-delete-modal', false);
         } catch(e) { showToast("删除失败"); } finally { btn.disabled = false; btn.innerText = "确定删除"; }
     };
 
@@ -655,12 +687,19 @@
     function toggleModal(id, show) { 
         const overlay = document.getElementById(id + '-overlay');
         if (show) {
-            lastScrollY = window.scrollY; overlay.style.display = 'flex';
-            document.body.style.top = `-${lastScrollY}px`; document.body.classList.add('modal-open-fixed');
+            lastScrollY = window.scrollY; 
+            overlay.style.display = 'flex';
+            // 只有在打开最底层第一个弹窗时才锁定 body 轴，避免多层弹窗时发生页面滚动位移
+            if (document.querySelectorAll('.modal-overlay[style*="display: flex"]').length === 1) {
+                document.body.style.top = `-${lastScrollY}px`; 
+                document.body.classList.add('modal-open-fixed');
+            }
         } else {
             overlay.style.display = 'none';
             if (!document.querySelector('.modal-overlay[style*="display: flex"]')) {
-                document.body.classList.remove('modal-open-fixed'); document.body.style.top = ''; window.scrollTo(0, lastScrollY);
+                document.body.classList.remove('modal-open-fixed'); 
+                document.body.style.top = ''; 
+                window.scrollTo(0, lastScrollY);
             }
         }
     }
@@ -671,7 +710,6 @@
         const pass = document.getElementById('main-pass').value; if (!pass) return;
         document.getElementById('main-pass').blur();
         const tokenInput = document.getElementById('gh-token'); if(tokenInput) tokenInput.blur();
-        
         const loader = document.getElementById('auth-loader'); const loaderText = document.getElementById('auth-loader-text');
         const resetLink = document.getElementById('reset-link'); const loginBtn = document.getElementById('login-btn');
         
@@ -679,7 +717,6 @@
         if (loaderText) loaderText.innerText = "正在解密安全密钥...";
         if (resetLink) resetLink.style.display = 'none';
         if (loginBtn) loginBtn.disabled = true;
-
         await new Promise(resolve => setTimeout(resolve, 300)); 
 
         try {
@@ -710,7 +747,7 @@
     async function preloadCloudData() {
         try {
             const resp = await fetch('https://api.github.com/gists', { headers: { 'Authorization': `token ${FINAL_TOKEN}` } });
-            if (!resp.ok) { return false; }
+            if (!resp.ok) return false;
             const data = await resp.json(); const db = data.find(g => g.files['aegis_db.json']);
             if(db) {
                 GIST_ID = db.id; localStorage.setItem('ae_gid', GIST_ID);
@@ -740,7 +777,6 @@
         } catch(e) { showToast("初始化失败"); }
     }
 
-    function handleSearch(val) { const query = (val || "").toLowerCase().trim(); if (!query) { render(CACHED_LIST); return; } render(CACHED_LIST.filter(item => item.name.toLowerCase().includes(query) || (item.user && item.user.toLowerCase().includes(query))), true); }
     async function getLatest() { 
         const r = await fetch(`https://api.github.com/gists/${GIST_ID}`, { headers: { Authorization: `token ${FINAL_TOKEN}` }}); 
         const data = await r.json(); const content = data.files['aegis_db.json'].content;
