@@ -147,6 +147,7 @@
         
         #pass-modal-overlay { z-index: 210; }
 
+        /* 【深度优化】：通过在 translate 中精确扣除安全区及键盘扰动补偿，使整体视觉完美落座物理视口绝对正中心 */
         .page-modal-content { 
             position: fixed; 
             top: calc(50% - env(safe-area-inset-bottom) / 2); 
@@ -235,16 +236,21 @@
         div.note-fixed-height-box { padding-top: 2px !important; } 
         .note-fixed-height-box::-webkit-scrollbar { display: none; width: 0; }
 
-        /* 搜索外包装 form 化调整 */
+        .info-block-item input, .info-block-item textarea {
+            background: transparent !important; border: none !important; margin: 0 !important;
+            border-radius: 0 !important; width: 100% !important; outline: none !important; color: #1d1d1f; font-family: inherit; font-size: inherit;
+        }
+        .info-block-item input { height: 26px !important; line-height: 26px !important; font-size: 16px !important; padding: 0 !important; }
+        
+        .info-block-item textarea.add-note-input { resize: none; padding: 2px 0 0 0 !important; }
+
         .modal-search-box-wrapper {
             background: #fff; border: 1px solid rgba(0,0,0,0.06); border-radius: 16px;
             padding: 2px 14px; display: flex; align-items: center; gap: 10px; height: 50px; margin-bottom: 20px;
             transition: border-color 0.25s, box-shadow 0.25s, background-color 0.25s; flex-shrink: 0;
-            width: 100%;
         }
-        .modal-search-box-wrapper form { display: flex; align-items: center; width: 100%; height: 100%; margin: 0; padding: 0; }
-        .modal-search-box-wrapper input { border: none; outline: none; font-size: 16px; flex: 1; color: #1d1d1f; height: 100%; background: transparent; font-family: var(--font-sans); width: 100%; }
         .modal-search-box-wrapper:focus-within { background: #ffffff; border-color: var(--accent); box-shadow: 0 0 0 3.5px rgba(0, 122, 255, 0.15); }
+        .modal-search-box-wrapper input { border: none; outline: none; font-size: 16px; flex: 1; color: #1d1d1f; height: 100%; background: transparent; font-family: var(--font-sans); }
         
         .modal-search-results-area {
             display: grid; grid-template-columns: 100%; gap: 12px; width: 100%; flex: 1; overflow-y: auto;
@@ -365,9 +371,7 @@
         </div>
         
         <div class="modal-search-box-wrapper">
-            <form action="javascript:void(0);" onsubmit="document.getElementById('modal-search-input').blur();">
-                <input type="search" id="modal-search-input" placeholder="输入名称、账号关键字过滤..." oninput="handleModalSearchEvent(this.value)" onkeydown="if(event.keyCode===13){this.blur();}">
-            </form>
+            <input type="text" id="modal-search-input" placeholder="输入名称、账号关键字过滤..." oninput="handleModalSearchEvent(this.value)">
         </div>
         
         <div class="modal-search-results-area" id="modal-search-results-box"></div>
