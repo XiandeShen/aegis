@@ -19,11 +19,13 @@
             --side-gap: 20px; --glass-bg: rgba(255, 255, 255, 0.75); --glass-blur: blur(20px);
             --glass-border: 1px solid rgba(255, 255, 255, 0.6); --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
             --radius-lg: 28px; --radius-md: 14px;
+            --font-sans: -apple-system, "SF Pro Display", "SF Pro Text", "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            --font-mono: "SF Pro Text", ui-monospace, SFMono-Regular, SF Pro Icons, "PingFang SC", monospace;
         }
         body, html {
             margin: 0; padding: 0; width: 100%; min-height: 100%;
             background-color: var(--bg-base); color: #1d1d1f;
-            font-family: -apple-system, "SF Pro Display", "PingFang SC", sans-serif;
+            font-family: var(--font-sans);
             -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; overflow-x: hidden;
         }
         
@@ -82,10 +84,11 @@
         .card-info { padding-right: 0; text-align: left; }
         .item-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin:0; font-size:18px; font-weight: 700; color: #1d1d1f; }
         .info-row { margin-top: 6px; display: flex; flex-direction: column; gap: 2px; }
-        .item-user, .pass-val { font-size:13px; font-family: ui-monospace, monospace; }
+        
+        .item-user, .pass-val { font-size:13px; font-family: var(--font-mono); }
         .item-user { color:var(--secondary); margin: 0; }
         .pass-val { color: var(--accent); opacity: 0.7; }
-        .item-time { position: absolute; bottom: 24px; right: 24px; font-size: 11px; color: var(--secondary); opacity: 0.4; font-family: ui-monospace, monospace; }
+        .item-time { position: absolute; bottom: 24px; right: 24px; font-size: 11px; color: var(--secondary); opacity: 0.4; font-family: var(--font-sans); }
         .search-result-card .item-time { bottom: 16px; right: 16px; }
 
         .auth-viewport { 
@@ -95,8 +98,8 @@
         }
         .glass-card { background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border-radius: var(--radius-lg); border: var(--glass-border); padding: 32px 24px; width: 100%; max-width: 340px; text-align: center; }
         
-        .auth-form-body input { width: 100%; height: 50px; padding: 0 16px; margin: 8px 0; border-radius: var(--radius-md); border: 1px solid rgba(0,0,0,0.08); font-size: 16px; outline: none; background: rgba(255,255,255,0.6); font-family: inherit; }
-        .primary-btn { width: 100%; height: 50px; background: var(--accent); border: none; border-radius: var(--radius-md); color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.3s; }
+        .auth-form-body input { width: 100%; height: 50px; padding: 0 16px; margin: 8px 0; border-radius: var(--radius-md); border: 1px solid rgba(0,0,0,0.08); font-size: 16px; outline: none; background: rgba(255,255,255,0.6); font-family: var(--font-sans); }
+        .primary-btn { width: 100%; height: 50px; background: var(--accent); border: none; border-radius: var(--radius-md); color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.3s; font-family: var(--font-sans); }
         .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .modal-overlay { 
@@ -155,27 +158,30 @@
 
         .info-block-content, .info-block-input-cell {
             font-size: 16px; color: #1d1d1f; text-align: left; word-break: break-all;
-            font-family: ui-monospace, monospace; width: 100%; height: 26px; line-height: 26px;
+            font-family: var(--font-mono); width: 100%; height: 26px; line-height: 26px;
         }
         .info-block-content.highlight { color: var(--accent); font-weight: 700; }
         
-        /* ─── 核心修改（第10点）：完全拉平并锁定详情查看、编辑修改、独立新增三处备注栏里字体的大小与排版 ─── */
+        /* ─── 极致对齐样式修正区域 ─── */
         .note-fixed-height-box {
             height: 76px !important; min-height: 76px !important; max-height: 76px !important;
             overflow-y: auto !important; word-break: break-all; white-space: pre-wrap;
-            font-size: 14px !important; color: #333 !important; line-height: 1.5 !important; 
-            font-family: -apple-system, "SF Pro Display", "PingFang SC", sans-serif !important; 
-            width: 100%; text-align: left;
+            font-size: 14px !important; color: #333 !important; line-height: 1.6 !important; 
+            font-family: var(--font-sans) !important; 
+            width: 100%; text-align: left; margin: 0 !important;
         }
+        div.note-fixed-height-box { padding-top: 2px !important; } 
         .note-fixed-height-box::-webkit-scrollbar { width: 3px; }
         .note-fixed-height-box::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.08); border-radius: 4px; }
 
         .info-block-item input, .info-block-item textarea {
-            background: transparent !important; border: none !important; margin: 0 !important; padding: 0 !important;
+            background: transparent !important; border: none !important; margin: 0 !important;
             border-radius: 0 !important; width: 100% !important; outline: none !important; color: #1d1d1f; font-family: inherit; font-size: inherit;
         }
-        .info-block-item input { height: 26px !important; line-height: 26px !important; font-size: 16px !important; }
-        .info-block-item textarea.add-note-input { resize: none; padding-top: 1px !important; }
+        .info-block-item input { height: 26px !important; line-height: 26px !important; font-size: 16px !important; padding: 0 !important; }
+        
+        /* 给编辑状态下的 textarea 补充精确内边距，将其文本基准线强行压低，与 div 达到绝对像素对齐 */
+        .info-block-item textarea.add-note-input { resize: none; padding: 2px 0 0 0 !important; }
 
         .modal-search-box-wrapper {
             background: #fff; border: 1px solid rgba(0,0,0,0.06); border-radius: 16px;
@@ -183,30 +189,28 @@
             transition: border-color 0.25s, box-shadow 0.25s;
         }
         .modal-search-box-wrapper:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1); }
-        .modal-search-box-wrapper input { border: none; outline: none; font-size: 16px; flex: 1; color: #1d1d1f; height: 100%; background: transparent; }
+        .modal-search-box-wrapper input { border: none; outline: none; font-size: 16px; flex: 1; color: #1d1d1f; height: 100%; background: transparent; font-family: var(--font-sans); }
         
-        /* ─── 核心修改（第9点）：为搜索滚动条区域增加右侧补白，防止滚动条侵入和挡住卡片边缘 ─── */
         .modal-search-results-area {
             display: flex; flex-direction: column; width: 100%; max-height: 280px; overflow-y: auto;
             padding-right: 6px; 
         }
-        /* 极致细化定制的现代半透明微型滚动条，不再扎眼 */
         .modal-search-results-area::-webkit-scrollbar { width: 3px; }
         .modal-search-results-area::-webkit-scrollbar-track { background: transparent; }
         .modal-search-results-area::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.08); border-radius: 10px; }
         .modal-search-results-area:hover::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); }
 
         .modal-action-row { display: flex; gap: 10px; width: 100%; margin-top: 14px; }
-        .modal-action-row .primary-btn, .modal-action-row .secondary-text-btn { flex: 1; height: 48px; border-radius: var(--radius-md); font-size: 15px; font-weight: 600; border: none; cursor: pointer; }
+        .modal-action-row .primary-btn, .modal-action-row .secondary-text-btn { flex: 1; height: 48px; border-radius: var(--radius-md); font-size: 15px; font-weight: 600; border: none; cursor: pointer; font-family: var(--font-sans); }
         .modal-action-row .secondary-text-btn { background: rgba(0, 0, 0, 0.04); color: #1d1d1f; transition: background 0.2s, transform 0.1s; }
         .modal-action-row .secondary-text-btn:active { background: rgba(0, 0, 0, 0.08); transform: scale(0.98); }
         
-        .modal-action-row .danger-text-btn { flex: 1; height: 48px; border-radius: var(--radius-md); font-size: 15px; font-weight: 600; border: none; cursor: pointer; background: rgba(255, 59, 48, 0.08); color: var(--danger); transition: background 0.2s; }
+        .modal-action-row .danger-text-btn { flex: 1; height: 48px; border-radius: var(--radius-md); font-size: 15px; font-weight: 600; border: none; cursor: pointer; background: rgba(255, 59, 48, 0.08); color: var(--danger); transition: background 0.2s; font-family: var(--font-sans); }
         .modal-action-row .danger-text-btn:active { background: rgba(255, 59, 48, 0.15); transform: scale(0.98); }
 
-        #toast { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(0,0,0,0.85); color: white; padding: 12px 24px; border-radius: 24px; z-index: 1000; opacity: 0; pointer-events: none; transition: all 0.4s; }
+        #toast { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(0,0,0,0.85); color: white; padding: 12px 24px; border-radius: 24px; z-index: 1000; opacity: 0; pointer-events: none; transition: all 0.4s; font-family: var(--font-sans); }
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-        .status-msg { width: 100%; padding: 40px 0; color: var(--secondary); text-align: center; grid-column: 1/-1; font-size: 14px; }
+        .status-msg { width: 100%; padding: 40px 0; color: var(--secondary); text-align: center; grid-column: 1/-1; font-size: 14px; font-family: var(--font-sans); }
 
         #login-card {
             background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.45); box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.01), 0 24px 60px -8px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.4);
@@ -219,17 +223,17 @@
         
         .auth-form-body { display: flex; flex-direction: column; gap: 0; min-height: 98px; justify-content: flex-start; }
         .auth-input-button-row { display: flex; gap: 10px; width: 100%; align-items: center; }
-        .auth-input-button-row input { margin: 0; flex: 1; background: rgba(255, 255, 255, 0.75); border: 1px solid rgba(0, 0, 0, 0.05); border-radius: 15px; height: 50px; font-size: 15px; color: #1d1d1f; box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.01); transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+        .auth-input-button-row input { margin: 0; flex: 1; background: rgba(255, 255, 255, 0.75); border: 1px solid rgba(0, 0, 0, 0.05); border-radius: 15px; height: 50px; font-size: 15px; color: #1d1d1f; box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.01); transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); font-family: var(--font-sans); }
         .auth-input-button-row input::placeholder { color: #a1a1a6; }
         .auth-input-button-row input:focus { background: #ffffff; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.12); }
         
-        .auth-input-button-row .primary-btn { width: 90px; flex-shrink: 0; background: linear-gradient(180deg, #2f91ff 0%, var(--accent) 100%); border-radius: 15px; height: 50px; font-size: 15px; font-weight: 600; box-shadow: 0 4px 14px rgba(0, 122, 255, 0.15); transition: all 0.25s ease; }
+        .auth-input-button-row .primary-btn { width: 90px; flex-shrink: 0; background: linear-gradient(180deg, #2f91ff 0%, var(--accent) 100%); border-radius: 15px; height: 50px; font-size: 15px; font-weight: 600; box-shadow: 0 4px 14px rgba(0, 122, 255, 0.15); transition: all 0.25s ease; font-family: var(--font-sans); }
         .auth-input-button-row .primary-btn:hover:not(:disabled) { opacity: 0.95; transform: translateY(-0.5px); }
         
         #setup-area { animation: fadeInFlag 0.4s ease forwards; width: 100%; margin-bottom: 12px; }
         @keyframes fadeInFlag { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
         
-        #reset-link { transition: opacity 0.25s ease, transform 0.25s ease, color 0.25s ease !important; font-weight: 500; padding: 8px 12px; display: inline-block; text-align: center; margin-top: 16px !important; width: 100%; background: transparent !important; }
+        #reset-link { transition: opacity 0.25s ease, transform 0.25s ease, color 0.25s ease !important; font-weight: 500; padding: 8px 12px; display: inline-block; text-align: center; margin-top: 16px !important; width: 100%; background: transparent !important; font-family: var(--font-sans); }
         #reset-link:hover { opacity: 1 !important; color: var(--danger) !important; }
         #reset-link:active { color: var(--danger) !important; transform: scale(0.97); }
 
@@ -238,7 +242,7 @@
         .auth-progress-bar { width: 100%; height: 4px; background: rgba(0, 0, 0, 0.05); border-radius: 2px; overflow: hidden; position: relative; }
         .auth-progress-fill { position: absolute; top: 0; left: 0; bottom: 0; width: 40%; background: linear-gradient(90deg, var(--accent), #64afff, var(--accent)); background-size: 200% 100%; border-radius: 2px; animation: progressMove 1.5s infinite linear; }
         @keyframes progressMove { 0% { left: -40%; background-position: 0% 0%; } 100% { left: 100%; background-position: -200% 0%; } }
-        .auth-progress-text { font-size: 12px; color: var(--secondary); font-weight: 500; text-align: center; }
+        .auth-progress-text { font-size: 12px; color: var(--secondary); font-weight: 500; text-align: center; font-family: var(--font-sans); }
 
         button, input, textarea, .action-btn, .info-block-item { -webkit-tap-highlight-color: transparent !important; outline: none !important; }
         .primary-btn { transition: opacity 0.2s ease, transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease !important; }
