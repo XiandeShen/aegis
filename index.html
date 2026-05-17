@@ -34,7 +34,6 @@
             overflow: hidden !important;
         }
 
-        /* ─── 核心修改：默认隐藏渐变背景，只有在解锁成功、添加了 .unlocked 类后才显示，避免解锁页断层 ─── */
         .gradient-bg {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(135deg, #e2e8f0 0%, #f9fafb 50%, #e2e8f0 100%);
@@ -46,7 +45,6 @@
         }
         @keyframes gradientFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         
-        /* ─── 核心修改：顶部栏保持 100% 纯实色不透明，向上翻动时完美遮挡底层卡片 ─── */
         header {
             position: fixed; top: 0; left: 0; width: 100%;
             padding: calc(18px + env(safe-area-inset-top)) var(--side-gap) 15px;
@@ -79,7 +77,6 @@
         .search-wrapper.has-content .search-clear { display: flex; }
         .action-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 12px; background: rgba(255, 255, 255, 0.5); border: 1px solid rgba(0, 0, 0, 0.05); flex-shrink: 0; }
         
-        /* 移动端首张卡片遮挡修复 - 恢复最初完美的间距比例 */
         .page-wrapper { width: 100%; max-width: 1000px; margin: 0 auto; min-height: 100vh; padding: calc(96px + env(safe-area-inset-top)) var(--side-gap) 40px; }
         @media (min-width: 768px) { .page-wrapper { padding-top: calc(106px + env(safe-area-inset-top)); } }
 
@@ -93,7 +90,6 @@
         }
         .item-card:hover:not(.shake-active) { transform: translateY(-2px); }
         
-        /* 二次确认卡片抖动动画 */
         .item-card.shake-active {
             animation: cardWiggle 0.25s ease-in-out infinite;
             border-color: rgba(255, 59, 48, 0.45);
@@ -118,7 +114,6 @@
         
         .item-time { position: absolute; bottom: 22px; right: 22px; font-size: 11px; color: var(--secondary); opacity: 0.4; font-family: ui-monospace, monospace; line-height: 1.5; }
 
-        /* 视口全屏锁定，确保 iOS PWA 模式下解锁面板完美绝对居中 */
         .auth-viewport { 
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -132,7 +127,6 @@
         .primary-btn { width: 100%; height: 50px; background: var(--accent); border: none; border-radius: var(--radius-md); color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.3s; }
         .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* 二级页面遮罩层 */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0, 0, 0, 0.15); z-index: 200; display: none; 
@@ -142,7 +136,6 @@
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
         }
         
-        /* 二级弹窗卡片容器 */
         .page-modal-content { 
             width: 100%; max-width: 440px; display: flex; flex-direction: column; text-align: left;
             background: #ffffff; border-radius: 24px; padding: 24px;
@@ -158,7 +151,6 @@
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        /* ─── 在移动端下让二级菜单的对应功能文字与图标，在尺寸排版上完全和底层 brand 重合 ─── */
         @media (max-width: 480px) {
             .modal-overlay { 
                 background: #f5f5f7; 
@@ -294,7 +286,13 @@
         .card-brand-name { font-size: 15px; font-weight: 800; letter-spacing: 0.25em; color: #1d1d1f; }
         #login-card h2 { display: none; }
         
-        .auth-form-body { display: flex; flex-direction: column; gap: 0; }
+        .auth-form-body { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 0; 
+            min-height: 98px; 
+            justify-content: flex-start;
+        }
         .auth-input-button-row { display: flex; gap: 10px; width: 100%; align-items: center; }
         .auth-input-button-row input { margin: 0; flex: 1; background: rgba(255, 255, 255, 0.75); border: 1px solid rgba(0, 0, 0, 0.05); border-radius: 15px; height: 50px; font-size: 15px; color: #1d1d1f; box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.01); transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
         .auth-input-button-row input::placeholder { color: #a1a1a6; }
@@ -307,13 +305,51 @@
         @keyframes fadeInFlag { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
         
         #reset-link { 
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important; 
+            transition: opacity 0.25s ease, transform 0.25s ease, color 0.25s ease !important; 
             font-weight: 500; padding: 8px 12px; display: inline-block; text-align: center; margin-top: 16px !important; width: 100%; background: transparent !important;
         }
         #reset-link:hover { opacity: 1 !important; color: var(--danger) !important; }
         #reset-link:active { color: var(--danger) !important; transform: scale(0.97); }
 
-        /* ─── 移动端点击高亮与焦点框完美优化 ─── */
+        .auth-progress-container {
+            width: 100%;
+            margin-top: 24px;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            animation: progressFadeIn 0.3s ease forwards;
+        }
+        @keyframes progressFadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .auth-progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+        .auth-progress-fill {
+            position: absolute;
+            top: 0; left: 0; bottom: 0; width: 40%;
+            background: linear-gradient(90deg, var(--accent), #64afff, var(--accent));
+            background-size: 200% 100%;
+            border-radius: 2px;
+            animation: progressMove 1.5s infinite linear;
+        }
+        @keyframes progressMove {
+            0% { left: -40%; background-position: 0% 0%; }
+            100% { left: 100%; background-position: -200% 0%; }
+        }
+        .auth-progress-text {
+            font-size: 12px;
+            color: var(--secondary);
+            font-weight: 500;
+            text-align: center;
+        }
+
         button, input, textarea, .action-btn, .tool-btn, .info-block-item {
             -webkit-tap-highlight-color: transparent !important;
             outline: none !important;
@@ -373,7 +409,11 @@
             <div id="setup-area" style="display:none;"><input type="password" id="gh-token" placeholder="GitHub Token (ghp_...)"></div>
             <div class="auth-input-button-row">
                 <input type="password" id="main-pass" placeholder="请键入密码" autofocus onkeydown="if(event.keyCode===13){handleAuth();}">
-                <button class="primary-btn" onclick="handleAuth()">登录</button>
+                <button class="primary-btn" id="login-btn" onclick="handleAuth()">登录</button>
+            </div>
+            <div class="auth-progress-container" id="auth-loader">
+                <div class="auth-progress-bar"><div class="auth-progress-fill"></div></div>
+                <div class="auth-progress-text" id="auth-loader-text">正在验证凭据...</div>
             </div>
             <p id="reset-link" style="font-size:12px; color:#86868b; cursor:pointer; display:none; opacity:0.6" onclick="toggleModal('hard-reset', true)">重置 Token 配置</p>
         </div>
@@ -525,7 +565,6 @@
 
     function focusSearch() { document.getElementById('search-bar').focus(); }
     
-    /* ─── 修正：彻底移除不美观的间距拉伸 CSS，改用优雅的无感 JS 瞬间置顶来解决移动端首卡遮挡 ─── */
     function handleSearchUI(input) {
         const wrapper = document.getElementById('search-wrapper'), actions = document.getElementById('actions');
         const hasText = input.value.length > 0;
@@ -628,7 +667,6 @@
 
         toggleModal('pass-modal', true);
         
-        /* ─── 保持修改：“复制全部”点击后一次性完整导出四大维度的文本内容 ─── */
         document.getElementById('copy-all-btn').onclick = function() {
             const allText = `名称: ${item.name || '-'}\n账号: ${item.user || '-'}\n密码: ${item.pass || '-'}${item.note ? `\n备注: ${item.note}` : ''}`;
             navigator.clipboard.writeText(allText).then(() => showToast("全部内容已复制")).catch(() => showToast("复制失败"));
@@ -683,6 +721,7 @@
     
     function showToast(m) { const t=document.getElementById('toast'); t.innerText=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2000); }
 
+    // ─── 核心修改：真正的预加载逻辑 ───
     async function handleAuth() {
         const pass = document.getElementById('main-pass').value; if (!pass) return;
         
@@ -690,49 +729,102 @@
         const tokenInput = document.getElementById('gh-token');
         if(tokenInput) tokenInput.blur();
         
-        await new Promise(resolve => setTimeout(resolve, 350)); 
+        const loader = document.getElementById('auth-loader');
+        const loaderText = document.getElementById('auth-loader-text');
+        const resetLink = document.getElementById('reset-link');
+        const loginBtn = document.getElementById('login-btn');
+        
+        if (loader) loader.style.display = 'flex';
+        if (loaderText) loaderText.innerText = "正在解密安全密钥...";
+        if (resetLink) resetLink.style.display = 'none';
+        if (loginBtn) loginBtn.disabled = true;
 
-        await CryptoSvc.deriveKey(pass);
-        if (!ENCRYPTED_TK) {
-            const tk = document.getElementById('gh-token').value.trim(); 
-            if (!tk.startsWith('ghp_')) { showToast("Token无效"); return; }
-            const encryptedTk = await CryptoSvc.encrypt(tk);
-            localStorage.setItem('ae_enc_tk', encryptedTk); FINAL_TOKEN = tk;
-        } else {
-            const decryptedTk = await CryptoSvc.decrypt(ENCRYPTED_TK);
-            decryptedTk ? FINAL_TOKEN = decryptedTk : (showToast("密码错误或数据损坏"));
-            if (!decryptedTk) return;
+        await new Promise(resolve => setTimeout(resolve, 300)); 
+
+        try {
+            await CryptoSvc.deriveKey(pass);
+            if (!ENCRYPTED_TK) {
+                const tk = document.getElementById('gh-token').value.trim(); 
+                if (!tk.startsWith('ghp_')) { 
+                    showToast("Token无效"); 
+                    resetAuthUI();
+                    return; 
+                }
+                const encryptedTk = await CryptoSvc.encrypt(tk);
+                localStorage.setItem('ae_enc_tk', encryptedTk); FINAL_TOKEN = tk;
+            } else {
+                const decryptedTk = await CryptoSvc.decrypt(ENCRYPTED_TK);
+                if (!decryptedTk) {
+                    showToast("密码错误或数据损坏");
+                    resetAuthUI();
+                    return;
+                }
+                FINAL_TOKEN = decryptedTk;
+            }
+            
+            // 密钥校验通过后，不急着切页面，直接在后台借用登录进度条拉取网络数据
+            if (loaderText) loaderText.innerText = "读取云端凭据中...";
+            
+            const isPreloadSuccess = await preloadCloudData();
+            if (!isPreloadSuccess) {
+                resetAuthUI();
+                return;
+            }
+
+            // ─── 到这里，数据在后台全部下载、解密并渲染完毕！此时瞬间切入界面，实现“进入即完整” ───
+            document.body.classList.add('unlocked');
+            document.getElementById('auth-ui').style.display = 'none'; 
+            document.getElementById('main-ui').style.display = 'block'; 
+            document.getElementById('actions').style.visibility = 'visible'; 
+            
+            window.scrollTo(0, 0);
+            document.body.scrollTop = 0;
+
+        } catch (e) {
+            showToast("认证发生未知错误");
+            resetAuthUI();
         }
-        
-        // ─── 核心修改：通过向 body 添加 .unlocked 类，动态优雅地切回列表的高级渐变背板 ───
-        document.body.classList.add('unlocked');
-
-        document.getElementById('auth-ui').style.display = 'none'; 
-        document.getElementById('main-ui').style.display = 'block'; 
-        document.getElementById('actions').style.visibility = 'visible'; 
-        
-        window.scrollTo(0, 0);
-        document.body.scrollTop = 0;
-        
-        startSync();
     }
 
-    async function startSync() {
-        const container = document.getElementById('list-container'); container.innerHTML = '<div class="status-msg">同步中...</div>';
+    // 后台无感加载云端数据流
+    async function preloadCloudData() {
         try {
             const resp = await fetch('https://api.github.com/gists', { headers: { 'Authorization': `token ${FINAL_TOKEN}` } });
-            const data = await resp.json(); const db = data.find(g => g.files['aegis_db.json']);
+            if (!resp.ok) { showToast("云端同步失败，网络异常"); return false; }
+            
+            const data = await resp.json(); 
+            const db = data.find(g => g.files['aegis_db.json']);
+            
             if(db) {
-                GIST_ID = db.id; localStorage.setItem('ae_gid', GIST_ID);
+                GIST_ID = db.id; 
+                localStorage.setItem('ae_gid', GIST_ID);
                 const detail = await (await fetch(db.url, { headers: { Authorization: `token ${FINAL_TOKEN}` } })).json();
                 const rawContent = detail.files['aegis_db.json'].content;
                 let list = [];
                 if (rawContent && rawContent !== "[]") {
-                    const decrypted = await CryptoSvc.decrypt(rawContent); list = JSON.parse(decrypted || "[]");
+                    const decrypted = await CryptoSvc.decrypt(rawContent); 
+                    list = JSON.parse(decrypted || "[]");
                 }
-                render(list);
-            } else { startSyncNew(); }
-        } catch(e) { container.innerHTML = '<div class="status-msg">同步失败</div>'; }
+                render(list); // 直接渲染到隐藏的容器中
+                return true;
+            } else { 
+                // 新用户建立新文件
+                await startSyncNew(); 
+                return true;
+            }
+        } catch(e) { 
+            showToast("云端仓库连接失败"); 
+            return false; 
+        }
+    }
+
+    function resetAuthUI() {
+        const loader = document.getElementById('auth-loader');
+        const resetLink = document.getElementById('reset-link');
+        const loginBtn = document.getElementById('login-btn');
+        if (loader) loader.style.display = 'none';
+        if (loginBtn) loginBtn.disabled = false;
+        if (resetLink && ENCRYPTED_TK) resetLink.style.display = 'block';
     }
 
     async function startSyncNew() {
