@@ -162,13 +162,14 @@
         }
         .info-block-content.highlight { color: var(--accent); font-weight: 700; }
         
-        /* ─── 极致对齐样式修正区域 ─── */
+        /* ─── 极致对齐与留白样式修正区域 ─── */
         .note-fixed-height-box {
             height: 76px !important; min-height: 76px !important; max-height: 76px !important;
             overflow-y: auto !important; word-break: break-all; white-space: pre-wrap;
             font-size: 14px !important; color: #333 !important; line-height: 1.6 !important; 
             font-family: var(--font-sans) !important; 
             width: 100%; text-align: left; margin: 0 !important;
+            padding-right: 8px !important; /* 增加右边距，给自定义滚动条优雅的留白，防止贴近框线 */
         }
         div.note-fixed-height-box { padding-top: 2px !important; } 
         .note-fixed-height-box::-webkit-scrollbar { width: 3px; }
@@ -556,6 +557,10 @@
         document.getElementById('detail-pass').innerText = item.pass || '-';
         document.getElementById('detail-note').innerText = item.note || '';
 
+        // 打开时让备注文本框直接重置归零
+        document.getElementById('detail-note').scrollTop = 0;
+        document.getElementById('edit-note').scrollTop = 0;
+
         toggleModal('pass-modal', true);
 
         document.getElementById('detail-del-btn').onclick = () => {
@@ -565,7 +570,13 @@
         };
     }
 
+    // ─── 核心修复区域：在这里解决“假关闭”问题 ───
     function closeDetailsWindow() {
+        // 彻底关闭逻辑：在隐藏弹窗的一瞬间，强行把状态、样式和滚动条全部清零复位！
+        toggleWindowEditState(false); 
+        document.getElementById('detail-note').scrollTop = 0;
+        document.getElementById('edit-note').scrollTop = 0;
+
         toggleModal('pass-modal', false);
         if (isSearchTriggerSource) {
             isSearchTriggerSource = false; 
@@ -594,6 +605,8 @@
                 document.getElementById(`container-${f}`).className = "info-block-item edit-mode-active";
             });
 
+            document.getElementById('edit-note').scrollTop = 0;
+
             document.getElementById('group-view-actions').style.display = 'none';
             document.getElementById('group-edit-actions').style.display = 'flex';
         } else {
@@ -605,6 +618,8 @@
                 document.getElementById(`detail-${f}`).style.display = 'block';
                 document.getElementById(`container-${f}`).className = "info-block-item view-mode-active";
             });
+
+            document.getElementById('detail-note').scrollTop = 0;
 
             document.getElementById('group-edit-actions').style.display = 'none';
             document.getElementById('group-view-actions').style.display = 'flex';
