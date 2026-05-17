@@ -38,6 +38,7 @@
             background: transparent !important;
             backdrop-filter: none !important;
             -webkit-backdrop-filter: none !important;
+            box-shadow: none !important;
         }
 
         .gradient-bg {
@@ -49,11 +50,17 @@
         body.unlocked .gradient-bg { display: block; }
         @keyframes gradientFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         
+        body:not(.unlocked) header {
+            display: none !important;
+        }
+
         header {
             position: fixed; top: 0; left: 0; width: 100%;
             padding: calc(18px + env(safe-area-inset-top)) var(--side-gap) 15px;
             z-index: 100; display: flex; justify-content: space-between; align-items: center;
-            background: #f5f5f7; border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+            background: #f5f5f7; 
+            border-bottom: 1px solid rgba(0, 0, 0, 0.02);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.015), 0 1px 0 rgba(0, 0, 0, 0.02);
         }
         .brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; transition: opacity 0.25s ease; }
         .brand-logo { color: var(--accent); display: flex; align-items: center; }
@@ -74,10 +81,10 @@
         }
         .action-btn:active { transform: scale(0.92); background-color: #e3e3e8; }
         
-        .page-wrapper { width: 100%; max-width: 1000px; margin: 0 auto; min-height: 100vh; padding: calc(96px + env(safe-area-inset-top)) var(--side-gap) 40px; }
+        .page-wrapper { width: 100%; max-width: 1000px; margin: 0 auto; min-height: 100vh; padding: calc(96px + env(safe-area-inset-top)) var(--side-gap) 20px; display: flex; flex-direction: column; justify-content: space-between; }
         @media (min-width: 768px) { .page-wrapper { padding-top: calc(106px + env(safe-area-inset-top)); } }
 
-        #list-container { display: grid; grid-template-columns: 100%; gap: 16px; }
+        #list-container { display: grid; grid-template-columns: 100%; gap: 16px; width: 100%; flex: 1; }
         @media (min-width: 768px) { #list-container { grid-template-columns: repeat(2, 1fr); gap: 20px; } }
         
         .item-card { 
@@ -94,7 +101,6 @@
         
         .item-card.touch-active { transform: scale(0.97) translateY(0); opacity: 0.85; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.01); background-color: #f2f2f7 !important; }
         
-        /* 【核心重构】：规范搜索结果卡片的色盘，从原本的纯白改为与详情页一致的 #f2f2f7 浅灰蓝，融入弹窗层次 */
         .search-result-card {
             background: #f2f2f7; backdrop-filter: none; -webkit-backdrop-filter: none;
             border-radius: 20px; border: 1px solid rgba(0, 0, 0, 0.03); box-shadow: none !important;
@@ -113,6 +119,13 @@
         .item-time { position: absolute; bottom: 24px; right: 24px; font-size: 11px; color: var(--secondary); opacity: 0.4; font-family: var(--font-sans); }
         .search-result-card .item-time { bottom: 20px; right: 20px; }
 
+        footer {
+            width: 100%; text-align: center; padding: 45px 0 10px;
+            font-size: 12px; color: var(--secondary); opacity: 0.55;
+            letter-spacing: 0.02em; line-height: 1.8; user-select: none;
+            font-family: var(--font-sans);
+        }
+
         .auth-viewport { 
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             display: flex; align-items: center; justify-content: center; 
@@ -129,30 +142,34 @@
             width: 100vw; height: 100vh;
             background: linear-gradient(to bottom, #f5f5f7 0%, #e3e3e8 40%, #d5d5de 100%); 
             z-index: 200; display: none; 
-            align-items: center; justify-content: center; padding: var(--side-gap);
+            padding: var(--side-gap);
         }
         
         #pass-modal-overlay { z-index: 210; }
 
         .page-modal-content { 
-            width: 100%; max-width: 420px; 
+            position: fixed; 
+            top: calc(50% - env(safe-area-inset-bottom) / 2); 
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: calc(100% - (var(--side-gap) * 2)); max-width: 420px; 
             height: auto; 
-            max-height: 85vh; 
+            max-height: calc(84vh - env(safe-area-inset-bottom)); 
             display: flex; flex-direction: column; text-align: left;
             background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
             border-radius: 30px; padding: 26px; box-shadow: 0 20px 50px rgba(0,0,0,0.12); border: 1px solid rgba(255, 255, 255, 0.7);
-            overflow: hidden; position: relative;
-            animation: applePopIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            overflow: hidden;
+            animation: applePopIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         @media (min-width: 768px) {
-            #search-modal-overlay .page-modal-content { max-width: 680px; padding: 30px; }
+            #search-modal-overlay .page-modal-content { max-width: 680px; padding: 30px; top: 50%; }
         }
 
         .page-modal-content::-webkit-scrollbar { display: none; width: 0; }
 
         @keyframes applePopIn {
-            from { opacity: 0; transform: scale(0.95) translateY(8px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
+            from { opacity: 0; transform: translate(-50%, calc(-50% + 12px)) scale(0.96); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         }
 
         .modal-close-x {
@@ -218,21 +235,16 @@
         div.note-fixed-height-box { padding-top: 2px !important; } 
         .note-fixed-height-box::-webkit-scrollbar { display: none; width: 0; }
 
-        .info-block-item input, .info-block-item textarea {
-            background: transparent !important; border: none !important; margin: 0 !important;
-            border-radius: 0 !important; width: 100% !important; outline: none !important; color: #1d1d1f; font-family: inherit; font-size: inherit;
-        }
-        .info-block-item input { height: 26px !important; line-height: 26px !important; font-size: 16px !important; padding: 0 !important; }
-        
-        .info-block-item textarea.add-note-input { resize: none; padding: 2px 0 0 0 !important; }
-
+        /* 搜索外包装 form 化调整 */
         .modal-search-box-wrapper {
             background: #fff; border: 1px solid rgba(0,0,0,0.06); border-radius: 16px;
             padding: 2px 14px; display: flex; align-items: center; gap: 10px; height: 50px; margin-bottom: 20px;
             transition: border-color 0.25s, box-shadow 0.25s, background-color 0.25s; flex-shrink: 0;
+            width: 100%;
         }
+        .modal-search-box-wrapper form { display: flex; align-items: center; width: 100%; height: 100%; margin: 0; padding: 0; }
+        .modal-search-box-wrapper input { border: none; outline: none; font-size: 16px; flex: 1; color: #1d1d1f; height: 100%; background: transparent; font-family: var(--font-sans); width: 100%; }
         .modal-search-box-wrapper:focus-within { background: #ffffff; border-color: var(--accent); box-shadow: 0 0 0 3.5px rgba(0, 122, 255, 0.15); }
-        .modal-search-box-wrapper input { border: none; outline: none; font-size: 16px; flex: 1; color: #1d1d1f; height: 100%; background: transparent; font-family: var(--font-sans); }
         
         .modal-search-results-area {
             display: grid; grid-template-columns: 100%; gap: 12px; width: 100%; flex: 1; overflow-y: auto;
@@ -333,7 +345,12 @@
     </div>
 </div>
 
-<div class="page-wrapper" id="main-ui" style="display:none"><div id="list-container"></div></div>
+<div class="page-wrapper" id="main-ui" style="display:none">
+    <div id="list-container"></div>
+    <footer>
+        © AEGIS &nbsp;|&nbsp; 本站永久在线托管于 GITHUB，请放心使用。
+    </footer>
+</div>
 
 <div class="modal-overlay" id="search-modal-overlay">
     <div class="page-modal-content">
@@ -348,7 +365,9 @@
         </div>
         
         <div class="modal-search-box-wrapper">
-            <input type="text" id="modal-search-input" placeholder="输入名称、账号关键字过滤..." oninput="handleModalSearchEvent(this.value)">
+            <form action="javascript:void(0);" onsubmit="document.getElementById('modal-search-input').blur();">
+                <input type="search" id="modal-search-input" placeholder="输入名称、账号关键字过滤..." oninput="handleModalSearchEvent(this.value)" onkeydown="if(event.keyCode===13){this.blur();}">
+            </form>
         </div>
         
         <div class="modal-search-results-area" id="modal-search-results-box"></div>
@@ -442,7 +461,7 @@
 </div>
 
 <div class="modal-overlay" id="confirm-delete-modal-overlay">
-    <div class="page-modal-content" style="height: auto; min-height: auto;">
+    <div class="page-modal-content">
         <div class="modal-close-x" onclick="toggleModal('confirm-delete-modal', false)">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </div>
@@ -466,7 +485,10 @@
 </div>
 
 <div class="modal-overlay" id="hard-reset-overlay">
-    <div class="page-modal-content" style="height: auto; min-height: auto;">
+    <div class="page-modal-content">
+        <div class="modal-close-x" onclick="toggleModal('hard-reset', false)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </div>
         <div class="modal-page-header">
             <div class="modal-icon-wrapper danger-style">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
