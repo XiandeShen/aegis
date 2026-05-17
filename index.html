@@ -23,7 +23,7 @@
             --font-mono: "SF Pro Text", ui-monospace, SFMono-Regular, SF Pro Icons, "PingFang SC", monospace;
         }
         
-        /* 规范化底色：确保 html 与 body 基础色调统一，防止 iOS 弹出层切换时画布底层漏光 */
+        /* 规范底色线：全局背景统一由基础浅灰色接管，保证画布统一 */
         html, body {
             margin: 0; padding: 0; width: 100%; min-height: 100%;
             background-color: var(--bg-base); color: #1d1d1f;
@@ -32,17 +32,14 @@
         }
         html { scroll-behavior: smooth; }
         
-        /* 规范化 iOS 弹窗底层滚动锁定 */
         body.modal-open-fixed {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden;
         }
 
-        /* 规范化隐藏逻辑：当认证界面存在或未解锁时，顶部导航栏直接物理隐藏，回归纯净 */
         body:has(#auth-ui:not([style*="display: none"])) header {
             display: none !important;
         }
         
-        /* 当二级菜单弹出时，顶部栏背景透明、消除边框，使其被覆盖时完美过渡 */
         body:has(.modal-overlay[style*="display: flex"]) header {
             background: transparent !important;
             backdrop-filter: none !important;
@@ -73,7 +70,11 @@
         .action-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 12px; background: rgba(0, 0, 0, 0.03); border: 1px solid rgba(0, 0, 0, 0.02); flex-shrink: 0; color: #1d1d1f; transition: transform 0.15s ease; }
         .action-btn:active { transform: scale(0.92); }
         
-        .page-wrapper { width: 100%; max-width: 1000px; margin: 0 auto; padding: calc(106px + env(safe-area-inset-top)) var(--side-gap) 40px; }
+        /* 布局修复：移除了多余的背景色，恢复通透的左右对称内边距对齐 */
+        .page-wrapper { 
+            width: 100%; max-width: 1000px; margin: 0 auto; 
+            padding: calc(106px + env(safe-area-inset-top)) var(--side-gap) 40px; 
+        }
         @media (min-width: 768px) { .page-wrapper { padding-top: calc(116px + env(safe-area-inset-top)); } }
 
         #list-container { display: grid; grid-template-columns: 100%; gap: 16px; }
@@ -82,13 +83,14 @@
         .item-card { 
             background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
             border-radius: var(--radius-lg); border: var(--glass-border); 
-            padding: 24px; position: relative; transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.2s ease, opacity 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease; min-height: 110px;
-            cursor: pointer; -webkit-user-select: none; user-select: none; width: 100%;
+            padding: 24px; position: relative; min-height: 110px; cursor: pointer; -webkit-user-select: none; user-select: none; width: 100%;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s ease, opacity 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
         }
         
         .search-result-card {
             background: #ffffff; backdrop-filter: none; -webkit-backdrop-filter: none;
             border-radius: 20px; border: 1px solid rgba(0, 0, 0, 0.04); padding: 20px; min-height: auto;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s ease, opacity 0.2s ease, background-color 0.2s ease;
         }
 
         @media (hover: hover) {
@@ -97,7 +99,9 @@
             }
         }
         
-        .item-card:active, .search-result-card:active { transform: scale(0.97) translateY(0); opacity: 0.85; box-shadow: none !important; }
+        .item-card:active, .search-result-card:active { 
+            opacity: 0.65; transform: translateY(0); box-shadow: none !important; transition: opacity 0.05s ease; 
+        }
 
         .card-info { padding-right: 0; text-align: left; }
         .item-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin:0; font-size:18px; font-weight: 700; color: #1d1d1f; }
@@ -109,19 +113,15 @@
         .item-time { position: absolute; bottom: 24px; right: 24px; font-size: 11px; color: var(--secondary); opacity: 0.4; font-family: var(--font-sans); }
         .search-result-card .item-time { bottom: 20px; right: 20px; }
 
-        /* 规范化底部栏目：作为普通流，随着网页自然滚动到底部显示，不抢占主屏幕视口 */
         .apple-footer {
-            width: 100%; background: rgba(29, 29, 31, 0.92);
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 24px var(--side-gap) calc(24px + env(safe-area-inset-bottom));
-            text-align: center; margin-top: 40px; display: none;
+            width: 100%; background: rgba(29, 29, 31, 0.92); border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 24px var(--side-gap) calc(24px + env(safe-area-inset-bottom)); text-align: center; margin-top: 40px; display: none;
         }
         body.unlocked .apple-footer { display: block; }
         .footer-text { font-size: 11px; color: rgba(255, 255, 255, 0.55); line-height: 1.5; letter-spacing: 0.02em; margin: 0; user-select: none; -webkit-user-select: none; }
 
         .auth-viewport { 
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            display: flex; align-items: center; justify-content: center; 
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; 
             padding: env(safe-area-inset-top) var(--side-gap) env(safe-area-inset-bottom); z-index: 150;
         }
         .glass-card { background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border-radius: var(--radius-lg); border: var(--glass-border); padding: 32px 24px; width: 100%; max-width: 340px; text-align: center; }
@@ -130,12 +130,11 @@
         .primary-btn { width: 100%; height: 50px; background: var(--accent); border: none; border-radius: var(--radius-md); color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.3s; font-family: var(--font-sans); }
         .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* 规范化修复：标准的四周全拉伸。采用高级感纯色半透明黑（rgba(0, 0, 0, 0.45)）全面覆盖 */
-        /* 剔除了模糊滤镜，浏览器会将此图层自然无缝地延伸到灵动岛和状态栏，彻底杜绝分界线线 Bug */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.45); z-index: 200; display: none; 
+            background: rgba(230, 230, 235, 0.5); z-index: 200; display: none; 
             align-items: center; justify-content: center; padding: var(--side-gap);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
         }
         
         #pass-modal-overlay { z-index: 210; }
@@ -143,8 +142,8 @@
         .page-modal-content { 
             width: 100%; max-width: 420px; height: auto; max-height: 85vh; 
             display: flex; flex-direction: column; text-align: left;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 30px; padding: 26px; box-shadow: 0 20px 50px rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.8);
+            background: rgba(255, 255, 255, 0.88); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border-radius: 30px; padding: 26px; box-shadow: 0 20px 50px rgba(0,0,0,0.08); border: var(--glass-border);
             overflow: hidden; position: relative;
             animation: applePopIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
@@ -209,14 +208,6 @@
         }
         div.note-fixed-height-box { padding-top: 2px !important; } 
         .note-fixed-height-box::-webkit-scrollbar { display: none; width: 0; }
-
-        .info-block-item input, .info-block-item textarea {
-            background: transparent !important; border: none !important; margin: 0 !important;
-            border-radius: 0 !important; width: 100% !important; outline: none !important; color: #1d1d1f; font-family: inherit; font-size: inherit;
-        }
-        .info-block-item input { height: 26px !important; line-height: 26px !important; font-size: 16px !important; padding: 0 !important; }
-        
-        .info-block-item textarea.add-note-input { resize: none; padding: 2px 0 0 0 !important; }
 
         .modal-search-box-wrapper {
             background: #fff; border: 1px solid rgba(0,0,0,0.06); border-radius: 16px;
