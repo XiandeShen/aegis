@@ -206,7 +206,7 @@
         .brand-logo-wrapper svg, .modal-icon-wrapper svg { width: 22px; height: 22px; display: block; }
         .modal-icon-wrapper.danger-style { background: rgba(255, 59, 48, 0.1); color: var(--danger); }
 
-        .brand-name { font-size: 19px; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; font-family: var(--font-apple); line-height: 1; }
+        .brand-name { font-size: 19px; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; font-family: var(--font-apple); line-height: 40px; height: 40px; display: flex; align-items: center; }
         
         body:not(.unlocked) .page-wrapper,
         body:not(.unlocked) .modal-overlay {
@@ -313,7 +313,9 @@
             flex-shrink: 0;
         }
         .modal-header-left { display: flex; align-items: center; gap: 12px; height: 40px; }
-        .page-modal-content h3 { font-size: 20px; font-weight: 700; color: var(--text-main); margin: 0; letter-spacing: -0.5px; font-family: var(--font-apple); line-height: 1.2; }
+        
+        /* 深度优化 PC 端二级弹窗中文标题字重与间距，保持高度平衡 */
+        .page-modal-content h3 { font-size: 20px; font-weight: 700; color: var(--text-main); margin: 0; letter-spacing: -0.02em; text-transform: none; font-family: var(--font-apple); line-height: 40px; height: 40px; display: flex; align-items: center; }
 
         .modal-close-x {
             position: absolute; top: 24px; right: 24px; width: 30px; height: 30px;
@@ -381,14 +383,18 @@
                 flex-shrink: 0 !important;
             } 
             
+            /* 【精细微调点】彻底分离移动端二级菜单标题与主页大写英文字体样式，去除间距，统一视觉高度 */
             .page-modal-content h3 { 
                 font-size: 19px !important; 
-                font-weight: 800 !important; 
-                letter-spacing: 0.25em !important; 
-                text-transform: uppercase !important; 
+                font-weight: 700 !important; 
+                letter-spacing: -0.01em !important; 
+                text-transform: none !important; 
                 color: var(--text-main) !important; 
                 margin: 0 !important;
-                line-height: 1 !important;
+                line-height: 40px !important;
+                height: 40px !important;
+                display: flex !important;
+                align-items: center !important;
             }
 
             .modal-scroll-area {
@@ -508,7 +514,7 @@
         }
         .card-brand-header { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
         .card-brand-logo { color: var(--accent); display: flex; align-items: center; }
-        .card-brand-name { font-size: 15px; font-weight: 800; letter-spacing: 0.25em; color: var(--text-main); font-family: var(--font-apple); }
+        .card-brand-name { font-size: 15px; font-weight: 800; letter-spacing: 0.25em; color: var(--text-main); font-family: var(--font-apple); line-height: 1; }
         #login-card h2 { display: none; }
         
         .auth-form-body { display: flex; flex-direction: column; gap: 0; }
@@ -901,7 +907,6 @@
         }
     }
 
-    // 核心重构点 1：每次渲染新凭据数据进 DOM 之后，再通过延时强制拉回 scrollTop
     function showDetails(item) {
         activeItemBackup = item; 
         currentEditId = item.id;
@@ -932,7 +937,6 @@
         clearPendingDelete();
         toggleModal('pass-modal', true);
 
-        // 关键修复：在新数据生成完 DOM 的此刻，强行重置备注滚动槽
         window.requestAnimationFrame(() => {
             noteEl.scrollTop = 0;
             document.getElementById('edit-note').scrollTop = 0;
@@ -1031,7 +1035,6 @@
             }
         });
 
-        // 核心重构点 2：模式切换完毕后，强行拉正视口
         window.requestAnimationFrame(() => {
             document.getElementById('detail-note').scrollTop = 0;
             document.getElementById('edit-note').scrollTop = 0;
@@ -1067,7 +1070,6 @@
             if (id === 'pass-modal') {
                 if (scrollArea) scrollArea.scrollTop = 0;
 
-                // 核心重构点 3：完全关闭窗口的最后一刻，确保将备注栏内存里的 scrollTop 清算彻底
                 document.getElementById('detail-note').scrollTop = 0;
                 document.getElementById('edit-note').scrollTop = 0;
 
@@ -1252,7 +1254,6 @@
     function hardReset() { localStorage.clear(); location.reload(); }
     if (!ENCRYPTED_TK) { document.getElementById('auth-brand-text').innerText = "AEGIS SETUP"; document.getElementById('setup-area').style.display = "block"; } else { document.getElementById('reset-link').style.display = "block"; }
     
-    // 页面加载自动拉取用户持久化主题
     initTheme();
 </script>
 </body>
