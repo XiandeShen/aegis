@@ -214,8 +214,9 @@
 
         .brand-name { font-size: 19px; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; font-family: var(--font-apple); line-height: 40px; height: 40px; display: flex; align-items: center; }
         
+        /* 修复核心：排除重置确认模态框，防止其在解锁前被强制 display: none */
         body:not(.unlocked) .page-wrapper,
-        body:not(.unlocked) .modal-overlay {
+        body:not(.unlocked) .modal-overlay:not(#hard-reset-overlay) {
             display: none !important;
             pointer-events: none !important;
         }
@@ -334,7 +335,6 @@
             position: absolute; left: 50%; transform: translateX(-50%); width: auto; max-width: 60%; white-space: nowrap; pointer-events: none;
         }
 
-        /* 【核心调整】PC端：关闭按钮尺寸统一升级为 40px 完美正圆，与顶部功能组件全面对齐 */
         .modal-close-x {
             position: absolute; top: 50%; right: 0; transform: translateY(-50%); width: 40px; height: 40px;
             border-radius: 50% !important; background: var(--modal-close-bg); color: var(--secondary);
@@ -388,7 +388,6 @@
                 height: 40px !important; 
             }
             
-            /* 【核心调整】移动端：关闭按钮尺寸完全校准至 40px 完美正圆，与顶部栏对齐 */
             .modal-close-x { 
                 position: absolute !important; 
                 top: calc(16px + env(safe-area-inset-top) + 20px) !important;
