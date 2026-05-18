@@ -15,7 +15,7 @@
     <style>
         * { box-sizing: border-box; }
         
-        /* 【新增】明亮模式纯净颜色变量映射，完美提取你原件的所有色彩 */
+        /* 明亮模式纯净颜色变量映射 */
         :root {
             --bg-base: #f5f5f7; 
             --accent: #007aff; 
@@ -31,7 +31,6 @@
             --font-apple: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "PingFang SC", "Segoe UI", sans-serif;
             --font-mono: "SF Mono", SFMono-Regular, ui-monospace, Menlo, Monaco, Consolas, monospace;
             
-            /* 提取你原文件里的固定背景及文字色彩 */
             --text-main: #1d1d1f;
             --text-placeholder: #a1a1a6;
             --action-btn-bg: rgba(0, 0, 0, 0.04);
@@ -54,7 +53,7 @@
             --gradient-color-2: #f9fafb;
         }
 
-        /* 【新增】原生 Apple 质感暗色变量映射，绝不影响布局宽高 */
+        /* 原生 Apple 质感暗色变量映射 */
         [data-theme="dark"] {
             --bg-base: #000000;
             --accent: #0a84ff;
@@ -85,7 +84,7 @@
             --gradient-color-2: #030712;
         }
 
-        /* 【新增】自动随系统时的暗色媒体查询机制 */
+        /* 自动随系统时的暗色媒体查询机制 */
         @media (prefers-color-scheme: dark) {
             :root:not([data-theme="light"]) {
                 --bg-base: #000000;
@@ -123,7 +122,6 @@
             background-color: var(--bg-base); color: var(--text-main);
             font-family: var(--font-apple);
             -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; overflow-x: hidden;
-            /* 丝滑的主题过渡 */
             transition: background-color 0.3s ease, color 0.3s ease;
         }
         
@@ -141,7 +139,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* 全局统一 PC 端 WebKit 外部滚动条美化 */
         ::-webkit-scrollbar {
             width: 5px;
             height: 5px;
@@ -158,7 +155,6 @@
             background: var(--scrollbar-thumb-hover);
         }
 
-        /* 维持你喜欢的备注内部微型滚动条美化样式 */
         .info-block-content.note-container-fixed::-webkit-scrollbar,
         .info-block-item textarea.add-note-input::-webkit-scrollbar {
             width: 4px;
@@ -247,15 +243,26 @@
         #list-container { display: grid; grid-template-columns: 100%; gap: 16px; }
         @media (min-width: 768px) { #list-container { grid-template-columns: repeat(2, 1fr); gap: 20px; } }
         
+        /* 【已优化】移动端卡片触控及颜色深度过滤机制 */
         .item-card { 
             background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
             border-radius: var(--radius-lg); border: var(--glass-border); box-shadow: var(--card-shadow); 
-            padding: 22px; position: relative; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s, background-color 0.2s; min-height: 110px;
-            cursor: pointer; user-select: none;
+            padding: 22px; position: relative; 
+            /* 移除可能在滑动时产生不必要位移重绘的 transform 过渡，只保留核心质感变色 */
+            transition: background-color 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; 
+            min-height: 110px; cursor: pointer; user-select: none; -webkit-user-select: none;
+            will-change: background-color;
         }
-        .item-card:hover { transform: translateY(-2px); }
-        .item-card:active { background: rgba(255, 255, 255, 0.9); }
-        [data-theme="dark"] .item-card:active { background: rgba(44, 44, 46, 0.9); }
+        /* 仅在非移动端（大屏设备）启用 Hover 浮动，从根本上杜绝手机端点击后卡片卡在 Hover 态 */
+        @media (min-width: 1025px) {
+            .item-card:hover { transform: translateY(-2px); }
+        }
+        /* 克制、高级的移动端原生按压状态，杜绝任何白光误触穿帮 */
+        .item-card:active { background-color: rgba(0, 0, 0, 0.04) !important; }
+        [data-theme="dark"] .item-card:active { background-color: rgba(255, 255, 255, 0.05) !important; }
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) .item-card:active { background-color: rgba(255, 255, 255, 0.05) !important; }
+        }
         
         .card-info { padding-right: 20px; text-align: left; pointer-events: none; }
         .item-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin:0; font-size:18px; font-weight: 700; font-family: var(--font-apple); }
@@ -314,7 +321,6 @@
         }
         .modal-header-left { display: flex; align-items: center; gap: 12px; height: 40px; }
         
-        /* 深度优化 PC 端二级弹窗中文标题字重与间距，保持高度平衡 */
         .page-modal-content h3 { font-size: 20px; font-weight: 700; color: var(--text-main); margin: 0; letter-spacing: -0.02em; text-transform: none; font-family: var(--font-apple); line-height: 40px; height: 40px; display: flex; align-items: center; }
 
         .modal-close-x {
@@ -383,7 +389,6 @@
                 flex-shrink: 0 !important;
             } 
             
-            /* 【精细微调点】彻底分离移动端二级菜单标题与主页大写英文字体样式，去除间距，统一视觉高度 */
             .page-modal-content h3 { 
                 font-size: 19px !important; 
                 font-weight: 700 !important; 
@@ -724,13 +729,11 @@
         editPencil: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`,
         eyeLook: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`,
         
-        /* 主题微调图标（高精度 Apple 图标样式映射） */
         sun: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
         moon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
         auto: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20V2z"/></svg>`
     };
 
-    // 存储当前的主题设置状态 'auto', 'light', 'dark'
     let currentThemeMode = localStorage.getItem('ae_theme_mode') || 'auto';
 
     function initTheme() {
@@ -841,6 +844,7 @@
         input.value = ''; handleSearchUI(input); input.focus();
     }
 
+    /* 【已优化】精准融合移动端防抖锁机制 */
     function render(list, isSearching = false) {
         if (!isSearching) CACHED_LIST = list; 
         const c = document.getElementById('list-container');
@@ -861,7 +865,32 @@
                 ${item.updatedAt ? `<div class="item-time">${item.updatedAt}</div>` : ''} 
             `;
             
-            div.addEventListener('click', () => {
+            // 引入移动端专属防误触局部状态锁
+            let touchStartY = 0;
+            let isScrolling = false;
+
+            div.addEventListener('touchstart', (e) => {
+                touchStartY = e.touches[0].clientY;
+                isScrolling = false;
+            }, { passive: true });
+
+            div.addEventListener('touchmove', (e) => {
+                const touchMoveY = e.touches[0].clientY;
+                // 当滑动振幅超过 10 像素时，判定用户是在滚动列表而非故意点击
+                if (Math.abs(touchMoveY - touchStartY) > 10) {
+                    isScrolling = true;
+                }
+            }, { passive: true });
+
+            div.addEventListener('touchend', (e) => {
+                if (isScrolling) {
+                    // 如果处于滑动页面态，阻止默认的点击事件扩散传递
+                    e.preventDefault();
+                }
+            }, { passive: false });
+
+            div.addEventListener('click', (e) => {
+                if (isScrolling) return; // 滑动中，完美拦截二级菜单的穿帮弹出
                 showDetails(item);
             });
 
