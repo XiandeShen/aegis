@@ -51,6 +51,9 @@
             --scrollbar-thumb-hover: rgba(0, 0, 0, 0.24);
             --gradient-color-1: #e2e8f0;
             --gradient-color-2: #f9fafb;
+            
+            --icon-wrapper-bg: rgba(0, 122, 255, 0.08);
+            --icon-wrapper-danger-bg: rgba(255, 59, 48, 0.1);
         }
 
         /* 原生 Apple 质感暗色变量映射 */
@@ -82,6 +85,9 @@
             --scrollbar-thumb-hover: rgba(255, 255, 255, 0.3);
             --gradient-color-1: #111827;
             --gradient-color-2: #030712;
+            
+            --icon-wrapper-bg: rgba(10, 132, 255, 0.16);
+            --icon-wrapper-danger-bg: rgba(255, 69, 58, 0.2);
         }
 
         /* 自动随系统时的暗色媒体查询机制 */
@@ -114,6 +120,9 @@
                 --scrollbar-thumb-hover: rgba(255, 255, 255, 0.3);
                 --gradient-color-1: #111827;
                 --gradient-color-2: #030712;
+                
+                --icon-wrapper-bg: rgba(10, 132, 255, 0.16);
+                --icon-wrapper-danger-bg: rgba(255, 69, 58, 0.2);
             }
         }
 
@@ -197,10 +206,11 @@
         .brand-logo-wrapper, .modal-icon-wrapper { 
             width: 40px; height: 40px; border-radius: 10px; 
             display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-            background: rgba(0, 122, 255, 0.08); color: var(--accent);
+            background: var(--icon-wrapper-bg); color: var(--accent);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         .brand-logo-wrapper svg, .modal-icon-wrapper svg { width: 22px; height: 22px; display: block; }
-        .modal-icon-wrapper.danger-style { background: rgba(255, 59, 48, 0.1); color: var(--danger); }
+        .modal-icon-wrapper.danger-style { background: var(--icon-wrapper-danger-bg); color: var(--danger); }
 
         .brand-name { font-size: 19px; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; font-family: var(--font-apple); line-height: 40px; height: 40px; display: flex; align-items: center; }
         
@@ -217,7 +227,7 @@
 
         .header-actions { display: flex; gap: 10px; visibility: hidden; align-items: center; height: 40px; }
         
-        .action-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 10px; background: var(--action-btn-bg); border: 1px solid transparent; flex-shrink: 0; color: var(--text-main); }
+        .action-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 50%; background: var(--action-btn-bg); border: 1px solid transparent; flex-shrink: 0; color: var(--text-main); }
         .action-btn:active { background: var(--action-btn-active); }
         
         .page-wrapper { width: 100%; max-width: 1000px; margin: 0 auto; min-height: 100vh; padding: calc(76px + env(safe-area-inset-top)) var(--side-gap) 40px; }
@@ -243,21 +253,17 @@
         #list-container { display: grid; grid-template-columns: 100%; gap: 16px; }
         @media (min-width: 768px) { #list-container { grid-template-columns: repeat(2, 1fr); gap: 20px; } }
         
-        /* 【已优化】移动端卡片触控及颜色深度过滤机制 */
         .item-card { 
             background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
             border-radius: var(--radius-lg); border: var(--glass-border); box-shadow: var(--card-shadow); 
             padding: 22px; position: relative; 
-            /* 移除可能在滑动时产生不必要位移重绘的 transform 过渡，只保留核心质感变色 */
             transition: background-color 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; 
             min-height: 110px; cursor: pointer; user-select: none; -webkit-user-select: none;
             will-change: background-color;
         }
-        /* 仅在非移动端（大屏设备）启用 Hover 浮动，从根本上杜绝手机端点击后卡片卡在 Hover 态 */
         @media (min-width: 1025px) {
             .item-card:hover { transform: translateY(-2px); }
         }
-        /* 克制、高级的移动端原生按压状态，杜绝任何白光误触穿帮 */
         .item-card:active { background-color: rgba(0, 0, 0, 0.04) !important; }
         [data-theme="dark"] .item-card:active { background-color: rgba(255, 255, 255, 0.05) !important; }
         @media (prefers-color-scheme: dark) {
@@ -316,20 +322,27 @@
         }
 
         .modal-page-header { 
-            margin-bottom: 20px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; height: 40px; 
-            flex-shrink: 0;
+            margin-bottom: 20px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; 
+            position: relative; height: 40px; flex-shrink: 0;
         }
-        .modal-header-left { display: flex; align-items: center; gap: 12px; height: 40px; }
+        .modal-header-left { display: flex; align-items: center; height: 40px; }
         
-        .page-modal-content h3 { font-size: 20px; font-weight: 700; color: var(--text-main); margin: 0; letter-spacing: -0.02em; text-transform: none; font-family: var(--font-apple); line-height: 40px; height: 40px; display: flex; align-items: center; }
+        .page-modal-content h3 { 
+            font-size: 20px; font-weight: 700; color: var(--text-main); margin: 0; letter-spacing: -0.02em; 
+            text-transform: none; font-family: var(--font-apple); line-height: 40px; height: 40px; 
+            display: flex; align-items: center; justify-content: center;
+            position: absolute; left: 50%; transform: translateX(-50%); width: auto; max-width: 60%; white-space: nowrap; pointer-events: none;
+        }
 
+        /* 【核心调整】PC端：关闭按钮尺寸统一升级为 40px 完美正圆，与顶部功能组件全面对齐 */
         .modal-close-x {
-            position: absolute; top: 24px; right: 24px; width: 30px; height: 30px;
-            border-radius: 50%; background: var(--modal-close-bg); color: var(--secondary);
+            position: absolute; top: 50%; right: 0; transform: translateY(-50%); width: 40px; height: 40px;
+            border-radius: 50% !important; background: var(--modal-close-bg); color: var(--secondary);
             display: flex; align-items: center; justify-content: center; cursor: pointer;
             border: none; z-index: 11; transition: background 0.2s, color 0.2s;
         }
         .modal-close-x:active { background: var(--action-btn-active); color: var(--text-main); }
+        .modal-close-x svg { width: 14px; height: 14px; }
 
         @keyframes popIn {
             from { opacity: 0; transform: scale(0.93) translateY(12px); }
@@ -360,12 +373,11 @@
                 flex-direction: row !important;
                 align-items: center !important; 
                 justify-content: space-between !important; 
-                gap: 12px !important; 
                 padding: calc(16px + env(safe-area-inset-top)) 0 12px !important; 
                 margin-bottom: 8px !important; 
                 height: calc(68px + env(safe-area-inset-top)) !important; 
                 background: var(--bg-base);
-                position: relative;
+                position: relative !important;
                 z-index: 10;
                 transition: background-color 0.3s;
             }
@@ -373,17 +385,18 @@
             .modal-header-left {
                 display: flex !important;
                 align-items: center !important;
-                gap: 12px !important;
                 height: 40px !important; 
             }
             
+            /* 【核心调整】移动端：关闭按钮尺寸完全校准至 40px 完美正圆，与顶部栏对齐 */
             .modal-close-x { 
                 position: absolute !important; 
-                top: calc(16px + env(safe-area-inset-top)) !important;
+                top: calc(16px + env(safe-area-inset-top) + 20px) !important;
                 right: 0 !important;
+                transform: translateY(-50%) !important;
                 width: 40px !important; 
                 height: 40px !important; 
-                border-radius: 10px !important;
+                border-radius: 50% !important;
                 background: var(--action-btn-bg) !important; 
                 margin: 0 !important;
                 flex-shrink: 0 !important;
@@ -400,6 +413,13 @@
                 height: 40px !important;
                 display: flex !important;
                 align-items: center !important;
+                justify-content: center !important;
+                position: absolute !important;
+                left: 50% !important;
+                top: calc(16px + env(safe-area-inset-top) + 20px) !important;
+                transform: translate(-50%, -50%) !important;
+                width: auto !important;
+                max-width: 50% !important;
             }
 
             .modal-scroll-area {
@@ -616,8 +636,8 @@
         <div class="modal-page-header">
             <div class="modal-header-left">
                 <div class="modal-icon-wrapper" id="add-modal-icon-container"></div>
-                <h3 id="modal-title">新增凭据</h3>
             </div>
+            <h3 id="modal-title">新增凭据</h3>
             <button class="modal-close-x" onclick="toggleModal('add-modal', false)">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
@@ -658,8 +678,8 @@
                 <div class="modal-icon-wrapper danger-style">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                 </div>
-                <h3>确定重置配置吗？</h3>
             </div>
+            <h3>确定重置配置吗？</h3>
             <button class="modal-close-x" onclick="toggleModal('hard-reset', false)">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
@@ -676,8 +696,8 @@
         <div class="modal-page-header">
             <div class="modal-header-left">
                 <div class="modal-icon-wrapper" id="pass-modal-icon-container"></div>
-                <h3 id="detail-modal-title">凭据详情</h3>
             </div>
+            <h3 id="detail-modal-title">凭据详情</h3>
             <button class="modal-close-x" onclick="toggleModal('pass-modal', false)">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
@@ -844,7 +864,6 @@
         input.value = ''; handleSearchUI(input); input.focus();
     }
 
-    /* 【已优化】精准融合移动端防抖锁机制 */
     function render(list, isSearching = false) {
         if (!isSearching) CACHED_LIST = list; 
         const c = document.getElementById('list-container');
@@ -865,7 +884,6 @@
                 ${item.updatedAt ? `<div class="item-time">${item.updatedAt}</div>` : ''} 
             `;
             
-            // 引入移动端专属防误触局部状态锁
             let touchStartY = 0;
             let isScrolling = false;
 
@@ -876,7 +894,6 @@
 
             div.addEventListener('touchmove', (e) => {
                 const touchMoveY = e.touches[0].clientY;
-                // 当滑动振幅超过 10 像素时，判定用户是在滚动列表而非故意点击
                 if (Math.abs(touchMoveY - touchStartY) > 10) {
                     isScrolling = true;
                 }
@@ -884,13 +901,12 @@
 
             div.addEventListener('touchend', (e) => {
                 if (isScrolling) {
-                    // 如果处于滑动页面态，阻止默认的点击事件扩散传递
                     e.preventDefault();
                 }
             }, { passive: false });
 
             div.addEventListener('click', (e) => {
-                if (isScrolling) return; // 滑动中，完美拦截二级菜单的穿帮弹出
+                if (isScrolling) return; 
                 showDetails(item);
             });
 
