@@ -19,7 +19,6 @@
             --side-gap: 20px; --glass-bg: rgba(255, 255, 255, 0.75); --glass-blur: blur(20px);
             --glass-border: 1px solid rgba(255, 255, 255, 0.6); --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
             --radius-lg: 28px; --radius-md: 14px;
-            /* 全局统一字体变量 */
             --font-apple: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "PingFang SC", "Segoe UI", sans-serif;
             --font-mono: "SF Mono", SFMono-Regular, ui-monospace, Menlo, Monaco, Consolas, monospace;
         }
@@ -37,7 +36,6 @@
             overflow: hidden !important;
         }
 
-        /* 统一表单元素与按钮的字体 */
         button, input, textarea, select {
             font-family: var(--font-apple) !important;
             -webkit-font-smoothing: antialiased;
@@ -54,7 +52,6 @@
         }
         @keyframes gradientFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         
-        /* 主顶栏：回归纯粹的标题与核心操作流 */
         header {
             position: fixed; top: 0; left: 0; width: 100%;
             padding: calc(16px + env(safe-area-inset-top)) var(--side-gap) 16px;
@@ -64,7 +61,6 @@
         }
         .brand { display: flex; align-items: center; gap: 12px; flex-shrink: 0; height: 40px; }
         
-        /* 全局大一统的【正方形】（带10px微圆角）底色图标容器 */
         .brand-logo-wrapper, .modal-icon-wrapper { 
             width: 40px; height: 40px; border-radius: 10px; 
             display: flex; align-items: center; justify-content: center; flex-shrink: 0;
@@ -75,6 +71,13 @@
 
         .brand-name { font-size: 19px; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; font-family: var(--font-apple); line-height: 1; }
         
+        /* 强化点 1：在未验证解锁前，绝对不让 main-ui 的任何隐式图层和遮罩影响到 auth-ui 的点击 */
+        body:not(.unlocked) .page-wrapper,
+        body:not(.unlocked) .modal-overlay {
+            display: none !important;
+            pointer-events: none !important;
+        }
+
         body:has(#auth-ui[style*="display: flex"]) header .brand,
         body:has(#auth-ui:not([style*="display: none"])) header .brand {
             opacity: 0; pointer-events: none;
@@ -82,18 +85,15 @@
 
         .header-actions { display: flex; gap: 10px; visibility: hidden; align-items: center; height: 40px; }
         
-        /* 顶栏操作按钮：正方形微圆角设计 */
         .action-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 10px; background: rgba(0, 0, 0, 0.04); border: 1px solid transparent; flex-shrink: 0; }
         .action-btn:active { background: rgba(0, 0, 0, 0.08); }
         
-        /* 主内边距区：留出顶部栏高度占位 */
         .page-wrapper { width: 100%; max-width: 1000px; margin: 0 auto; min-height: 100vh; padding: calc(76px + env(safe-area-inset-top)) var(--side-gap) 40px; }
 
-        /* ------------------ 优化重构：常驻卡片上方的搜索框 ------------------ */
         .main-search-area {
             width: 100%;
             margin-bottom: 20px;
-            display: none; /* 初始随 main-ui 一起在同步完成后展示 */
+            display: none;
         }
         .search-wrapper { 
             display: flex; align-items: center; background: rgba(0, 0, 0, 0.04); border-radius: 14px; 
@@ -142,7 +142,6 @@
         .primary-btn { width: 100%; height: 50px; background: var(--accent); border: none; border-radius: var(--radius-md); color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.3s; font-family: var(--font-apple); }
         .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* 模态框遮罩 */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0, 0, 0, 0.15); z-index: 200; display: none; 
@@ -175,12 +174,10 @@
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        /* 统一顶栏头部流布局 */
         .modal-page-header { margin-bottom: 24px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; height: 40px; }
         .modal-header-left { display: flex; align-items: center; gap: 12px; height: 40px; }
         .page-modal-content h3 { font-size: 20px; font-weight: 700; color: #1d1d1f; margin: 0; letter-spacing: -0.5px; font-family: var(--font-apple); line-height: 1.2; }
 
-        /* ================= 移动端自适应 ================= */
         @media (max-width: 480px) {
             .modal-overlay { 
                 background: #f5f5f7; 
@@ -415,7 +412,7 @@
         <form class="auth-form-body" id="auth-form" onsubmit="event.preventDefault(); handleAuth();">
             <div id="setup-area" style="display:none;"><input type="password" id="gh-token" placeholder="GitHub Token (ghp_...)"></div>
             <div class="auth-input-button-row">
-                <input type="password" id="main-pass" placeholder="请键入密码" autofocus>
+                <input type="password" id="main-pass" placeholder="请键入密码" inputmode="text" autocomplete="current-password" autofocus>
                 <button type="submit" class="primary-btn" id="login-submit-btn">登录</button>
             </div>
             <p id="reset-link" style="font-size:12px; color:#86868b; cursor:pointer; display:none; opacity:0.6" onclick="toggleModal('hard-reset', true)">重置 Token 配置</p>
@@ -585,6 +582,17 @@
     let FINAL_TOKEN = "", GIST_ID = localStorage.getItem('ae_gid'), ENCRYPTED_TK = localStorage.getItem('ae_enc_tk');
     let pendingDeleteCardId = null, currentEditId = null, CACHED_LIST = []; 
     let lastScrollY = 0, isInsideEditMode = false, activeItemBackup = null; 
+
+    // 强化点 2：针对移动端内核的表单失焦复位监听（彻底粉碎点击热区不贴合错位问题）
+    document.addEventListener('focusout', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+            // 当虚拟键盘收起时，强行让窗口轻微滚动回归原位，刷新 WebKit 的 Visual Viewport 热区
+            setTimeout(() => {
+                const scrollHeight = document.documentElement.scrollTop || document.body.scrollTop || 0;
+                window.scrollTo(0, Math.max(scrollHeight - 1, 0));
+            }, 60);
+        }
+    });
 
     document.addEventListener('click', (e) => {
         if (pendingDeleteCardId && !e.target.closest('#detail-del-btn')) { clearPendingDelete(); }
@@ -834,7 +842,6 @@
     
     function showToast(m) { const t=document.getElementById('toast'); t.innerText=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2000); }
 
-    // 优化：数据预加载 + 错误状态回滚
     async function handleAuth() {
         const pass = document.getElementById('main-pass').value; if (!pass) return;
         const submitBtn = document.getElementById('login-submit-btn');
@@ -873,12 +880,10 @@
                 FINAL_TOKEN = decryptedTk;
             }
             
-            // 更进：在此处直接进入后台静默数据预加载流程，不提前解锁主UI
             submitBtn.innerText = "加载中";
             const syncSuccess = await startPreloadSync();
             
             if (syncSuccess) {
-                // 只有数据获取并渲染完成后，再一口气优雅切入主UI
                 document.body.classList.add('unlocked');
                 document.getElementById('auth-ui').style.display = 'none'; 
                 document.getElementById('main-ui').style.display = 'block'; 
@@ -897,7 +902,6 @@
         }
     }
 
-    // 预加载静默网络流：获取云端并直接构建DOM
     async function startPreloadSync() {
         try {
             const resp = await fetch('https://api.github.com/gists', { headers: { 'Authorization': `token ${FINAL_TOKEN}` } });
@@ -916,10 +920,9 @@
                     const decrypted = await CryptoSvc.decrypt(rawContent); 
                     list = JSON.parse(decrypted || "[]");
                 }
-                render(list); // 此时列表已经在隐藏的DOM中渲染就绪
+                render(list); 
                 return true;
             } else { 
-                // 属于新用户的空库初始化逻辑
                 return await startSyncNew(); 
             }
         } catch(e) { 
@@ -944,7 +947,6 @@
         }
     }
 
-    // 主页面内的增删改后续动作依旧保持流畅的就地更新，无需使用 preload 包装
     async function startSync() {
         try {
             let list = await getLatest();
