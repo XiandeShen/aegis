@@ -19,11 +19,14 @@
             --side-gap: 20px; --glass-bg: rgba(255, 255, 255, 0.75); --glass-blur: blur(20px);
             --glass-border: 1px solid rgba(255, 255, 255, 0.6); --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
             --radius-lg: 28px; --radius-md: 14px;
+            /* 全局统一字体变量 */
+            --font-apple: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "PingFang SC", "Segoe UI", sans-serif;
+            --font-mono: "SF Mono", SFMono-Regular, ui-monospace, Menlo, Monaco, Consolas, monospace;
         }
         body, html {
             margin: 0; padding: 0; width: 100%; min-height: 100%;
             background-color: var(--bg-base); color: #1d1d1f;
-            font-family: -apple-system, "SF Pro Display", "PingFang SC", sans-serif;
+            font-family: var(--font-apple);
             -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; overflow-x: hidden;
         }
         
@@ -34,7 +37,12 @@
             overflow: hidden !important;
         }
 
-        /* ─── 核心修改：默认隐藏渐变背景，只有在解锁成功、添加了 .unlocked 类后才显示，避免解锁页断层 ─── */
+        /* 统一表单元素与按钮的字体 */
+        button, input, textarea, select {
+            font-family: var(--font-apple) !important;
+            -webkit-font-smoothing: antialiased;
+        }
+
         .gradient-bg {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(135deg, #e2e8f0 0%, #f9fafb 50%, #e2e8f0 100%);
@@ -46,42 +54,55 @@
         }
         @keyframes gradientFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         
-        /* ─── 核心修改：顶部栏保持 100% 纯实色不透明，向上翻动时完美遮挡底层卡片 ─── */
+        /* 主顶栏高度规范 */
         header {
             position: fixed; top: 0; left: 0; width: 100%;
-            padding: calc(18px + env(safe-area-inset-top)) var(--side-gap) 15px;
+            padding: calc(16px + env(safe-area-inset-top)) var(--side-gap) 16px;
             z-index: 100; display: flex; justify-content: space-between; align-items: center;
-            background: #f5f5f7; 
+            background: #f5f5f7; transition: padding 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            height: calc(72px + env(safe-area-inset-top)); 
         }
-        .brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; transition: opacity 0.25s ease; }
-        .brand-logo { color: var(--accent); display: flex; align-items: center; }
-        .brand-name { font-size: 19px; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; }
+        .brand { display: flex; align-items: center; gap: 12px; flex-shrink: 0; transition: opacity 0.25s ease; height: 40px; }
+        
+        /* 全局大一统的【正方形】（带10px微圆角）底色图标容器 */
+        .brand-logo-wrapper, .modal-icon-wrapper { 
+            width: 40px; height: 40px; border-radius: 10px; 
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            background: rgba(0, 122, 255, 0.08); color: var(--accent);
+        }
+        .brand-logo-wrapper svg, .modal-icon-wrapper svg { width: 22px; height: 22px; display: block; }
+        .modal-icon-wrapper.danger-style { background: rgba(255, 59, 48, 0.1); color: var(--danger); }
+
+        .brand-name { font-size: 19px; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; font-family: var(--font-apple); line-height: 1; }
         
         body:has(#auth-ui[style*="display: flex"]) header .brand,
         body:has(#auth-ui:not([style*="display: none"])) header .brand {
             opacity: 0; pointer-events: none;
         }
 
-        .header-actions { display: flex; gap: 10px; visibility: hidden; align-items: center; flex: 1; justify-content: flex-end; margin-left: 12px; }
-        .search-wrapper { display: flex; align-items: center; background: rgba(0, 0, 0, 0.05); border-radius: 12px; width: 40px; height: 40px; overflow: hidden; position: relative; border: 1px solid transparent; transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s; }
+        .header-actions { display: flex; gap: 10px; visibility: hidden; align-items: center; flex: 1; justify-content: flex-end; margin-left: 12px; height: 40px; }
+        
+        /* 搜索框与操作按钮改为一致的正方形微圆角 */
+        .search-wrapper { display: flex; align-items: center; background: rgba(0, 0, 0, 0.04); border-radius: 10px; width: 40px; height: 40px; overflow: hidden; position: relative; border: 1px solid transparent; transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s, width 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
         .search-icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: var(--secondary); flex-shrink: 0; }
-        .search-input { border: none; background: transparent; height: 100%; width: 0; padding: 0; font-size: 16px; outline: none !important; box-shadow: none !important; color: #1d1d1f; line-height: normal; }
+        .search-input { border: none; background: transparent; height: 100%; width: 0; padding: 0; font-size: 16px; outline: none !important; box-shadow: none !important; color: #1d1d1f; line-height: normal; font-family: var(--font-apple); }
         .search-clear { width: 32px; height: 40px; color: var(--secondary); cursor: pointer; display: none; align-items: center; justify-content: center; flex-shrink: 0; }
         
         .search-wrapper:focus-within { background: #fff; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12); }
 
         @media (max-width: 767px) {
             .header-actions.search-active .action-btn { display: none; }
-            .header-actions.search-active .search-wrapper { width: 100%; max-width: 200px; background: #fff; box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12); border-color: var(--accent); }
+            .header-actions.search-active .search-wrapper { width: 100%; max-width: 100%; background: #fff; box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12); border-color: var(--accent); }
             .header-actions.search-active .search-input { width: 100%; padding: 0 4px; }
         }
-        @media (min-width: 768px) { .search-wrapper { width: 200px; transition: width 0.2s, border-color 0.2s, box-shadow 0.2s, background-color 0.2s; } .search-input { width: 100%; padding-right: 10px; } }
+        @media (min-width: 768px) { .search-wrapper { width: 200px; border-radius: 10px; } .search-input { width: 100%; padding-right: 10px; } }
         .search-wrapper.has-content .search-clear { display: flex; }
-        .action-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 12px; background: rgba(255, 255, 255, 0.5); border: 1px solid rgba(0, 0, 0, 0.05); flex-shrink: 0; }
         
-        /* 移动端首张卡片遮挡修复 - 恢复最初完美的间距比例 */
-        .page-wrapper { width: 100%; max-width: 1000px; margin: 0 auto; min-height: 100vh; padding: calc(96px + env(safe-area-inset-top)) var(--side-gap) 40px; }
-        @media (min-width: 768px) { .page-wrapper { padding-top: calc(106px + env(safe-area-inset-top)); } }
+        /* 顶栏操作按钮：正方形微圆角设计 */
+        .action-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 10px; background: rgba(0, 0, 0, 0.04); border: 1px solid transparent; flex-shrink: 0; }
+        .action-btn:active { background: rgba(0, 0, 0, 0.08); }
+        
+        .page-wrapper { width: 100%; max-width: 1000px; margin: 0 auto; min-height: 100vh; padding: calc(92px + env(safe-area-inset-top)) var(--side-gap) 40px; transition: padding 0.3s ease; }
 
         #list-container { display: grid; grid-template-columns: 100%; gap: 16px; }
         @media (min-width: 768px) { #list-container { grid-template-columns: repeat(2, 1fr); gap: 20px; } }
@@ -90,35 +111,20 @@
             background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
             border-radius: var(--radius-lg); border: var(--glass-border); box-shadow: var(--card-shadow); 
             padding: 22px; position: relative; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; min-height: 110px;
+            cursor: pointer; user-select: none;
         }
-        .item-card:hover:not(.shake-active) { transform: translateY(-2px); }
+        .item-card:hover { transform: translateY(-2px); }
+        .item-card:active { background: rgba(255, 255, 255, 0.9); }
         
-        /* 二次确认卡片抖动动画 */
-        .item-card.shake-active {
-            animation: cardWiggle 0.25s ease-in-out infinite;
-            border-color: rgba(255, 59, 48, 0.45);
-            box-shadow: 0 8px 24px rgba(255, 59, 48, 0.08);
-        }
-        @keyframes cardWiggle {
-            0% { transform: rotate(-0.5deg); }
-            50% { transform: rotate(0.5deg); }
-            100% { transform: rotate(-0.5deg); }
-        }
-
-        .card-actions { position: absolute; top: 18px; right: 18px; display: flex; gap: 2px; }
-        .card-info { padding-right: 80px; text-align: left; }
-        .item-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin:0; font-size:18px; font-weight: 700; }
+        .card-info { padding-right: 20px; text-align: left; pointer-events: none; }
+        .item-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin:0; font-size:18px; font-weight: 700; font-family: var(--font-apple); }
         .info-row { margin-top: 6px; display: flex; flex-direction: column; gap: 2px; }
-        .item-user, .pass-val { font-size:13px; font-family: ui-monospace, monospace; }
+        .item-user, .pass-val { font-size:13px; font-family: var(--font-mono); }
         .item-user { color:var(--secondary); margin: 0; }
-        .pass-val { color: var(--accent); opacity: 0.8; user-select: text; }
-        .tool-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; color: var(--secondary); cursor: pointer; border-radius: 8px; transition: background 0.2s; }
-        .tool-btn:hover { background: rgba(0,0,0,0.04); }
-        .tool-btn.active { color: var(--accent); background: rgba(0, 122, 255, 0.1); }
+        .pass-val { color: var(--accent); opacity: 0.8; }
         
-        .item-time { position: absolute; bottom: 22px; right: 22px; font-size: 11px; color: var(--secondary); opacity: 0.4; font-family: ui-monospace, monospace; line-height: 1.5; }
+        .item-time { position: absolute; bottom: 22px; right: 22px; font-size: 11px; color: var(--secondary); opacity: 0.4; font-family: var(--font-mono); line-height: 1.5; pointer-events: none; }
 
-        /* 视口全屏锁定，确保 iOS PWA 模式下解锁面板完美绝对居中 */
         .auth-viewport { 
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -128,11 +134,11 @@
         }
         .glass-card { background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border-radius: var(--radius-lg); border: var(--glass-border); padding: 32px 24px; width: 100%; max-width: 340px; text-align: center; }
         
-        .auth-form-body input { width: 100%; height: 50px; padding: 0 16px; margin: 8px 0; border-radius: var(--radius-md); border: 1px solid rgba(0,0,0,0.08); font-size: 16px; outline: none; background: rgba(255,255,255,0.6); font-family: inherit; }
-        .primary-btn { width: 100%; height: 50px; background: var(--accent); border: none; border-radius: var(--radius-md); color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.3s; }
+        .auth-form-body input { width: 100%; height: 50px; padding: 0 16px; margin: 8px 0; border-radius: var(--radius-md); border: 1px solid rgba(0,0,0,0.08); font-size: 16px; outline: none; background: rgba(255,255,255,0.6); font-family: var(--font-apple); }
+        .primary-btn { width: 100%; height: 50px; background: var(--accent); border: none; border-radius: var(--radius-md); color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.3s; font-family: var(--font-apple); }
         .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* 二级页面遮罩层 */
+        /* 模态框基础遮罩 */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0, 0, 0, 0.15); z-index: 200; display: none; 
@@ -142,10 +148,9 @@
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
         }
         
-        /* 二级弹窗卡片容器 */
         .page-modal-content { 
             width: 100%; max-width: 440px; display: flex; flex-direction: column; text-align: left;
-            background: #ffffff; border-radius: 24px; padding: 24px;
+            background: #ffffff; border-radius: 24px; padding: 24px; position: relative;
             box-shadow: 0 12px 40px rgba(0,0,0,0.12); border: 1px solid rgba(0,0,0,0.05);
             max-height: calc(100vh - 40px); overflow-y: auto;
             animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
@@ -153,38 +158,71 @@
         .page-modal-content::-webkit-scrollbar { width: 4px; }
         .page-modal-content::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 10px; }
 
+        .modal-close-x {
+            position: absolute; top: 29px; right: 24px; width: 30px; height: 30px;
+            border-radius: 50%; background: rgba(0, 0, 0, 0.05); color: #86868b;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            border: none; z-index: 10; transition: background 0.2s, color 0.2s;
+        }
+        .modal-close-x:active { background: rgba(0, 0, 0, 0.1); color: #1d1d1f; }
+
         @keyframes popIn {
             from { opacity: 0; transform: scale(0.93) translateY(12px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        /* ─── 在移动端下让二级菜单的对应功能文字与图标，在尺寸排版上完全和底层 brand 重合 ─── */
+        /* 统一顶栏头部流布局 */
+        .modal-page-header { margin-bottom: 24px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; height: 40px; }
+        .modal-header-left { display: flex; align-items: center; gap: 12px; height: 40px; }
+        .page-modal-content h3 { font-size: 20px; font-weight: 700; color: #1d1d1f; margin: 0; letter-spacing: -0.5px; font-family: var(--font-apple); line-height: 1.2; }
+
+        /* ================= 移动端自适应（精细对齐调整） ================= */
         @media (max-width: 480px) {
             .modal-overlay { 
                 background: #f5f5f7; 
-                padding: calc(18px + env(safe-area-inset-top)) var(--side-gap) 40px; 
+                padding: 0; 
                 align-items: flex-start; 
             }
-            .page-modal-content { max-height: 100%; box-shadow: none; border: none; padding: 0; background: transparent; animation: none; overflow-y: visible; }
+            .page-modal-content { 
+                max-height: 100%; 
+                min-height: 100vh;
+                box-shadow: none; 
+                border: none; 
+                padding: 0 var(--side-gap) 40px; 
+                background: transparent; 
+                animation: none; 
+                overflow-y: visible; 
+            }
             
+            /* 移动端弹出层的标题栏位置、内边距，完全像素级同步主顶栏 */
             .modal-page-header { 
                 display: flex !important;
                 flex-direction: row !important;
                 align-items: center !important; 
-                gap: 10px !important; 
-                margin-bottom: 24px !important; 
-                padding: 0 !important;
+                justify-content: space-between !important; 
+                gap: 12px !important; 
+                padding: calc(16px + env(safe-area-inset-top)) 0 16px !important; 
+                margin-bottom: 16px !important; 
+                height: calc(72px + env(safe-area-inset-top)) !important; 
             }
-            .modal-icon-wrapper { 
-                background: transparent !important; 
-                box-shadow: none !important; 
-                width: auto !important; 
-                height: auto !important; 
+
+            .modal-header-left {
                 display: flex !important;
                 align-items: center !important;
-                color: var(--accent) !important; 
+                gap: 12px !important;
+                height: 40px !important; 
             }
-            .modal-icon-wrapper svg { width: 24px !important; height: 24px !important; }
+            
+            /* 取消绝对定位，关闭按钮也同步为正方形微圆角 */
+            .modal-close-x { 
+                position: static !important; 
+                width: 40px !important; 
+                height: 40px !important; 
+                border-radius: 10px !important;
+                background: rgba(0, 0, 0, 0.04) !important; 
+                margin: 0 !important;
+                flex-shrink: 0 !important;
+            } 
             
             .page-modal-content h3 { 
                 font-size: 19px !important; 
@@ -193,14 +231,8 @@
                 text-transform: uppercase !important; 
                 color: #1d1d1f !important; 
                 margin: 0 !important;
+                line-height: 1 !important;
             }
-        }
-
-        @media (min-width: 481px) {
-            .modal-page-header { margin-bottom: 24px; display: flex; flex-direction: row; align-items: center; gap: 14px; padding-left: 2px; }
-            .modal-icon-wrapper { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #f5f5f7; box-shadow: 0 2px 8px rgba(0,0,0,0.02); color: var(--accent); }
-            .modal-icon-wrapper svg { width: 24px; height: 24px; }
-            .page-modal-content h3 { font-size: 22px; font-weight: 700; color: #1d1d1f; margin: 0; letter-spacing: -0.5px; }
         }
 
         .apple-group-box, .info-cell-group {
@@ -221,7 +253,7 @@
             transition: background-color 0.2s, border-color 0.25s, box-shadow 0.25s;
         }
         .info-block-item.editable-box { cursor: default; } 
-        .info-block-item:not(.editable-box):active { background-color: rgba(0, 0, 0, 0.06); }
+        .info-block-item:not(.editable-box):not(.edit-mode-active):active { background-color: rgba(0, 0, 0, 0.06); }
         
         .info-block-item:focus-within {
             background: #ffffff;
@@ -234,23 +266,40 @@
             color: var(--secondary);
             font-weight: 600;
             user-select: none;
+            font-family: var(--font-apple);
         }
 
+        /* ------------------ 终极防抖与对齐样式控制 ------------------ */
+        /* 详情文本核心样式：彻底控制高度与行高，与 input 完全一致 */
         .info-block-content {
             font-size: 16px;
             color: #1d1d1f;
             text-align: left; 
             word-break: break-all;
-            font-family: ui-monospace, monospace;
             width: 100%;
-            line-height: 1.4;
+            height: 26px; 
+            line-height: 26px !important; /* 强制统一行高 */
             display: block;
-            overflow-y: auto;
-            max-height: 160px; 
+            overflow: hidden;
+            padding: 0 !important;
+            margin: 0 !important;
         }
+        /* 字体分流：名称、账号、常规备注用常规字体，密码用等宽字体 */
+        #detail-name, #detail-user, .font-style-apple { font-family: var(--font-apple) !important; }
+        #detail-pass, .font-style-mono { font-family: var(--font-mono) !important; }
+        
         .info-block-content.highlight { color: var(--accent); font-weight: 700; }
-        .info-block-content.note-style { font-family: inherit; font-size: 15px; color: #333; }
+        .info-block-content.note-style { font-size: 15px; color: #1d1d1f; }
+        
+        /* 暂无备注时的优雅高品质灰度样式 */
+        .info-block-content.note-empty {
+            color: var(--secondary);
+            opacity: 0.5;
+            font-style: italic;
+            font-family: var(--font-apple) !important;
+        }
 
+        /* 表单输入控件基本规则：完全抹平浏览器原生内外边距与行高带来的塌陷 */
         .info-block-item input, .info-block-item textarea {
             background: transparent !important;
             border: none !important;
@@ -258,18 +307,28 @@
             padding: 0 !important;
             border-radius: 0 !important;
             height: 26px !important; 
+            line-height: 26px !important; /* 原地像素对齐 */
             font-size: 16px !important;
             box-shadow: none !important;
             width: 100% !important;
             outline: none !important; 
+            color: #1d1d1f !important;
         }
-        .info-block-item textarea.add-note-input {
+        /* 针对输入框也进行严格的字体对齐管理 */
+        #edit-name, #edit-user { font-family: var(--font-apple) !important; }
+        #edit-pass { font-family: var(--font-mono) !important; }
+
+        /* 详情和编辑态在长文本（备注）下高度像素级完全对齐 */
+        .info-block-item textarea.add-note-input, .info-block-content.note-container-fixed {
             height: 80px !important;
-            padding-top: 2px !important;
+            max-height: 80px !important;
+            line-height: 1.4 !important; /* 长文本使用标准宽松行高 */
+            padding-top: 0 !important;
             resize: none;
             word-break: break-all;
-            line-height: 1.4;
+            overflow-y: auto;
         }
+        #edit-note { font-family: var(--font-apple) !important; font-size: 15px !important; }
 
         .info-block-content::-webkit-scrollbar, .info-block-item textarea::-webkit-scrollbar { width: 4px; }
         .info-block-content::-webkit-scrollbar-track, .info-block-item textarea::-webkit-scrollbar-track { background: transparent; }
@@ -277,13 +336,17 @@
         .info-block-item:hover .info-block-content::-webkit-scrollbar-thumb, .info-block-item:hover textarea::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.12); }
 
         .modal-action-row { display: flex; gap: 12px; width: 100%; margin-top: 14px; }
-        .modal-action-row .primary-btn, .modal-action-row .secondary-text-btn { flex: 1; height: 50px; border-radius: var(--radius-md); font-size: 16px; font-weight: 600; border: none; cursor: pointer; }
+        .modal-action-row .primary-btn, .modal-action-row .secondary-text-btn, .modal-action-row .danger-btn { flex: 1; height: 50px; border-radius: var(--radius-md); font-size: 16px; font-weight: 600; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: var(--font-apple); }
         .modal-action-row .secondary-text-btn { background: rgba(0, 0, 0, 0.04); color: #1d1d1f; transition: background 0.2s, transform 0.1s; }
         .modal-action-row .secondary-text-btn:active { background: rgba(0, 0, 0, 0.08); transform: scale(0.98); }
+        .modal-action-row .danger-btn { background: rgba(255, 59, 48, 0.1); color: var(--danger); transition: background 0.2s, transform 0.1s; font-family: var(--font-apple); }
+        .modal-action-row .danger-btn:active { background: rgba(255, 59, 48, 0.18); transform: scale(0.98); }
+        .modal-action-row .danger-btn.shake-active { animation: btnWiggle 0.25s ease-in-out infinite; background: var(--danger); color: #fff; }
+        @keyframes btnWiggle { 0% { transform: rotate(-1deg); } 50% { transform: rotate(1deg); } 100% { transform: rotate(-1deg); } }
 
-        #toast { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(0,0,0,0.85); color: white; padding: 12px 24px; border-radius: 24px; z-index: 1000; opacity: 0; pointer-events: none; transition: all 0.4s; }
+        #toast { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(0,0,0,0.85); color: white; padding: 12px 24px; border-radius: 24px; z-index: 1000; opacity: 0; pointer-events: none; transition: all 0.4s; font-family: var(--font-apple); font-size: 14px; }
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-        .status-msg { width: 100%; padding: 60px 0; color: var(--secondary); text-align: center; grid-column: 1/-1; }
+        .status-msg { width: 100%; padding: 60px 0; color: var(--secondary); text-align: center; grid-column: 1/-1; font-family: var(--font-apple); }
 
         #login-card {
             background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.45); box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.01), 0 24px 60px -8px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.4);
@@ -291,16 +354,16 @@
         }
         .card-brand-header { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
         .card-brand-logo { color: var(--accent); display: flex; align-items: center; }
-        .card-brand-name { font-size: 15px; font-weight: 800; letter-spacing: 0.25em; color: #1d1d1f; }
+        .card-brand-name { font-size: 15px; font-weight: 800; letter-spacing: 0.25em; color: #1d1d1f; font-family: var(--font-apple); }
         #login-card h2 { display: none; }
         
         .auth-form-body { display: flex; flex-direction: column; gap: 0; }
         .auth-input-button-row { display: flex; gap: 10px; width: 100%; align-items: center; }
-        .auth-input-button-row input { margin: 0; flex: 1; background: rgba(255, 255, 255, 0.75); border: 1px solid rgba(0, 0, 0, 0.05); border-radius: 15px; height: 50px; font-size: 15px; color: #1d1d1f; box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.01); transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+        .auth-input-button-row input { margin: 0; flex: 1; background: rgba(255, 255, 255, 0.75); border: 1px solid rgba(0, 0, 0, 0.05); border-radius: 15px; height: 50px; font-size: 15px; color: #1d1d1f; box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.01); transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); font-family: var(--font-apple); }
         .auth-input-button-row input::placeholder { color: #a1a1a6; }
         .auth-input-button-row input:focus { background: #ffffff; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.12); }
         
-        .auth-input-button-row .primary-btn { width: 90px; flex-shrink: 0; background: linear-gradient(180deg, #2f91ff 0%, var(--accent) 100%); border-radius: 15px; height: 50px; font-size: 15px; font-weight: 600; box-shadow: 0 4px 14px rgba(0, 122, 255, 0.15); transition: all 0.25s ease; }
+        .auth-input-button-row .primary-btn { width: 90px; flex-shrink: 0; background: linear-gradient(180deg, #2f91ff 0%, var(--accent) 100%); border-radius: 15px; height: 50px; font-size: 15px; font-weight: 600; box-shadow: 0 4px 14px rgba(0, 122, 255, 0.15); transition: all 0.25s ease; font-family: var(--font-apple); }
         .auth-input-button-row .primary-btn:hover:not(:disabled) { opacity: 0.95; transform: translateY(-0.5px); }
         
         #setup-area { animation: fadeInFlag 0.4s ease forwards; width: 100%; margin-bottom: 12px; }
@@ -308,12 +371,11 @@
         
         #reset-link { 
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important; 
-            font-weight: 500; padding: 8px 12px; display: inline-block; text-align: center; margin-top: 16px !important; width: 100%; background: transparent !important;
+            font-weight: 500; padding: 8px 12px; display: inline-block; text-align: center; margin-top: 16px !important; width: 100%; background: transparent !important; font-family: var(--font-apple);
         }
         #reset-link:hover { opacity: 1 !important; color: var(--danger) !important; }
         #reset-link:active { color: var(--danger) !important; transform: scale(0.97); }
 
-        /* ─── 移动端点击高亮与焦点框完美优化 ─── */
         button, input, textarea, .action-btn, .tool-btn, .info-block-item {
             -webkit-tap-highlight-color: transparent !important;
             outline: none !important;
@@ -330,20 +392,15 @@
             transform: scale(1) !important;
             cursor: not-allowed;
         }
-        .modal-action-row .secondary-text-btn {
-            transition: background-color 0.2s ease, transform 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        }
-        .modal-action-row .secondary-text-btn:active {
-            background: rgba(0, 0, 0, 0.08) !important;
-            transform: scale(0.96) !important;
-        }
     </style>
 </head>
 <body>
 <div class="gradient-bg"></div>
 <header>
     <div class="brand">
-        <div class="brand-logo"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 12 12 22 12 22Z"/><path d="M9 12L11 14L15 10"/></svg></div>
+        <div class="brand-logo-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 12 12 22 12 22Z"/><path d="M9 12L11 14L15 10"/></svg>
+        </div>
         <div class="brand-name">AEGIS</div>
     </div>
     <div class="header-actions" id="actions">
@@ -385,8 +442,13 @@
 <div class="modal-overlay" id="add-modal-overlay">
     <div class="page-modal-content">
         <div class="modal-page-header">
-            <div class="modal-icon-wrapper" id="add-modal-icon-container"></div>
-            <h3 id="modal-title">新增凭据</h3>
+            <div class="modal-header-left">
+                <div class="modal-icon-wrapper" id="add-modal-icon-container"></div>
+                <h3 id="modal-title">新增凭据</h3>
+            </div>
+            <button class="modal-close-x" onclick="toggleModal('add-modal', false)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
         </div>
         <div class="apple-group-box">
             <div class="info-block-item editable-box">
@@ -416,10 +478,15 @@
 <div class="modal-overlay" id="hard-reset-overlay">
     <div class="page-modal-content">
         <div class="modal-page-header">
-            <div class="modal-icon-wrapper danger-style">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            <div class="modal-header-left">
+                <div class="modal-icon-wrapper danger-style">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                </div>
+                <h3 style="color:var(--danger)">确定重置配置吗？</h3>
             </div>
-            <h3 style="color:var(--danger)">确定重置所有配置吗？</h3>
+            <button class="modal-close-x" onclick="toggleModal('hard-reset', false)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
         </div>
         <div class="modal-action-row">
             <button class="secondary-text-btn" onclick="toggleModal('hard-reset', false)">取消</button>
@@ -431,34 +498,47 @@
 <div class="modal-overlay" id="pass-modal-overlay">
     <div class="page-modal-content">
         <div class="modal-page-header">
-            <div class="modal-icon-wrapper" id="pass-modal-icon-container">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <div class="modal-header-left">
+                <div class="modal-icon-wrapper" id="pass-modal-icon-container"></div>
+                <h3 id="detail-modal-title">凭据详情</h3>
             </div>
-            <h3 id="detail-modal-title">凭据详情</h3>
+            <button class="modal-close-x" onclick="toggleModal('pass-modal', false)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
         </div>
         
         <div class="info-cell-group">
-            <div class="info-block-item" onclick="copyTextFromCell('detail-name', '名称')">
+            <div class="info-block-item" id="box-name" onclick="handleCellClick('name', '名称')">
                 <div class="info-block-label">应用名称</div>
                 <div class="info-block-content" id="detail-name"></div>
+                <input type="text" id="edit-name" style="display:none;">
             </div>
-            <div class="info-block-item" onclick="copyTextFromCell('detail-user', '账号')">
+            <div class="info-block-item" id="box-user" onclick="handleCellClick('user', '账号')">
                 <div class="info-block-label">登录账号</div>
                 <div class="info-block-content" id="detail-user"></div>
+                <input type="text" id="edit-user" style="display:none;">
             </div>
-            <div class="info-block-item" onclick="copyTextFromCell('detail-pass', '密码')">
+            <div class="info-block-item" id="box-pass" onclick="handleCellClick('pass', '密码')">
                 <div class="info-block-label">安全密码</div>
                 <div class="info-block-content highlight" id="detail-pass"></div>
+                <input type="text" id="edit-pass" style="display:none;">
             </div>
-            <div class="info-block-item" id="detail-note-row" style="cursor: default;">
+            <div class="info-block-item" id="box-note" onclick="handleCellClick('note', '备注')">
                 <div class="info-block-label">备注信息</div>
-                <div class="info-block-content note-style" id="detail-note"></div>
+                <div class="info-block-content note-style note-container-fixed" id="detail-note"></div>
+                <textarea id="edit-note" class="add-note-input" style="display:none;" placeholder="可在此记录安全问题等长文本..."></textarea>
             </div>
         </div>
 
-        <div class="modal-action-row">
-            <button class="secondary-text-btn" onclick="toggleModal('pass-modal', false)">关闭</button>
+        <div class="modal-action-row" id="detail-actions-row">
+            <button id="detail-del-btn" class="danger-btn">删除</button>
             <button class="primary-btn" id="copy-all-btn">复制全部</button>
+            <button id="detail-edit-btn" class="secondary-text-btn">编辑</button>
+        </div>
+
+        <div class="modal-action-row" id="edit-actions-row" style="display:none;">
+            <button class="secondary-text-btn" id="edit-cancel-btn">取消</button>
+            <button class="primary-btn" id="edit-save-btn">同步云端</button>
         </div>
     </div>
 </div>
@@ -468,7 +548,8 @@
 <script>
     const SVGIcons = {
         filePlus: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>`,
-        editPencil: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`
+        editPencil: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`,
+        eyeLook: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`
     };
 
     const CryptoSvc = {
@@ -501,15 +582,14 @@
 
     let FINAL_TOKEN = "", GIST_ID = localStorage.getItem('ae_gid'), ENCRYPTED_TK = localStorage.getItem('ae_enc_tk');
     let pendingDeleteCardId = null, currentEditId = null, CACHED_LIST = []; 
-    let lastScrollY = 0; 
+    let lastScrollY = 0, isInsideEditMode = false, activeItemBackup = null; 
 
     document.addEventListener('click', (e) => {
         const bar = document.getElementById('search-bar');
         const wrapper = document.getElementById('search-wrapper');
-        const isDelBtn = e.target.closest('.tool-btn[data-del-btn]'); 
         
-        if (wrapper && !wrapper.contains(e.target) && bar && bar.value === "" && !e.target.closest('.tool-btn')) { bar.blur(); }
-        if (pendingDeleteCardId && !isDelBtn) { clearPendingDelete(); }
+        if (wrapper && !wrapper.contains(e.target) && bar && bar.value === "" && !e.target.closest('.item-card')) { bar.blur(); }
+        if (pendingDeleteCardId && !e.target.closest('#detail-del-btn')) { clearPendingDelete(); }
     });
 
     document.addEventListener('touchmove', (e) => {
@@ -525,7 +605,6 @@
 
     function focusSearch() { document.getElementById('search-bar').focus(); }
     
-    /* ─── 修正：彻底移除不美观的间距拉伸 CSS，改用优雅的无感 JS 瞬间置顶来解决移动端首卡遮挡 ─── */
     function handleSearchUI(input) {
         const wrapper = document.getElementById('search-wrapper'), actions = document.getElementById('actions');
         const hasText = input.value.length > 0;
@@ -534,8 +613,8 @@
         if (isFocused || hasText) actions.classList.add('search-active'); else actions.classList.remove('search-active');
         handleSearch(input.value);
         
-        if (isFocused || hasText) {
-            window.scrollTo({ top: 0, behavior: 'instant' });
+        if ((isFocused || hasText) && window.scrollY > 10) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
     
@@ -548,19 +627,12 @@
         if (!isSearching) CACHED_LIST = list; 
         const c = document.getElementById('list-container');
         c.innerHTML = list.length ? '' : `<div class="status-msg">${isSearching ? '未找到相关凭据' : '暂无凭据'}</div>`;
+        
         list.sort((a,b)=>b.id-a.id).forEach(item => {
             const div = document.createElement('div');
             div.className = 'item-card'; div.id = `card-${item.id}`;
-            const itemStr = JSON.stringify(item).replace(/"/g, '&quot;');
 
             div.innerHTML = `
-                <div class="card-actions">
-                    <button class="tool-btn" onmousedown="event.preventDefault();showDetails(${itemStr})" ontouchstart="event.preventDefault();showDetails(${itemStr})"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                    <button class="tool-btn" onmousedown="event.preventDefault();openEditModal(${itemStr})" ontouchstart="event.preventDefault();openEditModal(${itemStr})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-                    <button id="del-btn-${item.id}" data-del-btn="true" class="tool-btn" onmousedown="event.preventDefault();confirmDelete('${item.id}')" ontouchstart="event.preventDefault();confirmDelete('${item.id}')" style="color:var(--danger)">
-                        <svg class="del-icon-raw" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2-2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                    </button>
-                </div>
                 <div class="card-info">
                     <h3 class="item-name">${item.name}</h3>
                     <div class="info-row">
@@ -570,6 +642,11 @@
                 </div>
                 ${item.updatedAt ? `<div class="item-time">${item.updatedAt}</div>` : ''} 
             `;
+            
+            div.addEventListener('click', () => {
+                showDetails(item);
+            });
+
             c.appendChild(div);
         });
         pendingDeleteCardId = null; 
@@ -577,31 +654,30 @@
 
     function clearPendingDelete() {
         if (!pendingDeleteCardId) return;
-        const previousCard = document.getElementById(`card-${pendingDeleteCardId}`);
-        const previousBtn = document.getElementById(`del-btn-${pendingDeleteCardId}`);
-        if (previousCard) previousCard.classList.remove('shake-active');
-        if (previousBtn) {
-            previousBtn.innerHTML = `<svg class="del-icon-raw" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2-2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`;
+        const delBtn = document.getElementById('detail-del-btn');
+        if (delBtn) {
+            delBtn.classList.remove('shake-active');
+            delBtn.innerText = "删除";
         }
         pendingDeleteCardId = null;
     }
 
     async function confirmDelete(id) { 
-        const targetCard = document.getElementById(`card-${id}`);
-        const targetBtn = document.getElementById(`del-btn-${id}`);
+        const delBtn = document.getElementById('detail-del-btn');
         
         if (pendingDeleteCardId !== id) {
             clearPendingDelete(); 
             pendingDeleteCardId = id;
-            if (targetCard) targetCard.classList.add('shake-active');
-            if (targetBtn) {
-                targetBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+            if (delBtn) {
+                delBtn.classList.add('shake-active');
+                delBtn.innerText = "确 认";
             }
             return; 
         }
         
         try { 
             showToast("正在同步删除...");
+            toggleModal('pass-modal', false);
             let list = await getLatest(); 
             list = list.filter(i => i.id != id); 
             await updateCloud(list); 
@@ -613,34 +689,130 @@
     }
 
     function showDetails(item) {
+        activeItemBackup = item; 
+        currentEditId = item.id;
+        isInsideEditMode = false;
+
+        document.getElementById('pass-modal-icon-container').innerHTML = SVGIcons.eyeLook;
         document.getElementById('detail-modal-title').innerText = "凭据详情";
+        
         document.getElementById('detail-name').innerText = item.name || '-';
         document.getElementById('detail-user').innerText = item.user || '-';
         document.getElementById('detail-pass').innerText = item.pass || '-';
         
-        const noteRow = document.getElementById('detail-note-row');
+        const noteEl = document.getElementById('detail-note');
         if (item.note && item.note.trim()) {
-            document.getElementById('detail-note').innerText = item.note;
-            noteRow.style.display = 'flex';
+            noteEl.innerText = item.note;
+            noteEl.classList.remove('note-empty');
         } else {
-            noteRow.style.display = 'none';
+            noteEl.innerText = "暂无备注...";
+            noteEl.classList.add('note-empty');
         }
 
+        document.getElementById('edit-name').value = item.name;
+        document.getElementById('edit-user').value = item.user || '';
+        document.getElementById('edit-pass').value = item.pass;
+        document.getElementById('edit-note').value = item.note || '';
+
+        switchInlineUIMode(false);
+        clearPendingDelete();
         toggleModal('pass-modal', true);
         
-        /* ─── 保持修改：“复制全部”点击后一次性完整导出四大维度的文本内容 ─── */
         document.getElementById('copy-all-btn').onclick = function() {
             const allText = `名称: ${item.name || '-'}\n账号: ${item.user || '-'}\n密码: ${item.pass || '-'}${item.note ? `\n备注: ${item.note}` : ''}`;
             navigator.clipboard.writeText(allText).then(() => showToast("全部内容已复制")).catch(() => showToast("复制失败"));
         };
+
+        document.getElementById('detail-edit-btn').onclick = function() {
+            startInlineEdit();
+        };
+        
+        document.getElementById('detail-del-btn').onclick = function() {
+            confirmDelete(item.id);
+        };
     }
 
-    function copyTextFromCell(elementId, labelName) {
-        const text = document.getElementById(elementId).innerText;
+    function handleCellClick(type, labelName) {
+        if (isInsideEditMode) return; 
+        if (type === 'note' && document.getElementById('detail-note').classList.contains('note-empty')) return;
+        
+        const text = document.getElementById(`detail-${type}`).innerText;
         if (!text || text === '-') return;
         navigator.clipboard.writeText(text).then(() => {
             showToast(`${labelName}已复制`);
         }).catch(() => showToast("复制失败"));
+    }
+
+    function startInlineEdit() {
+        isInsideEditMode = true;
+        
+        document.getElementById('pass-modal-icon-container').innerHTML = SVGIcons.editPencil;
+        document.getElementById('detail-modal-title').innerText = "修改凭据";
+
+        switchInlineUIMode(true);
+
+        document.getElementById('edit-cancel-btn').onclick = function() {
+            showDetails(activeItemBackup); 
+        };
+
+        document.getElementById('edit-save-btn').onclick = async function() {
+            const name = document.getElementById('edit-name').value.trim();
+            const pass = document.getElementById('edit-pass').value.trim();
+            if (!name || !pass) return;
+
+            const saveBtn = document.getElementById('edit-save-btn');
+            saveBtn.disabled = true; saveBtn.innerText = "同步中...";
+
+            const now = new Date();
+            const timeStr = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+            try {
+                let list = await getLatest();
+                const payload = { 
+                    name, 
+                    user: document.getElementById('edit-user').value, 
+                    pass, 
+                    note: document.getElementById('edit-note').value, 
+                    updatedAt: timeStr 
+                };
+                
+                const index = list.findIndex(i => i.id == currentEditId);
+                if (index !== -1) {
+                    list[index] = { ...list[index], ...payload };
+                    activeItemBackup = list[index]; 
+                }
+                
+                await updateCloud(list);
+                clearSearch();
+                showDetails(activeItemBackup); 
+            } catch (e) {
+                showToast("同步失败");
+            } finally {
+                saveBtn.disabled = false; saveBtn.innerText = "同步云端";
+            }
+        };
+    }
+
+    function switchInlineUIMode(toEditMode) {
+        const fields = ['name', 'user', 'pass', 'note'];
+        fields.forEach(f => {
+            const cell = document.getElementById(`box-${f}`);
+            const textEl = document.getElementById(`detail-${f}`);
+            const inputEl = document.getElementById(`edit-${f}`);
+            
+            if (toEditMode) {
+                cell.classList.add('edit-mode-active');
+                textEl.style.display = 'none';
+                inputEl.style.display = 'block';
+            } else {
+                cell.classList.remove('edit-mode-active');
+                textEl.style.display = 'block';
+                inputEl.style.display = 'none';
+            }
+        });
+
+        document.getElementById('detail-actions-row').style.display = toEditMode ? 'none' : 'flex';
+        document.getElementById('edit-actions-row').style.display = toEditMode ? 'flex' : 'none';
     }
 
     function openAddModal() { 
@@ -648,17 +820,6 @@
         document.getElementById('modal-title').innerText = "新增凭据";
         document.getElementById('add-modal-icon-container').innerHTML = SVGIcons.filePlus;
         ['add-name','add-user','add-pass','add-note'].forEach(i => document.getElementById(i).value=''); 
-        toggleModal('add-modal', true); 
-    }
-    
-    function openEditModal(item) { 
-        currentEditId = item.id; 
-        document.getElementById('modal-title').innerText = "修改凭据"; 
-        document.getElementById('add-modal-icon-container').innerHTML = SVGIcons.editPencil;
-        document.getElementById('add-name').value = item.name; 
-        document.getElementById('add-user').value = item.user; 
-        document.getElementById('add-pass').value = item.pass; 
-        document.getElementById('add-note').value = item.note || ''; 
         toggleModal('add-modal', true); 
     }
     
@@ -704,7 +865,6 @@
             if (!decryptedTk) return;
         }
         
-        // ─── 核心修改：通过向 body 添加 .unlocked 类，动态优雅地切回列表的高级渐变背板 ───
         document.body.classList.add('unlocked');
 
         document.getElementById('auth-ui').style.display = 'none'; 
@@ -758,11 +918,7 @@
         try { 
             let list = await getLatest(); 
             const payload = { name, user: document.getElementById('add-user').value, pass, note: document.getElementById('add-note').value, updatedAt: timeStr };
-            if (currentEditId) { 
-                const index = list.findIndex(i => i.id == currentEditId); if (index !== -1) list[index] = { ...list[index], ...payload }; 
-            } else { 
-                list.push({ ...payload, id: Date.now() }); 
-            } 
+            list.push({ ...payload, id: Date.now() }); 
             await updateCloud(list); clearSearch(); toggleModal('add-modal', false); 
         } catch (e) { showToast("同步失败"); } finally { 
             saveBtn.disabled = false; saveBtn.innerText = "同步云端"; 
