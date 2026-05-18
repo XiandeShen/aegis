@@ -14,19 +14,117 @@
 
     <style>
         * { box-sizing: border-box; }
+        
+        /* 【新增】明亮模式纯净颜色变量映射，完美提取你原件的所有色彩 */
         :root {
-            --bg-base: #f5f5f7; --accent: #007aff; --danger: #ff3b30; --secondary: #86868b;
-            --side-gap: 20px; --glass-bg: rgba(255, 255, 255, 0.75); --glass-blur: blur(20px);
-            --glass-border: 1px solid rgba(255, 255, 255, 0.6); --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
-            --radius-lg: 28px; --radius-md: 14px;
+            --bg-base: #f5f5f7; 
+            --accent: #007aff; 
+            --danger: #ff3b30; 
+            --secondary: #86868b;
+            --side-gap: 20px; 
+            --glass-bg: rgba(255, 255, 255, 0.75); 
+            --glass-blur: blur(20px);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.6); 
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+            --radius-lg: 28px; 
+            --radius-md: 14px;
             --font-apple: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "PingFang SC", "Segoe UI", sans-serif;
             --font-mono: "SF Mono", SFMono-Regular, ui-monospace, Menlo, Monaco, Consolas, monospace;
+            
+            /* 提取你原文件里的固定背景及文字色彩 */
+            --text-main: #1d1d1f;
+            --text-placeholder: #a1a1a6;
+            --action-btn-bg: rgba(0, 0, 0, 0.04);
+            --action-btn-active: rgba(0, 0, 0, 0.08);
+            --search-focus-bg: #ffffff;
+            --modal-content-bg: #ffffff;
+            --modal-content-border: 1px solid rgba(0,0,0,0.05);
+            --modal-close-bg: rgba(0, 0, 0, 0.05);
+            --info-item-bg: rgba(0, 0, 0, 0.03);
+            --info-item-border: 1px solid rgba(0, 0, 0, 0.02);
+            --info-item-active: rgba(0, 0, 0, 0.06);
+            --info-item-focus-bg: #ffffff;
+            --login-card-bg: rgba(255, 255, 255, 0.45);
+            --login-card-border: 1px solid rgba(255, 255, 255, 0.45);
+            --login-input-bg: rgba(255, 255, 255, 0.75);
+            --login-input-border: 1px solid rgba(0, 0, 0, 0.05);
+            --scrollbar-thumb-bg: rgba(0, 0, 0, 0.12);
+            --scrollbar-thumb-hover: rgba(0, 0, 0, 0.24);
+            --gradient-color-1: #e2e8f0;
+            --gradient-color-2: #f9fafb;
         }
+
+        /* 【新增】原生 Apple 质感暗色变量映射，绝不影响布局宽高 */
+        [data-theme="dark"] {
+            --bg-base: #000000;
+            --accent: #0a84ff;
+            --danger: #ff453a;
+            --secondary: #8e8e93;
+            --glass-bg: rgba(28, 28, 30, 0.75);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --text-main: #f5f5f7;
+            --text-placeholder: #48484a;
+            --action-btn-bg: rgba(255, 255, 255, 0.1);
+            --action-btn-active: rgba(255, 255, 255, 0.18);
+            --search-focus-bg: #1c1c1e;
+            --modal-content-bg: #1c1c1e;
+            --modal-content-border: 1px solid rgba(255, 255, 255, 0.1);
+            --modal-close-bg: rgba(255, 255, 255, 0.12);
+            --info-item-bg: rgba(255, 255, 255, 0.04);
+            --info-item-border: 1px solid rgba(255, 255, 255, 0.02);
+            --info-item-active: rgba(255, 255, 255, 0.1);
+            --info-item-focus-bg: #1c1c1e;
+            --login-card-bg: rgba(28, 28, 30, 0.45);
+            --login-card-border: 1px solid rgba(255, 255, 255, 0.15);
+            --login-input-bg: rgba(255, 255, 255, 0.05);
+            --login-input-border: 1px solid rgba(255, 255, 255, 0.1);
+            --scrollbar-thumb-bg: rgba(255, 255, 255, 0.15);
+            --scrollbar-thumb-hover: rgba(255, 255, 255, 0.3);
+            --gradient-color-1: #111827;
+            --gradient-color-2: #030712;
+        }
+
+        /* 【新增】自动随系统时的暗色媒体查询机制 */
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --bg-base: #000000;
+                --accent: #0a84ff;
+                --danger: #ff453a;
+                --secondary: #8e8e93;
+                --glass-bg: rgba(28, 28, 30, 0.75);
+                --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+                --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                --text-main: #f5f5f7;
+                --text-placeholder: #48484a;
+                --action-btn-bg: rgba(255, 255, 255, 0.1);
+                --action-btn-active: rgba(255, 255, 255, 0.18);
+                --search-focus-bg: #1c1c1e;
+                --modal-content-bg: #1c1c1e;
+                --modal-content-border: 1px solid rgba(255, 255, 255, 0.1);
+                --modal-close-bg: rgba(255, 255, 255, 0.12);
+                --info-item-bg: rgba(255, 255, 255, 0.04);
+                --info-item-border: 1px solid rgba(255, 255, 255, 0.02);
+                --info-item-active: rgba(255, 255, 255, 0.1);
+                --info-item-focus-bg: #1c1c1e;
+                --login-card-bg: rgba(28, 28, 30, 0.45);
+                --login-card-border: 1px solid rgba(255, 255, 255, 0.15);
+                --login-input-bg: rgba(255, 255, 255, 0.05);
+                --login-input-border: 1px solid rgba(255, 255, 255, 0.1);
+                --scrollbar-thumb-bg: rgba(255, 255, 255, 0.15);
+                --scrollbar-thumb-hover: rgba(255, 255, 255, 0.3);
+                --gradient-color-1: #111827;
+                --gradient-color-2: #030712;
+            }
+        }
+
         body, html {
             margin: 0; padding: 0; width: 100%; min-height: 100%;
-            background-color: var(--bg-base); color: #1d1d1f;
+            background-color: var(--bg-base); color: var(--text-main);
             font-family: var(--font-apple);
             -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; overflow-x: hidden;
+            /* 丝滑的主题过渡 */
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         
         body.modal-open-fixed {
@@ -52,12 +150,12 @@
             background: transparent;
         }
         ::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.12);
+            background: var(--scrollbar-thumb-bg);
             border-radius: 10px;
             transition: background 0.2s ease;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 0, 0, 0.24);
+            background: var(--scrollbar-thumb-hover);
         }
 
         /* 维持你喜欢的备注内部微型滚动条美化样式 */
@@ -71,17 +169,17 @@
         }
         .info-block-content.note-container-fixed::-webkit-scrollbar-thumb,
         .info-block-item textarea.add-note-input::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.12);
+            background: var(--scrollbar-thumb-bg);
             border-radius: 10px;
         }
         .info-block-content.note-container-fixed::-webkit-scrollbar-thumb:hover,
         .info-block-item textarea.add-note-input::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 0, 0, 0.24);
+            background: var(--scrollbar-thumb-hover);
         }
 
         .gradient-bg {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(135deg, #e2e8f0 0%, #f9fafb 50%, #e2e8f0 100%);
+            background: linear-gradient(135deg, var(--gradient-color-1) 0%, var(--gradient-color-2) 50%, var(--gradient-color-1) 100%);
             background-size: 400% 400%; animation: gradientFlow 15s ease-in-out infinite; z-index: -1;
             display: none; 
         }
@@ -94,8 +192,9 @@
             position: fixed; top: 0; left: 0; width: 100%;
             padding: calc(16px + env(safe-area-inset-top)) var(--side-gap) 16px;
             z-index: 100; display: flex; justify-content: space-between; align-items: center;
-            background: #f5f5f7; 
+            background: var(--bg-base); 
             height: calc(72px + env(safe-area-inset-top)); 
+            transition: background-color 0.3s ease;
         }
         .brand { display: flex; align-items: center; gap: 12px; flex-shrink: 0; height: 40px; }
         
@@ -122,8 +221,8 @@
 
         .header-actions { display: flex; gap: 10px; visibility: hidden; align-items: center; height: 40px; }
         
-        .action-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 10px; background: rgba(0, 0, 0, 0.04); border: 1px solid transparent; flex-shrink: 0; }
-        .action-btn:active { background: rgba(0, 0, 0, 0.08); }
+        .action-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 10px; background: var(--action-btn-bg); border: 1px solid transparent; flex-shrink: 0; color: var(--text-main); }
+        .action-btn:active { background: var(--action-btn-active); }
         
         .page-wrapper { width: 100%; max-width: 1000px; margin: 0 auto; min-height: 100vh; padding: calc(76px + env(safe-area-inset-top)) var(--side-gap) 40px; }
 
@@ -133,16 +232,16 @@
             display: none;
         }
         .search-wrapper { 
-            display: flex; align-items: center; background: rgba(0, 0, 0, 0.04); border-radius: 14px; 
+            display: flex; align-items: center; background: var(--action-btn-bg); border-radius: 14px; 
             width: 100%; height: 46px; overflow: hidden; position: relative; border: 1px solid transparent; 
             transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s; 
         }
         .search-icon { width: 44px; height: 46px; display: flex; align-items: center; justify-content: center; color: var(--secondary); flex-shrink: 0; }
-        .search-input { border: none; background: transparent; height: 100%; width: 100%; padding: 0 4px 0 0; font-size: 16px; outline: none !important; box-shadow: none !important; color: #1d1d1f; line-height: normal; font-family: var(--font-apple); }
-        .search-input::placeholder { color: #a1a1a6; }
+        .search-input { border: none; background: transparent; height: 100%; width: 100%; padding: 0 4px 0 0; font-size: 16px; outline: none !important; box-shadow: none !important; color: var(--text-main); line-height: normal; font-family: var(--font-apple); }
+        .search-input::placeholder { color: var(--text-placeholder); }
         .search-clear { width: 40px; height: 46px; color: var(--secondary); cursor: pointer; display: none; align-items: center; justify-content: center; flex-shrink: 0; }
         
-        .search-wrapper:focus-within { background: #fff; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12); }
+        .search-wrapper:focus-within { background: var(--search-focus-bg); border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12); }
         .search-wrapper.has-content .search-clear { display: flex; }
 
         #list-container { display: grid; grid-template-columns: 100%; gap: 16px; }
@@ -151,11 +250,12 @@
         .item-card { 
             background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
             border-radius: var(--radius-lg); border: var(--glass-border); box-shadow: var(--card-shadow); 
-            padding: 22px; position: relative; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; min-height: 110px;
+            padding: 22px; position: relative; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s, background-color 0.2s; min-height: 110px;
             cursor: pointer; user-select: none;
         }
         .item-card:hover { transform: translateY(-2px); }
         .item-card:active { background: rgba(255, 255, 255, 0.9); }
+        [data-theme="dark"] .item-card:active { background: rgba(44, 44, 46, 0.9); }
         
         .card-info { padding-right: 20px; text-align: left; pointer-events: none; }
         .item-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin:0; font-size:18px; font-weight: 700; font-family: var(--font-apple); }
@@ -175,7 +275,8 @@
         }
         .glass-card { background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border-radius: var(--radius-lg); border: var(--glass-border); padding: 32px 24px; width: 100%; max-width: 340px; text-align: center; }
         
-        .auth-form-body input { width: 100%; height: 50px; padding: 0 16px; margin: 8px 0; border-radius: var(--radius-md); border: 1px solid rgba(0,0,0,0.08); font-size: 16px; outline: none; background: rgba(255,255,255,0.6); font-family: var(--font-apple); }
+        .auth-form-body input { width: 100%; height: 50px; padding: 0 16px; margin: 8px 0; border-radius: var(--radius-md); border: var(--login-input-border); font-size: 16px; outline: none; background: var(--login-input-bg); font-family: var(--font-apple); color: var(--text-main); }
+        .auth-form-body input::placeholder { color: var(--text-placeholder); }
         .primary-btn { width: 100%; height: 50px; background: var(--accent); border: none; border-radius: var(--radius-md); color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.3s; font-family: var(--font-apple); }
         .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
@@ -191,11 +292,12 @@
         .page-modal-content { 
             width: 100%; max-width: 440px; 
             display: flex; flex-direction: column; text-align: left;
-            background: #ffffff; border-radius: 24px; padding: 24px; position: relative;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.12); border: 1px solid rgba(0,0,0,0.05);
+            background: var(--modal-content-bg); border-radius: 24px; padding: 24px; position: relative;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.12); border: var(--modal-content-border);
             max-height: calc(100vh - 40px); 
             animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
             overflow: hidden;
+            transition: background-color 0.3s;
         }
 
         .modal-scroll-area {
@@ -211,15 +313,15 @@
             flex-shrink: 0;
         }
         .modal-header-left { display: flex; align-items: center; gap: 12px; height: 40px; }
-        .page-modal-content h3 { font-size: 20px; font-weight: 700; color: #1d1d1f; margin: 0; letter-spacing: -0.5px; font-family: var(--font-apple); line-height: 1.2; }
+        .page-modal-content h3 { font-size: 20px; font-weight: 700; color: var(--text-main); margin: 0; letter-spacing: -0.5px; font-family: var(--font-apple); line-height: 1.2; }
 
         .modal-close-x {
             position: absolute; top: 24px; right: 24px; width: 30px; height: 30px;
-            border-radius: 50%; background: rgba(0, 0, 0, 0.05); color: #86868b;
+            border-radius: 50%; background: var(--modal-close-bg); color: var(--secondary);
             display: flex; align-items: center; justify-content: center; cursor: pointer;
             border: none; z-index: 11; transition: background 0.2s, color 0.2s;
         }
-        .modal-close-x:active { background: rgba(0, 0, 0, 0.1); color: #1d1d1f; }
+        .modal-close-x:active { background: var(--action-btn-active); color: var(--text-main); }
 
         @keyframes popIn {
             from { opacity: 0; transform: scale(0.93) translateY(12px); }
@@ -228,7 +330,7 @@
 
         @media (max-width: 480px) {
             .modal-overlay { 
-                background: #f5f5f7; 
+                background: var(--bg-base); 
                 padding: 0; 
                 align-items: flex-start; 
             }
@@ -240,7 +342,7 @@
                 box-shadow: none; 
                 border: none; 
                 padding: 0 var(--side-gap) calc(24px + env(safe-area-inset-bottom)) !important; 
-                background: #f5f5f7; 
+                background: var(--bg-base); 
                 animation: none; 
                 border-radius: 0;
             }
@@ -254,9 +356,10 @@
                 padding: calc(16px + env(safe-area-inset-top)) 0 12px !important; 
                 margin-bottom: 8px !important; 
                 height: calc(68px + env(safe-area-inset-top)) !important; 
-                background: #f5f5f7;
+                background: var(--bg-base);
                 position: relative;
                 z-index: 10;
+                transition: background-color 0.3s;
             }
 
             .modal-header-left {
@@ -273,7 +376,7 @@
                 width: 40px !important; 
                 height: 40px !important; 
                 border-radius: 10px !important;
-                background: rgba(0, 0, 0, 0.04) !important; 
+                background: var(--action-btn-bg) !important; 
                 margin: 0 !important;
                 flex-shrink: 0 !important;
             } 
@@ -283,7 +386,7 @@
                 font-weight: 800 !important; 
                 letter-spacing: 0.25em !important; 
                 text-transform: uppercase !important; 
-                color: #1d1d1f !important; 
+                color: var(--text-main) !important; 
                 margin: 0 !important;
                 line-height: 1 !important;
             }
@@ -300,10 +403,10 @@
         }
 
         .info-block-item {
-            background: rgba(0, 0, 0, 0.03); 
+            background: var(--info-item-bg); 
             border-radius: 16px; 
             padding: 12px 16px;
-            border: 1px solid rgba(0, 0, 0, 0.02);
+            border: var(--info-item-border);
             display: flex; 
             flex-direction: column; 
             gap: 4px;
@@ -312,10 +415,10 @@
             transition: background-color 0.2s, border-color 0.25s, box-shadow 0.25s;
         }
         .info-block-item.editable-box { cursor: default; } 
-        .info-block-item:not(.editable-box):not(.edit-mode-active):active { background-color: rgba(0, 0, 0, 0.06); }
+        .info-block-item:not(.editable-box):not(.edit-mode-active):active { background-color: var(--info-item-active); }
         
         .info-block-item:focus-within {
-            background: #ffffff;
+            background: var(--info-item-focus-bg);
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.08);
         }
@@ -330,7 +433,7 @@
 
         .info-block-content {
             font-size: 16px;
-            color: #1d1d1f;
+            color: var(--text-main);
             text-align: left; 
             word-break: break-all;
             width: 100%;
@@ -345,9 +448,10 @@
         #detail-pass, .font-style-mono { font-family: var(--font-mono) !important; }
         
         .info-block-content.highlight { color: var(--accent); font-weight: 700; }
-        .info-block-content.note-style { font-size: 15px; color: #1d1d1f; }
+        .info-block-content.note-style { font-size: 15px; color: var(--text-main); }
 
-        .info-block-item textarea.add-note-input, .info-block-content.note-container-fixed {
+        .info-block-content.note-container-fixed,
+        .info-block-item textarea.add-note-input {
             height: 80px !important;
             max-height: 80px !important;
             line-height: 1.4 !important; 
@@ -378,38 +482,40 @@
             box-shadow: none !important;
             width: 100% !important;
             outline: none !important; 
-            color: #1d1d1f !important;
+            color: var(--text-main) !important;
         }
+        .info-block-item input::placeholder, .info-block-item textarea::placeholder { color: var(--text-placeholder) !important; }
         #edit-name, #edit-user { font-family: var(--font-apple) !important; }
         #edit-pass { font-family: var(--font-mono) !important; }
 
         .modal-action-row { display: flex; gap: 12px; width: 100%; margin-top: 14px; flex-shrink: 0; }
         .modal-action-row .primary-btn, .modal-action-row .secondary-text-btn, .modal-action-row .danger-btn { flex: 1; height: 50px; border-radius: var(--radius-md); font-size: 16px; font-weight: 600; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: var(--font-apple); }
-        .modal-action-row .secondary-text-btn { background: rgba(0, 0, 0, 0.04); color: #1d1d1f; transition: background 0.2s, transform 0.1s; }
-        .modal-action-row .secondary-text-btn:active { background: rgba(0, 0, 0, 0.08); transform: scale(0.98); }
+        .modal-action-row .secondary-text-btn { background: var(--action-btn-bg); color: var(--text-main); transition: background 0.2s, transform 0.1s; }
+        .modal-action-row .secondary-text-btn:active { background: var(--action-btn-active); transform: scale(0.98); }
         .modal-action-row .danger-btn { background: rgba(255, 59, 48, 0.1); color: var(--danger); transition: background 0.2s, transform 0.1s; font-family: var(--font-apple); }
         .modal-action-row .danger-btn:active { background: rgba(255, 59, 48, 0.18); transform: scale(0.98); }
         .modal-action-row .danger-btn.shake-active { animation: btnWiggle 0.25s ease-in-out infinite; background: var(--danger); color: #fff; }
         @keyframes btnWiggle { 0% { transform: rotate(-1deg); } 50% { transform: rotate(1deg); } 100% { transform: rotate(-1deg); } }
 
         #toast { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(0,0,0,0.85); color: white; padding: 12px 24px; border-radius: 24px; z-index: 1000; opacity: 0; pointer-events: none; transition: all 0.4s; font-family: var(--font-apple); font-size: 14px; }
+        [data-theme="dark"] #toast { background: rgba(255,255,255,0.85); color: #000; }
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         .status-msg { width: 100%; padding: 60px 0; color: var(--secondary); text-align: center; grid-column: 1/-1; font-family: var(--font-apple); }
 
         #login-card {
-            background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.45); box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.01), 0 24px 60px -8px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            background: var(--login-card-bg); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: var(--login-card-border); box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.01), 0 24px 60px -8px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.4);
             width: 100%; max-width: 360px; padding: 24px; border-radius: 30px; display: flex; flex-direction: column; position: relative;
         }
         .card-brand-header { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
         .card-brand-logo { color: var(--accent); display: flex; align-items: center; }
-        .card-brand-name { font-size: 15px; font-weight: 800; letter-spacing: 0.25em; color: #1d1d1f; font-family: var(--font-apple); }
+        .card-brand-name { font-size: 15px; font-weight: 800; letter-spacing: 0.25em; color: var(--text-main); font-family: var(--font-apple); }
         #login-card h2 { display: none; }
         
         .auth-form-body { display: flex; flex-direction: column; gap: 0; }
         .auth-input-button-row { display: flex; gap: 10px; width: 100%; align-items: center; }
-        .auth-input-button-row input { margin: 0; flex: 1; background: rgba(255, 255, 255, 0.75); border: 1px solid rgba(0, 0, 0, 0.05); border-radius: 15px; height: 50px; font-size: 15px; color: #1d1d1f; box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.01); transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); font-family: var(--font-apple); }
-        .auth-input-button-row input::placeholder { color: #a1a1a6; }
-        .auth-input-button-row input:focus { background: #ffffff; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.12); }
+        .auth-input-button-row input { margin: 0; flex: 1; background: var(--login-input-bg); border: var(--login-input-border); border-radius: 15px; height: 50px; font-size: 15px; color: var(--text-main); box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.01); transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); font-family: var(--font-apple); }
+        .auth-input-button-row input::placeholder { color: var(--text-placeholder); }
+        .auth-input-button-row input:focus { background: var(--info-item-focus-bg); border-color: var(--accent); box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.12); }
         
         .auth-input-button-row .primary-btn { width: 90px; flex-shrink: 0; background: linear-gradient(180deg, #2f91ff 0%, var(--accent) 100%); border-radius: 15px; height: 50px; font-size: 15px; font-weight: 600; box-shadow: 0 4px 14px rgba(0, 122, 255, 0.15); transition: all 0.25s ease; font-family: var(--font-apple); }
         .auth-input-button-row .primary-btn:hover:not(:disabled) { opacity: 0.95; transform: translateY(-0.5px); }
@@ -452,6 +558,7 @@
         <div class="brand-name">AEGIS</div>
     </div>
     <div class="header-actions" id="actions">
+        <div class="action-btn" id="theme-btn" onmousedown="event.preventDefault();toggleThemeMode()" ontouchstart="event.preventDefault();toggleThemeMode()"></div>
         <div class="action-btn" onmousedown="event.preventDefault();openAddModal()" ontouchstart="event.preventDefault();openAddModal()" style="color:var(--accent)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
         <div class="action-btn" onmousedown="event.preventDefault();softLock()" ontouchstart="event.preventDefault();softLock()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
     </div>
@@ -610,8 +717,54 @@
     const SVGIcons = {
         filePlus: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>`,
         editPencil: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`,
-        eyeLook: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`
+        eyeLook: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`,
+        
+        /* 主题微调图标（高精度 Apple 图标样式映射） */
+        sun: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
+        moon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
+        auto: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20V2z"/></svg>`
     };
+
+    // 存储当前的主题设置状态 'auto', 'light', 'dark'
+    let currentThemeMode = localStorage.getItem('ae_theme_mode') || 'auto';
+
+    function initTheme() {
+        const root = document.documentElement;
+        const themeBtn = document.getElementById('theme-btn');
+        if (!themeBtn) return;
+        
+        if (currentThemeMode === 'light') {
+            root.setAttribute('data-theme', 'light');
+            themeBtn.innerHTML = SVGIcons.sun;
+            themeBtn.style.color = '#ff9500';
+        } else if (currentThemeMode === 'dark') {
+            root.setAttribute('data-theme', 'dark');
+            themeBtn.innerHTML = SVGIcons.moon;
+            themeBtn.style.color = '#5e5ce6';
+        } else {
+            root.removeAttribute('data-theme');
+            themeBtn.innerHTML = SVGIcons.auto;
+            themeBtn.style.color = 'var(--secondary)';
+        }
+    }
+
+    function toggleThemeMode() {
+        if (currentThemeMode === 'auto') {
+            currentThemeMode = 'light';
+        } else if (currentThemeMode === 'light') {
+            currentThemeMode = 'dark';
+        } else {
+            currentThemeMode = 'auto';
+        }
+        localStorage.setItem('ae_theme_mode', currentThemeMode);
+        initTheme();
+        const modeNames = { 'auto': '自动跟随系统', 'light': '明亮模式', 'dark': '深色模式' };
+        showToast(`已切换至: ${modeNames[currentThemeMode]}`);
+    }
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        if (currentThemeMode === 'auto') initTheme();
+    });
 
     const CryptoSvc = {
         _key: null,
@@ -1098,6 +1251,9 @@
 
     function hardReset() { localStorage.clear(); location.reload(); }
     if (!ENCRYPTED_TK) { document.getElementById('auth-brand-text').innerText = "AEGIS SETUP"; document.getElementById('setup-area').style.display = "block"; } else { document.getElementById('reset-link').style.display = "block"; }
+    
+    // 页面加载自动拉取用户持久化主题
+    initTheme();
 </script>
 </body>
 </html>
