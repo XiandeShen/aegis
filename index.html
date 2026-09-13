@@ -90,7 +90,6 @@
             --icon-wrapper-danger-bg: rgba(255, 69, 58, 0.2);
         }
 
-        /* 自动随系统时的暗色媒体查询机制 */
         @media (prefers-color-scheme: dark) {
             :root:not([data-theme="light"]) {
                 --bg-base: #000000;
@@ -148,39 +147,10 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        ::-webkit-scrollbar {
-            width: 5px;
-            height: 5px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--scrollbar-thumb-bg);
-            border-radius: 10px;
-            transition: background 0.2s ease;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--scrollbar-thumb-hover);
-        }
-
-        .info-block-content.note-container-fixed::-webkit-scrollbar,
-        .info-block-item textarea.add-note-input::-webkit-scrollbar {
-            width: 4px;
-        }
-        .info-block-content.note-container-fixed::-webkit-scrollbar-track,
-        .info-block-item textarea.add-note-input::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .info-block-content.note-container-fixed::-webkit-scrollbar-thumb,
-        .info-block-item textarea.add-note-input::-webkit-scrollbar-thumb {
-            background: var(--scrollbar-thumb-bg);
-            border-radius: 10px;
-        }
-        .info-block-content.note-container-fixed::-webkit-scrollbar-thumb:hover,
-        .info-block-item textarea.add-note-input::-webkit-scrollbar-thumb:hover {
-            background: var(--scrollbar-thumb-hover);
-        }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb-bg); border-radius: 10px; transition: background 0.2s ease; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
 
         .gradient-bg {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
@@ -188,9 +158,7 @@
             background-size: 400% 400%; animation: gradientFlow 15s ease-in-out infinite; z-index: -1;
             display: none; 
         }
-        body.unlocked .gradient-bg {
-            display: block;
-        }
+        body.unlocked .gradient-bg { display: block; }
         @keyframes gradientFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         
         header {
@@ -214,7 +182,6 @@
 
         .brand-name { font-size: 19px; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; font-family: var(--font-apple); line-height: 40px; height: 40px; display: flex; align-items: center; }
         
-        /* 修复核心：排除重置确认模态框，防止其在解锁前被强制 display: none */
         body:not(.unlocked) .page-wrapper,
         body:not(.unlocked) .modal-overlay:not(#hard-reset-overlay) {
             display: none !important;
@@ -233,11 +200,7 @@
         
         .page-wrapper { width: 100%; max-width: 1000px; margin: 0 auto; min-height: 100vh; padding: calc(76px + env(safe-area-inset-top)) var(--side-gap) 40px; }
 
-        .main-search-area {
-            width: 100%;
-            margin-bottom: 20px;
-            display: none;
-        }
+        .main-search-area { width: 100%; margin-bottom: 20px; display: none; }
         .search-wrapper { 
             display: flex; align-items: center; background: var(--action-btn-bg); border-radius: 14px; 
             width: 100%; height: 46px; overflow: hidden; position: relative; border: 1px solid transparent; 
@@ -260,11 +223,8 @@
             padding: 22px; position: relative; 
             transition: background-color 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; 
             min-height: 110px; cursor: pointer; user-select: none; -webkit-user-select: none;
-            will-change: background-color;
         }
-        @media (min-width: 1025px) {
-            .item-card:hover { transform: translateY(-2px); }
-        }
+        @media (min-width: 1025px) { .item-card:hover { transform: translateY(-2px); } }
         .item-card:active { background-color: rgba(0, 0, 0, 0.04) !important; }
         [data-theme="dark"] .item-card:active { background-color: rgba(255, 255, 255, 0.05) !important; }
         @media (prefers-color-scheme: dark) {
@@ -277,12 +237,10 @@
         .item-user, .pass-val { font-size:13px; font-family: var(--font-mono); }
         .item-user { color:var(--secondary); margin: 0; }
         .pass-val { color: var(--accent); opacity: 0.8; }
-        
         .item-time { position: absolute; bottom: 22px; right: 22px; font-size: 11px; color: var(--secondary); opacity: 0.4; font-family: var(--font-mono); line-height: 1.5; pointer-events: none; }
 
         .auth-viewport { 
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             display: flex; align-items: center; justify-content: center; 
             padding: env(safe-area-inset-top) var(--side-gap) env(safe-area-inset-bottom);
             z-index: 150;
@@ -291,36 +249,33 @@
         
         .auth-form-body input { width: 100%; height: 50px; padding: 0 16px; margin: 8px 0; border-radius: var(--radius-md); border: var(--login-input-border); font-size: 16px; outline: none; background: var(--login-input-bg); font-family: var(--font-apple); color: var(--text-main); }
         .auth-form-body input::placeholder { color: var(--text-placeholder); }
-        .primary-btn { width: 100%; height: 50px; background: var(--accent); border: none; border-radius: var(--radius-md); color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.3s; font-family: var(--font-apple); }
+        
+        /* 统一标准按钮外观与无阴影特性：完全消除iOS移动端点击时由于默认阴影引起的问题 */
+        .primary-btn { 
+            width: 100%; height: 50px; background: var(--accent); border: none; border-radius: var(--radius-md); 
+            color: white; font-size: 16px; font-weight: 600; cursor: pointer; font-family: var(--font-apple);
+            box-shadow: none !important; -webkit-box-shadow: none !important; outline: none !important;
+            transition: opacity 0.2s;
+        }
+        .primary-btn:active { opacity: 0.8; box-shadow: none !important; -webkit-box-shadow: none !important; }
         .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0, 0, 0, 0.15); z-index: 200; display: none; 
-            align-items: center; justify-content: center;
-            padding: var(--side-gap);
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            overflow: hidden;
+            align-items: center; justify-content: center; padding: var(--side-gap);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); overflow: hidden;
         }
         
         .page-modal-content { 
-            width: 100%; max-width: 440px; 
-            display: flex; flex-direction: column; text-align: left;
+            width: 100%; max-width: 440px; display: flex; flex-direction: column; text-align: left;
             background: var(--modal-content-bg); border-radius: 24px; padding: 24px; position: relative;
             box-shadow: 0 12px 40px rgba(0,0,0,0.12); border: var(--modal-content-border);
-            max-height: calc(100vh - 40px); 
-            animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-            overflow: hidden;
-            transition: background-color 0.3s;
+            max-height: calc(100vh - 40px); animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            overflow: hidden; transition: background-color 0.3s;
         }
 
-        .modal-scroll-area {
-            width: 100%;
-            flex: 1;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            padding-right: 6px; 
-        }
+        .modal-scroll-area { width: 100%; flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-right: 6px; }
 
         .modal-page-header { 
             margin-bottom: 20px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; 
@@ -330,7 +285,7 @@
         
         .page-modal-content h3 { 
             font-size: 20px; font-weight: 700; color: var(--text-main); margin: 0; letter-spacing: -0.02em; 
-            text-transform: none; font-family: var(--font-apple); line-height: 40px; height: 40px; 
+            font-family: var(--font-apple); line-height: 40px; height: 40px; 
             display: flex; align-items: center; justify-content: center;
             position: absolute; left: 50%; transform: translateX(-50%); width: auto; max-width: 60%; white-space: nowrap; pointer-events: none;
         }
@@ -350,193 +305,79 @@
         }
 
         @media (max-width: 480px) {
-            /* 排除重置弹窗遮罩层，使其在手机端依然保持模糊居中 */
-            .modal-overlay:not(#hard-reset-overlay) { 
-                background: var(--bg-base); 
-                padding: 0; 
-                align-items: flex-start; 
-            }
-            
-            /* 排除重置弹窗内容框，使其不变成全屏 */
+            .modal-overlay:not(#hard-reset-overlay) { background: var(--bg-base); padding: 0; align-items: flex-start; }
             .page-modal-content:not(#hard-reset-overlay .page-modal-content) { 
-                max-height: 100dvh !important; 
-                min-height: 100dvh !important;
-                height: 100dvh !important;
-                max-height: 100% !important; 
-                box-shadow: none; 
-                border: none; 
-                padding: 0 var(--side-gap) calc(24px + env(safe-area-inset-bottom)) !important; 
-                background: var(--bg-base); 
-                animation: none; 
-                border-radius: 0;
+                max-height: 100dvh !important; min-height: 100dvh !important; height: 100dvh !important;
+                box-shadow: none; border: none; padding: 0 var(--side-gap) calc(24px + env(safe-area-inset-bottom)) !important; 
+                background: var(--bg-base); animation: none; border-radius: 0;
             }
-            
-            /* 排除重置弹窗的头部布局 */
             .modal-page-header:not(#hard-reset-overlay .modal-page-header) { 
-                display: flex !important;
-                flex-direction: row !important;
-                align-items: center !important; 
-                justify-content: space-between !important; 
-                padding: calc(16px + env(safe-area-inset-top)) 0 12px !important; 
-                margin-bottom: 8px !important; 
-                height: calc(68px + env(safe-area-inset-top)) !important; 
-                background: var(--bg-base);
-                position: relative !important;
-                z-index: 10;
-                transition: background-color 0.3s;
+                display: flex !important; flex-direction: row !important; align-items: center !important; 
+                justify-content: space-between !important; padding: calc(16px + env(safe-area-inset-top)) 0 12px !important; 
+                margin-bottom: 8px !important; height: calc(68px + env(safe-area-inset-top)) !important; 
+                background: var(--bg-base); position: relative !important; z-index: 10;
             }
-
-            .modal-header-left:not(#hard-reset-overlay .modal-header-left) {
-                display: flex !important;
-                align-items: center !important;
-                height: 40px !important; 
-            }
-            
-            /* 排除重置弹窗的关闭按钮 */
+            .modal-header-left:not(#hard-reset-overlay .modal-header-left) { display: flex !important; align-items: center !important; height: 40px !important; }
             .modal-close-x:not(#hard-reset-overlay .modal-close-x) { 
-                position: absolute !important; 
-                top: calc(16px + env(safe-area-inset-top) + 20px) !important;
-                right: 0 !important;
-                transform: translateY(-50%) !important;
-                width: 40px !important; 
-                height: 40px !important; 
-                border-radius: 50% !important;
-                background: var(--action-btn-bg) !important; 
-                margin: 0 !important;
-                flex-shrink: 0 !important;
+                position: absolute !important; top: calc(16px + env(safe-area-inset-top) + 20px) !important; right: 0 !important;
+                transform: translateY(-50%) !important; width: 40px !important; height: 40px !important; border-radius: 50% !important;
+                background: var(--action-btn-bg) !important; margin: 0 !important; flex-shrink: 0 !important;
             } 
-            
-            /* 排除重置弹窗的标题 */
             .page-modal-content:not(#hard-reset-overlay .page-modal-content) h3 { 
-                font-size: 19px !important; 
-                font-weight: 700 !important; 
-                letter-spacing: -0.01em !important; 
-                text-transform: none !important; 
-                color: var(--text-main) !important; 
-                margin: 0 !important;
-                line-height: 40px !important;
-                height: 40px !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                position: absolute !important;
-                left: 50% !important;
-                top: calc(16px + env(safe-area-inset-top) + 20px) !important;
-                transform: translate(-50%, -50%) !important;
-                width: auto !important;
-                max-width: 50% !important;
+                font-size: 19px !important; font-weight: 700 !important; color: var(--text-main) !important; margin: 0 !important;
+                line-height: 40px !important; height: 40px !important; display: flex !important; align-items: center !important; 
+                justify-content: center !important; position: absolute !important; left: 50% !important; 
+                top: calc(16px + env(safe-area-inset-top) + 20px) !important; transform: translate(-50%, -50%) !important; width: auto !important; max-width: 50% !important;
             }
-
-            .modal-scroll-area:not(#hard-reset-overlay .modal-scroll-area) {
-                padding-bottom: 12px;
-                overscroll-behavior-y: contain; 
-            }
+            .modal-scroll-area:not(#hard-reset-overlay .modal-scroll-area) { padding-bottom: 12px; overscroll-behavior-y: contain; }
         }
 
-        .apple-group-box, .info-cell-group {
-            background: transparent; border: none; padding: 0; margin-bottom: 12px;
-            display: flex; flex-direction: column; gap: 12px; 
-        }
+        .apple-group-box, .info-cell-group { background: transparent; border: none; padding: 0; margin-bottom: 12px; display: flex; flex-direction: column; gap: 12px; }
 
         .info-block-item {
-            background: var(--info-item-bg); 
-            border-radius: 16px; 
-            padding: 12px 16px;
-            border: var(--info-item-border);
-            display: flex; 
-            flex-direction: column; 
-            gap: 4px;
-            width: 100%;
-            cursor: pointer;
+            background: var(--info-item-bg); border-radius: 16px; padding: 12px 16px; border: var(--info-item-border);
+            display: flex; flex-direction: column; gap: 4px; width: 100%; cursor: pointer;
             transition: background-color 0.2s, border-color 0.25s, box-shadow 0.25s;
         }
         .info-block-item.editable-box { cursor: default; } 
         .info-block-item:not(.editable-box):not(.edit-mode-active):active { background-color: var(--info-item-active); }
+        .info-block-item:focus-within { background: var(--info-item-focus-bg); border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.08); }
+
+        .info-block-label { font-size: 12px; color: var(--secondary); font-weight: 600; user-select: none; font-family: var(--font-apple); }
+        .info-block-content { font-size: 16px; color: var(--text-main); text-align: left; word-break: break-all; width: 100%; height: 26px; line-height: 26px !important; display: block; overflow: hidden; padding: 0 !important; margin: 0 !important; }
         
-        .info-block-item:focus-within {
-            background: var(--info-item-focus-bg);
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.08);
-        }
-
-        .info-block-label {
-            font-size: 12px;
-            color: var(--secondary);
-            font-weight: 600;
-            user-select: none;
-            font-family: var(--font-apple);
-        }
-
-        .info-block-content {
-            font-size: 16px;
-            color: var(--text-main);
-            text-align: left; 
-            word-break: break-all;
-            width: 100%;
-            height: 26px; 
-            line-height: 26px !important; 
-            display: block;
-            overflow: hidden;
-            padding: 0 !important;
-            margin: 0 !important;
-        }
         #detail-name, #detail-user, .font-style-apple { font-family: var(--font-apple) !important; }
         #detail-pass, .font-style-mono { font-family: var(--font-mono) !important; }
-        
         .info-block-content.highlight { color: var(--accent); font-weight: 700; }
         .info-block-content.note-style { font-size: 15px; color: var(--text-main); }
 
-        .info-block-content.note-container-fixed,
-        .info-block-item textarea.add-note-input {
-            height: 80px !important;
-            max-height: 80px !important;
-            line-height: 1.4 !important; 
-            padding-top: 0 !important;
-            resize: none;
-            word-break: break-all;
-            overflow-y: auto;
-            padding-right: 6px !important; 
+        .info-block-content.note-container-fixed, .info-block-item textarea.add-note-input {
+            height: 80px !important; max-height: 80px !important; line-height: 1.4 !important; 
+            padding-top: 0 !important; resize: none; word-break: break-all; overflow-y: auto; padding-right: 6px !important; 
         }
         #edit-note { font-family: var(--font-apple) !important; font-size: 15px !important; }
-        
-        .info-block-content.note-empty {
-            color: var(--secondary);
-            opacity: 0.5;
-            font-style: italic;
-            font-family: var(--font-apple) !important;
-        }
+        .info-block-content.note-empty { color: var(--secondary); opacity: 0.5; font-style: italic; font-family: var(--font-apple) !important; }
 
         .info-block-item input, .info-block-item textarea {
-            background: transparent !important;
-            border: none !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            border-radius: 0 !important;
-            height: 26px !important; 
-            line-height: 26px !important; 
-            font-size: 16px !important;
-            box-shadow: none !important;
-            width: 100% !important;
-            outline: none !important; 
-            color: var(--text-main) !important;
+            background: transparent !important; border: none !important; margin: 0 !important; padding: 0 !important;
+            border-radius: 0 !important; height: 26px !important; line-height: 26px !important; font-size: 16px !important;
+            box-shadow: none !important; width: 100% !important; outline: none !important; color: var(--text-main) !important;
         }
         .info-block-item input::placeholder, .info-block-item textarea::placeholder { color: var(--text-placeholder) !important; }
-        #edit-name, #edit-user { font-family: var(--font-apple) !important; }
-        #edit-pass { font-family: var(--font-mono) !important; }
 
+        /* 模态框下方的操作栏按钮统一样式，确保无论点击哪个按钮均无任何多余的高亮阴影 */
         .modal-action-row { display: flex; gap: 12px; width: 100%; margin-top: 14px; flex-shrink: 0; }
-        .modal-action-row .primary-btn, .modal-action-row .secondary-text-btn, .modal-action-row .danger-btn { flex: 1; height: 50px; border-radius: var(--radius-md); font-size: 16px; font-weight: 600; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: var(--font-apple); }
-        .modal-action-row .secondary-text-btn { background: var(--action-btn-bg); color: var(--text-main); transition: background 0.2s, transform 0.1s; }
-        .modal-action-row .secondary-text-btn:active { background: var(--action-btn-active); transform: scale(0.98); }
-        .modal-action-row .danger-btn { background: rgba(255, 59, 48, 0.1); color: var(--danger); transition: background 0.2s, transform 0.1s; font-family: var(--font-apple); }
-        .modal-action-row .danger-btn:active { background: rgba(255, 59, 48, 0.18); transform: scale(0.98); }
+        .modal-action-row .primary-btn, .modal-action-row .secondary-text-btn, .modal-action-row .danger-btn { 
+            flex: 1; height: 50px; border-radius: var(--radius-md); font-size: 16px; font-weight: 600; border: none; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; font-family: var(--font-apple);
+            box-shadow: none !important; -webkit-box-shadow: none !important; outline: none !important; -webkit-tap-highlight-color: transparent;
+        }
+        .modal-action-row .secondary-text-btn { background: var(--action-btn-bg); color: var(--text-main); transition: background 0.2s; }
+        .modal-action-row .secondary-text-btn:active { background: var(--action-btn-active); }
+        .modal-action-row .danger-btn { background: rgba(255, 59, 48, 0.1); color: var(--danger); transition: background 0.2s; }
+        .modal-action-row .danger-btn:active { background: rgba(255, 59, 48, 0.18); }
         .modal-action-row .danger-btn.shake-active { animation: btnWiggle 0.25s ease-in-out infinite; background: var(--danger); color: #fff; }
         @keyframes btnWiggle { 0% { transform: rotate(-1deg); } 50% { transform: rotate(1deg); } 100% { transform: rotate(-1deg); } }
-
-        /* 同步云端按钮专属样式：去除默认的阴影问题 */
-        #save-btn, #edit-save-btn {
-            box-shadow: none !important;
-        }
 
         #toast { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(0,0,0,0.85); color: white; padding: 12px 24px; border-radius: 24px; z-index: 1000; opacity: 0; pointer-events: none; transition: all 0.4s; font-family: var(--font-apple); font-size: 14px; }
         [data-theme="dark"] #toast { background: rgba(255,255,255,0.85); color: #000; }
@@ -554,17 +395,15 @@
         
         .auth-form-body { display: flex; flex-direction: column; gap: 0; }
         .auth-input-button-row { display: flex; gap: 10px; width: 100%; align-items: center; }
-        .auth-input-button-row input { margin: 0; flex: 1; background: var(--login-input-bg); border: var(--login-input-border); border-radius: 15px; height: 50px; font-size: 15px; color: var(--text-main); box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.01); transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); font-family: var(--font-apple); }
+        .auth-input-button-row input { margin: 0; flex: 1; background: var(--login-input-bg); border: var(--login-input-border); border-radius: 15px; height: 50px; font-size: 15px; color: var(--text-main); box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.01); transition: all 0.25s; font-family: var(--font-apple); }
         .auth-input-button-row input::placeholder { color: var(--text-placeholder); }
         .auth-input-button-row input:focus { background: var(--info-item-focus-bg); border-color: var(--accent); box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.12); }
         
-        .auth-input-button-row .primary-btn { width: 90px; flex-shrink: 0; background: linear-gradient(180deg, #2f91ff 0%, var(--accent) 100%); border-radius: 15px; height: 50px; font-size: 15px; font-weight: 600; box-shadow: 0 4px 14px rgba(0, 122, 255, 0.15); transition: all 0.25s ease; font-family: var(--font-apple); }
-        .auth-input-button-row .primary-btn:hover:not(:disabled) { opacity: 0.95; transform: translateY(-0.5px); }
+        .auth-input-button-row .primary-btn { width: 90px; flex-shrink: 0; background: linear-gradient(180deg, #2f91ff 0%, var(--accent) 100%); border-radius: 15px; height: 50px; font-size: 15px; font-weight: 600; font-family: var(--font-apple); box-shadow: none !important; -webkit-box-shadow: none !important; }
         
         #setup-area { animation: fadeInFlag 0.4s ease forwards; width: 100%; margin-bottom: 12px; }
         @keyframes fadeInFlag { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* 去除了 hover 时的 text-decoration: underline 下划线逻辑 */
         #reset-link { 
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important; 
             font-weight: 500; margin-top: 16px !important; background: transparent !important; font-family: var(--font-apple);
@@ -742,7 +581,6 @@
         filePlus: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>`,
         editPencil: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`,
         eyeLook: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`,
-        
         sun: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
         moon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
         auto: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20V2z"/></svg>`
@@ -835,22 +673,16 @@
 
     document.addEventListener('touchmove', (e) => {
         if (document.body.classList.contains('modal-open-fixed')) {
-            if (!e.target.closest('.modal-scroll-area')) { 
-                e.preventDefault(); 
-            }
+            if (!e.target.closest('.modal-scroll-area')) { e.preventDefault(); }
         }
     }, { passive: false });
 
     function handleSearchUI(input) {
         const wrapper = document.getElementById('search-wrapper');
         const hasText = input.value.length > 0;
-        
         if (hasText) wrapper.classList.add('has-content'); else wrapper.classList.remove('has-content');
         handleSearch(input.value);
-        
-        if (hasText && window.scrollY > 20) {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        if (hasText && window.scrollY > 20) { window.scrollTo({ top: 0, behavior: 'smooth' }); }
     }
     
     function clearSearch() {
@@ -878,31 +710,11 @@
                 ${item.updatedAt ? `<div class="item-time">${item.updatedAt}</div>` : ''} 
             `;
             
-            let touchStartY = 0;
-            let isScrolling = false;
-
-            div.addEventListener('touchstart', (e) => {
-                touchStartY = e.touches[0].clientY;
-                isScrolling = false;
-            }, { passive: true });
-
-            div.addEventListener('touchmove', (e) => {
-                const touchMoveY = e.touches[0].clientY;
-                if (Math.abs(touchMoveY - touchStartY) > 10) {
-                    isScrolling = true;
-                }
-            }, { passive: true });
-
-            div.addEventListener('touchend', (e) => {
-                if (isScrolling) {
-                    e.preventDefault();
-                }
-            }, { passive: false });
-
-            div.addEventListener('click', (e) => {
-                if (isScrolling) return; 
-                showDetails(item);
-            });
+            let touchStartY = 0, isScrolling = false;
+            div.addEventListener('touchstart', (e) => { touchStartY = e.touches[0].clientY; isScrolling = false; }, { passive: true });
+            div.addEventListener('touchmove', (e) => { if (Math.abs(e.touches[0].clientY - touchStartY) > 10) isScrolling = true; }, { passive: true });
+            div.addEventListener('touchend', (e) => { if (isScrolling) e.preventDefault(); }, { passive: false });
+            div.addEventListener('click', (e) => { if (isScrolling) return; showDetails(item); });
 
             c.appendChild(div);
         });
@@ -912,26 +724,17 @@
     function clearPendingDelete() {
         if (!pendingDeleteCardId) return;
         const delBtn = document.getElementById('detail-del-btn');
-        if (delBtn) {
-            delBtn.classList.remove('shake-active');
-            delBtn.innerText = "删除";
-        }
+        if (delBtn) { delBtn.classList.remove('shake-active'); delBtn.innerText = "删除"; }
         pendingDeleteCardId = null;
     }
 
     async function confirmDelete(id) { 
         const delBtn = document.getElementById('detail-del-btn');
-        
         if (pendingDeleteCardId !== id) {
-            clearPendingDelete(); 
-            pendingDeleteCardId = id;
-            if (delBtn) {
-                delBtn.classList.add('shake-active');
-                delBtn.innerText = "确 认";
-            }
+            clearPendingDelete(); pendingDeleteCardId = id;
+            if (delBtn) { delBtn.classList.add('shake-active'); delBtn.innerText = "确 认"; }
             return; 
         }
-        
         try { 
             showToast("正在同步删除...");
             toggleModal('pass-modal', false);
@@ -940,16 +743,12 @@
             await updateCloud(list); 
             clearSearch(); 
         } catch(e) { 
-            showToast("删除失败"); 
-            clearPendingDelete();
+            showToast("删除失败"); clearPendingDelete();
         }
     }
 
     function showDetails(item) {
-        activeItemBackup = item; 
-        currentEditId = item.id;
-        isInsideEditMode = false;
-
+        activeItemBackup = item; currentEditId = item.id; isInsideEditMode = false;
         document.getElementById('pass-modal-icon-container').innerHTML = SVGIcons.eyeLook;
         document.getElementById('detail-modal-title').innerText = "凭据详情";
         
@@ -959,11 +758,9 @@
         
         const noteEl = document.getElementById('detail-note');
         if (item.note && item.note.trim()) {
-            noteEl.innerText = item.note;
-            noteEl.classList.remove('note-empty');
+            noteEl.innerText = item.note; noteEl.classList.remove('note-empty');
         } else {
-            noteEl.innerText = "暂无备注...";
-            noteEl.classList.add('note-empty');
+            noteEl.innerText = "暂无备注..."; noteEl.classList.add('note-empty');
         }
 
         document.getElementById('edit-name').value = item.name;
@@ -971,13 +768,10 @@
         document.getElementById('edit-pass').value = item.pass;
         document.getElementById('edit-note').value = item.note || '';
 
-        switchInlineUIMode(false);
-        clearPendingDelete();
-        toggleModal('pass-modal', true);
+        switchInlineUIMode(false); clearPendingDelete(); toggleModal('pass-modal', true);
 
         window.requestAnimationFrame(() => {
-            noteEl.scrollTop = 0;
-            document.getElementById('edit-note').scrollTop = 0;
+            noteEl.scrollTop = 0; document.getElementById('edit-note').scrollTop = 0;
         });
         
         document.getElementById('copy-all-btn').onclick = function() {
@@ -985,37 +779,25 @@
             navigator.clipboard.writeText(allText).then(() => showToast("全部内容已复制")).catch(() => showToast("复制失败"));
         };
 
-        document.getElementById('detail-edit-btn').onclick = function() {
-            startInlineEdit();
-        };
-        
-        document.getElementById('detail-del-btn').onclick = function() {
-            confirmDelete(item.id);
-        };
+        document.getElementById('detail-edit-btn').onclick = function() { startInlineEdit(); };
+        document.getElementById('detail-del-btn').onclick = function() { confirmDelete(item.id); };
     }
 
     function handleCellClick(type, labelName) {
         if (isInsideEditMode) return; 
         if (type === 'note' && document.getElementById('detail-note').classList.contains('note-empty')) return;
-        
         const text = document.getElementById(`detail-${type}`).innerText;
         if (!text || text === '-') return;
-        navigator.clipboard.writeText(text).then(() => {
-            showToast(`${labelName}已复制`);
-        }).catch(() => showToast("复制失败"));
+        navigator.clipboard.writeText(text).then(() => showToast(`${labelName}已复制`)).catch(() => showToast("复制失败"));
     }
 
     function startInlineEdit() {
         isInsideEditMode = true;
-        
         document.getElementById('pass-modal-icon-container').innerHTML = SVGIcons.editPencil;
         document.getElementById('detail-modal-title').innerText = "修改凭据";
-
         switchInlineUIMode(true);
 
-        document.getElementById('edit-cancel-btn').onclick = function() {
-            showDetails(activeItemBackup); 
-        };
+        document.getElementById('edit-cancel-btn').onclick = function() { showDetails(activeItemBackup); };
 
         document.getElementById('edit-save-btn').onclick = async function() {
             const name = document.getElementById('edit-name').value.trim();
@@ -1030,23 +812,10 @@
 
             try {
                 let list = await getLatest();
-                const payload = { 
-                    name, 
-                    user: document.getElementById('edit-user').value, 
-                    pass, 
-                    note: document.getElementById('edit-note').value, 
-                    updatedAt: timeStr 
-                };
-                
+                const payload = { name, user: document.getElementById('edit-user').value, pass, note: document.getElementById('edit-note').value, updatedAt: timeStr };
                 const index = list.findIndex(i => i.id == currentEditId);
-                if (index !== -1) {
-                    list[index] = { ...list[index], ...payload };
-                    activeItemBackup = list[index]; 
-                }
-                
-                await updateCloud(list);
-                clearSearch();
-                showDetails(activeItemBackup); 
+                if (index !== -1) { list[index] = { ...list[index], ...payload }; activeItemBackup = list[index]; }
+                await updateCloud(list); clearSearch(); showDetails(activeItemBackup); 
             } catch (e) {
                 showToast("同步失败");
             } finally {
@@ -1056,28 +825,19 @@
     }
 
     function switchInlineUIMode(toEditMode) {
-        const fields = ['name', 'user', 'pass', 'note'];
-        fields.forEach(f => {
+        ['name', 'user', 'pass', 'note'].forEach(f => {
             const cell = document.getElementById(`box-${f}`);
             const textEl = document.getElementById(`detail-${f}`);
             const inputEl = document.getElementById(`edit-${f}`);
-            
             if (toEditMode) {
-                cell.classList.add('edit-mode-active');
-                textEl.style.display = 'none';
-                inputEl.style.display = 'block';
+                cell.classList.add('edit-mode-active'); textEl.style.display = 'none'; inputEl.style.display = 'block';
             } else {
-                cell.classList.remove('edit-mode-active');
-                textEl.style.display = 'block';
-                inputEl.style.display = 'none';
+                cell.classList.remove('edit-mode-active'); textEl.style.display = 'block'; inputEl.style.display = 'none';
             }
         });
-
         window.requestAnimationFrame(() => {
-            document.getElementById('detail-note').scrollTop = 0;
-            document.getElementById('edit-note').scrollTop = 0;
+            document.getElementById('detail-note').scrollTop = 0; document.getElementById('edit-note').scrollTop = 0;
         });
-
         document.getElementById('detail-actions-row').style.display = toEditMode ? 'none' : 'flex';
         document.getElementById('edit-actions-row').style.display = toEditMode ? 'flex' : 'none';
     }
@@ -1095,7 +855,6 @@
     function toggleModal(id, show) { 
         const overlay = document.getElementById(id + '-overlay');
         const scrollArea = overlay.querySelector('.modal-scroll-area');
-        
         if (show) {
             lastScrollY = window.scrollY;
             if(scrollArea) scrollArea.scrollTop = 0; 
@@ -1104,31 +863,19 @@
             document.body.classList.add('modal-open-fixed');
         } else {
             overlay.style.display = 'none';
-            
             if (id === 'pass-modal') {
                 if (scrollArea) scrollArea.scrollTop = 0;
-
-                document.getElementById('detail-note').scrollTop = 0;
-                document.getElementById('edit-note').scrollTop = 0;
-
-                document.getElementById('detail-name').innerText = '';
-                document.getElementById('detail-user').innerText = '';
-                document.getElementById('detail-pass').innerText = '';
-                document.getElementById('detail-note').innerText = '';
-                
-                document.getElementById('edit-name').value = '';
-                document.getElementById('edit-user').value = '';
-                document.getElementById('edit-pass').value = '';
-                document.getElementById('edit-note').value = '';
-                
+                document.getElementById('detail-note').scrollTop = 0; document.getElementById('edit-note').scrollTop = 0;
+                ['detail-name','detail-user','detail-pass','detail-note','edit-name','edit-user','edit-pass','edit-note'].forEach(i => {
+                    const el = document.getElementById(i);
+                    if(el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.value = ''; else el.innerText = '';
+                });
                 switchInlineUIMode(false);
             }
-
             if (id === 'add-modal') {
                 if (scrollArea) scrollArea.scrollTop = 0;
                 document.getElementById('add-note').scrollTop = 0;
             }
-            
             if (!document.querySelector('.modal-overlay[style*="display: flex"]')) {
                 document.body.classList.remove('modal-open-fixed');
                 document.body.style.top = '';
@@ -1142,56 +889,41 @@
     async function handleAuth() {
         const pass = document.getElementById('main-pass').value; if (!pass) return;
         const submitBtn = document.getElementById('login-submit-btn');
-        
-        submitBtn.disabled = true;
-        submitBtn.innerText = "解密中";
+        submitBtn.disabled = true; submitBtn.innerText = "解密中";
         
         document.getElementById('main-pass').blur();
-        const tokenInput = document.getElementById('gh-token');
-        if(tokenInput) tokenInput.blur();
+        const tokenInput = document.getElementById('gh-token'); if(tokenInput) tokenInput.blur();
         
-        await new Promise(resolve => {
-            window.requestAnimationFrame(() => {
-                setTimeout(resolve, 450); 
-            });
-        }); 
+        await new Promise(resolve => { window.requestAnimationFrame(() => { setTimeout(resolve, 450); }); }); 
 
         try {
             await CryptoSvc.deriveKey(pass);
             if (!ENCRYPTED_TK) {
                 const tk = document.getElementById('gh-token').value.trim(); 
                 if (!tk.startsWith('ghp_')) { 
-                    showToast("Token无效"); 
-                    submitBtn.disabled = false; submitBtn.innerText = "登录"; 
-                    return; 
+                    showToast("Token无效"); submitBtn.disabled = false; submitBtn.innerText = "登录"; return; 
                 }
                 const encryptedTk = await CryptoSvc.encrypt(tk);
                 localStorage.setItem('ae_enc_tk', encryptedTk); FINAL_TOKEN = tk;
             } else {
                 const decryptedTk = await CryptoSvc.decrypt(ENCRYPTED_TK);
                 if (!decryptedTk) {
-                    showToast("密码错误或数据损坏");
-                    submitBtn.disabled = false; submitBtn.innerText = "登录";
-                    return;
+                    showToast("密码错误或数据损坏"); submitBtn.disabled = false; submitBtn.innerText = "登录"; return;
                 }
                 FINAL_TOKEN = decryptedTk;
             }
             
             submitBtn.innerText = "加载中";
             const syncSuccess = await startPreloadSync();
-            
             if (syncSuccess) {
                 document.body.classList.add('unlocked');
                 document.getElementById('auth-ui').style.display = 'none'; 
                 document.getElementById('main-ui').style.display = 'block'; 
                 document.getElementById('search-zone').style.display = 'block'; 
                 document.getElementById('actions').style.visibility = 'visible'; 
-                
-                window.scrollTo(0, 0);
-                document.body.scrollTop = 0;
+                window.scrollTo(0, 0); document.body.scrollTop = 0;
             } else {
-                submitBtn.disabled = false; 
-                submitBtn.innerText = "登录";
+                submitBtn.disabled = false; submitBtn.innerText = "登录";
             }
         } catch(e) {
             showToast("解密失败，请重试");
@@ -1203,10 +935,7 @@
         try {
             const resp = await fetch('https://api.github.com/gists', { headers: { 'Authorization': `token ${FINAL_TOKEN}` } });
             if (!resp.ok) throw new Error("Network response error");
-            
-            const data = await resp.json(); 
-            const db = data.find(g => g.files['aegis_db.json']);
-            
+            const data = await resp.json(); const db = data.find(g => g.files['aegis_db.json']);
             if(db) {
                 GIST_ID = db.id; localStorage.setItem('ae_gid', GIST_ID);
                 const detailResp = await fetch(db.url, { headers: { Authorization: `token ${FINAL_TOKEN}` } });
@@ -1214,17 +943,12 @@
                 const rawContent = detail.files['aegis_db.json'].content;
                 let list = [];
                 if (rawContent && rawContent !== "[]") {
-                    const decrypted = await CryptoSvc.decrypt(rawContent); 
-                    list = JSON.parse(decrypted || "[]");
+                    const decrypted = await CryptoSvc.decrypt(rawContent); list = JSON.parse(decrypted || "[]");
                 }
-                render(list); 
-                return true;
-            } else { 
-                return await startSyncNew(); 
-            }
+                render(list); return true;
+            } else { return await startSyncNew(); }
         } catch(e) { 
-            showToast("同步云端数据失败"); 
-            return false;
+            showToast("同步云端数据失败"); return false;
         }
     }
 
@@ -1236,24 +960,15 @@
             });
             if (!res.ok) return false;
             const data = await res.json(); GIST_ID = data.id; localStorage.setItem('ae_gid', GIST_ID); 
-            render([]); 
-            return true;
-        } catch(e) { 
-            showToast("初始化失败"); 
-            return false;
-        }
+            render([]); return true;
+        } catch(e) { showToast("初始化失败"); return false; }
     }
 
-    async function startSync() {
-        try {
-            let list = await getLatest();
-            render(list);
-        } catch(e) {
-            document.getElementById('list-container').innerHTML = '<div class="status-msg">同步失败</div>';
-        }
+    function handleSearch(val) { 
+        const query = (val || "").toLowerCase().trim(); 
+        if (!query) { render(CACHED_LIST); return; } 
+        render(CACHED_LIST.filter(item => item.name.toLowerCase().includes(query) || (item.user && item.user.toLowerCase().includes(query))), true); 
     }
-
-    function handleSearch(val) { const query = (val || "").toLowerCase().trim(); if (!query) { render(CACHED_LIST); return; } render(CACHED_LIST.filter(item => item.name.toLowerCase().includes(query) || (item.user && item.user.toLowerCase().includes(query))), true); }
     
     async function save() { 
         const name = document.getElementById('add-name').value.trim(), pass = document.getElementById('add-pass').value.trim(); 
