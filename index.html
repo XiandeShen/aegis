@@ -214,7 +214,7 @@
 
         .brand-name { font-size: 19px; font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; font-family: var(--font-apple); line-height: 40px; height: 40px; display: flex; align-items: center; }
         
-        /* 排除重置确认模态框，防止其在解锁前被强制 display: none */
+        /* 修复核心：排除重置确认模态框，防止其在解锁前被强制 display: none */
         body:not(.unlocked) .page-wrapper,
         body:not(.unlocked) .modal-overlay:not(#hard-reset-overlay) {
             display: none !important;
@@ -293,12 +293,6 @@
         .auth-form-body input::placeholder { color: var(--text-placeholder); }
         .primary-btn { width: 100%; height: 50px; background: var(--accent); border: none; border-radius: var(--radius-md); color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.3s; font-family: var(--font-apple); }
         .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        /* 针对性消除同步按钮在移动端点击/禁用时的突兀阴影闪烁 */
-        .modal-action-row .primary-btn:active,
-        .modal-action-row .primary-btn:disabled {
-            box-shadow: none !important;
-        }
 
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
@@ -539,6 +533,11 @@
         .modal-action-row .danger-btn.shake-active { animation: btnWiggle 0.25s ease-in-out infinite; background: var(--danger); color: #fff; }
         @keyframes btnWiggle { 0% { transform: rotate(-1deg); } 50% { transform: rotate(1deg); } 100% { transform: rotate(-1deg); } }
 
+        /* 同步云端按钮专属样式：去除默认的阴影问题 */
+        #save-btn, #edit-save-btn {
+            box-shadow: none !important;
+        }
+
         #toast { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(0,0,0,0.85); color: white; padding: 12px 24px; border-radius: 24px; z-index: 1000; opacity: 0; pointer-events: none; transition: all 0.4s; font-family: var(--font-apple); font-size: 14px; }
         [data-theme="dark"] #toast { background: rgba(255,255,255,0.85); color: #000; }
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -565,6 +564,7 @@
         #setup-area { animation: fadeInFlag 0.4s ease forwards; width: 100%; margin-bottom: 12px; }
         @keyframes fadeInFlag { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
         
+        /* 去除了 hover 时的 text-decoration: underline 下划线逻辑 */
         #reset-link { 
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important; 
             font-weight: 500; margin-top: 16px !important; background: transparent !important; font-family: var(--font-apple);
